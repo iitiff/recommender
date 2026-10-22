@@ -2,12 +2,18 @@
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
 from pathlib import Path
+from typing import Annotated
 
 import typer
 
 from recsys.catalog import CatalogError, load_catalog
 from recsys.config import Settings
+from recsys.eval import evaluate as run_evaluation
+from recsys.eval import leave_last_out, load_interactions_csv, temporal_split, to_markdown
+from recsys.eval.report import write_report
+from recsys.models import REGISTRY
 from recsys.store import init_db, make_engine
 from recsys.store.repo import sync_catalog
 
@@ -46,6 +52,52 @@ def load_catalog_cmd(directory: Path) -> None:
     init_db(engine)
     report = sync_catalog(engine, settings.tenant_id, catalog.items, catalog.offers)
     typer.echo(f"tenant {settings.tenant_id}: {report}")
+
+
+@app.command()
+def evaluate(
+    catalog_dir: Path,
+    interactions: Path,
+    models: Annotated[
+        str, typer.Option(help="Comma-separated model names from the registry")
+    ] = ",".join(REGISTRY),
+    k: Annotated[list[int] | None, typer.Option(help="Cutoffs; repeat for several")] = None,
+    split: Annotated[str, typer.Option(help="temporal | last")] = "temporal",
+    test_fraction: Annotated[float, typer.Option(help="temporal: share of latest data")] = 0.2,
+    last_n: Annotated[int, typer.Option(help="last: positives held out per user")] = 1,
+    baseline: Annotated[str, typer.Option(help="Model name others are compared to")] = (
+        "most_popular"
+    ),
+    out: Annotated[Path, typer.Option(help="Where report .md/.json go")] = Path("artifacts/eval"),
+) -> None:
+    """Fit models on a time-based split of INTERACTIONS and report metrics with CIs."""
+    try:
+        catalog = load_catalog(catalog_dir)
+    except CatalogError as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    names = [n.strip() for n in models.split(",") if n.strip()]
+    unknown = [n for n in names if n not in REGISTRY]
+    if unknown:
+        typer.echo(f"unknown models {unknown}; available: {sorted(REGISTRY)}", err=True)
+        raise typer.Exit(1)
+
+    data = load_interactions_csv(interactions)
+    if split == "temporal":
+        s = temporal_split(catalog.items, data, test_fraction=test_fraction)
+    elif split == "last":
+        s = leave_last_out(catalog.items, data, n=last_n)
+    else:
+        typer.echo("--split must be 'temporal' or 'last'", err=True)
+        raise typer.Exit(1)
+
+    report = run_evaluation(
+        [REGISTRY[n]() for n in names], s, ks=tuple(k or (5, 10, 20)), baseline=baseline
+    )
+    name = f"{datetime.now(UTC):%Y%m%d-%H%M%S}-{s.info['fingerprint']}"
+    md, js = write_report(report, out, name=name)
+    typer.echo(to_markdown(report))
+    typer.echo(f"saved {md} and {js}")
 
 
 if __name__ == "__main__":

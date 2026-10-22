@@ -40,6 +40,7 @@ src/recsys/
   events/     event schema (pydantic) + EventLogger (the one place events are written)
   store/      SQLAlchemy Core tables, engine setup, repo functions (the only SQL)
   models/     Recommender base class + models (baselines, content-based, ...)
+  eval/       splits, metrics, bootstrap CIs, harness, reports
   cli.py      `recsys` command
 examples/demo/  fictional catalog + generator
 docs/           DESIGN.md, ROADMAP.md, experiments/
@@ -54,6 +55,7 @@ uv run pytest                             # tests
 uv run ruff check . && uv run ruff format --check .
 uv run recsys validate-catalog examples/demo
 uv run recsys load-catalog examples/demo  # syncs into RECSYS_DATABASE_URL
+uv run recsys evaluate examples/demo examples/demo/interactions.csv  # offline eval
 ```
 
 ## Conventions

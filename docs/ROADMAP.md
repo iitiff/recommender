@@ -1,0 +1,88 @@
+# Roadmap
+
+Each phase has a learning goal, what gets built, and how we decide it worked.
+A phase ships only when its model beats the previous best on the eval harness
+(and on online metrics once there is traffic), with a write-up in
+`docs/experiments/`.
+
+## Phase 1: Content-based recommendations and the foundations ← now
+
+**Learn:** cold start, content similarity, text embeddings, offline evaluation,
+event design.
+
+- [x] Engine scaffold, domain types, `Recommender` interface, contract tests
+- [x] Catalog spec + loader + idempotent refresh (items vs offers, soft delete)
+- [x] Event schema + logger; DB schema with `tenant_id` throughout
+- [x] Baselines: Random, MostPopular
+- [ ] Evaluation harness: temporal split, recall@k, NDCG@k, coverage, popularity
+      bias, bootstrap confidence intervals, markdown/JSON report
+- [ ] Taste quiz → tag affinities (cold start); profile update from ratings
+- [ ] Tag-similarity model (weighted tag overlap / TF-IDF over tags + numeric distance)
+- [ ] Web app: FastAPI + Jinja2 + HTMX; quiz, recs with "because you liked X",
+      👍/👎, save, not interested; `/go/{item}` affiliate redirect; impression beacon
+- [ ] Candidate filters: budget, in stock, ships to region
+- [ ] Text-embedding model (local sentence-transformers) and tag/embedding hybrid
+- [ ] Tasting-panel protocol + first experiment write-up
+- [ ] Deploy: Alembic migrations, small VPS or PaaS, SQLite + Litestream backups
+
+**Done when:** the content model beats MostPopular on the tasting panel and on
+offline eval, and the site is live, logging clean events.
+
+## Phase 2: Collaborative filtering
+
+**Learn:** matrix factorization for implicit feedback (ALS, BPR), negative
+sampling, hybrid models for cold start.
+
+- Train/evaluate on a public wine-ratings dataset first (no traffic needed),
+  then on our own logs as they grow
+- Implicit-feedback MF (e.g. `implicit` library) as a `Recommender`
+- Hybrid: content model for new users/items, blend toward CF as data grows
+- **Switch criterion:** enough users with ≥5 interactions that CF beats content
+  offline with non-overlapping confidence intervals
+
+## Phase 3: Embedding retrieval
+
+**Learn:** two-tower / item2vec embeddings, approximate nearest neighbour
+search, the retrieval → ranking split.
+
+- Learned item and user embeddings; ANN index (FAISS or pgvector)
+- Retrieval of a few hundred candidates feeding a separate ranking stage
+- Matters once catalogs reach many thousands of items
+
+## Phase 4: Learning to rank
+
+**Learn:** feature engineering, gradient-boosted rankers (LightGBM
+LambdaMART), position-bias correction using the logged `position`.
+
+- Features: retrieval scores, tag affinities, price fit, popularity, freshness
+- Train on logged slates (shown-and-clicked vs shown-and-skipped)
+- Counterfactual/unbiased LTR using propensities
+
+## Phase 5: Bandits and experimentation
+
+**Learn:** exploration vs exploitation, A/B testing, interleaving, off-policy
+evaluation.
+
+- Experiment assignment (hash of user_id) feeding `experiment` on events
+- Team-draft interleaving for low-traffic model comparisons
+- A/B tests with power analysis; permanent popularity holdout to measure lift
+- Thompson sampling / epsilon-greedy exploration with logged propensities;
+  inverse propensity scoring (IPS) for offline policy evaluation
+
+## Phase 6: Multi-tenant productization
+
+**Learn:** serving many tenants reliably.
+
+- One model/config per tenant; tenant-aware catalog sync from an external API
+- Cold start for tenants with little data (content + popularity priors)
+- Scheduled retraining, model registry, low-latency serving (precomputed
+  item-to-item tables, caching)
+- Per-tenant dashboards proving lift from experiments
+- Product details live in the private repo
+
+## Infrastructure track (as needed)
+
+- Alembic migrations (before first production deploy)
+- Postgres when concurrent writes or analytics outgrow SQLite
+- Export events to Parquet for analysis
+- CI: lint + tests on every PR

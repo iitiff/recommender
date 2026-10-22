@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# Secrets: never commit, in any repo
+.env
+.env.*
+!.env.example
+
+# Runtime data and model artifacts: rebuilt from code + config, never versioned in git
+data/
+artifacts/
+*.db
+*.db-wal
+*.db-shm
+
+# Business data belongs in the private site repo, not here
+private/

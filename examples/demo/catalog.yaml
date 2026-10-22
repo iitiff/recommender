@@ -1,0 +1,34 @@
+# Maps items.csv columns onto the engine's generic Item (see src/recsys/catalog/spec.py).
+item_id: item_id
+title: title
+description: description
+category: wine_type
+image_url: image_url
+
+tag_facets:
+  producer: {column: producer}
+  varietal: {column: varietals, multi: true}
+  subregion: {column: subregion}
+  note: {column: flavor_notes, multi: true}
+  pairing: {column: food_pairings, multi: true}
+
+# 1-5 scales. Kept as numbers (so models can use distance) and binned into tags
+# (so tag-overlap models and explanations can use them).
+numeric_attributes: [body, tannin, acidity, oak]
+bins:
+  body:
+    - {label: light, low: 1, high: 2}
+    - {label: medium, low: 3, high: 3}
+    - {label: full, low: 4, high: 5}
+  tannin:
+    - {label: soft, low: 1, high: 2}
+    - {label: moderate, low: 3, high: 3}
+    - {label: firm, low: 4, high: 5}
+  acidity:
+    - {label: low, low: 1, high: 2}
+    - {label: moderate, low: 3, high: 3}
+    - {label: bright, low: 4, high: 5}
+  oak:
+    - {label: unoaked, low: 1, high: 2}
+    - {label: moderate, low: 3, high: 3}
+    - {label: oaky, low: 4, high: 5}

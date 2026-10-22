@@ -19,9 +19,13 @@ def model(request, demo_training) -> Recommender:
     return request.param().fit(demo_training)
 
 
+def recommendable_ids(data) -> list[str]:
+    return [i.item_id for i in data.items if i.recommendable]
+
+
 @pytest.fixture
 def user(demo_training) -> UserContext:
-    ids = [i.item_id for i in demo_training.items]
+    ids = recommendable_ids(demo_training)
     return UserContext(user_id="u-test", liked=(ids[0],), disliked=(ids[1],), hidden=(ids[2],))
 
 
@@ -33,16 +37,30 @@ def test_returns_k_unique_sorted(model, user):
     assert scores == sorted(scores, reverse=True)
 
 
-def test_excludes_rated_and_hidden(model, user):
+def test_excludes_rated_and_hidden(model, user, demo_training):
     recs = model.recommend(user, k=100)
     assert not {r.item_id for r in recs} & user.excluded
-    assert len(recs) == 40 - len(user.excluded)
+    assert len(recs) == len(recommendable_ids(demo_training)) - len(user.excluded)
 
 
 def test_respects_candidates(model, user, demo_training):
-    allowed = {i.item_id for i in demo_training.items[10:15]}
+    allowed = set(recommendable_ids(demo_training)[10:15])
     recs = model.recommend(user, k=10, candidates=allowed)
     assert {r.item_id for r in recs} == allowed
+
+
+def test_never_recommends_non_recommendable(model, demo_training):
+    quiz_only = {i.item_id for i in demo_training.items if not i.recommendable}
+    assert quiz_only, "demo catalog should include quiz-only items"
+    # Even when the user liked quiz-only wines and candidates name them explicitly.
+    user = UserContext(user_id="u-quiz", liked=tuple(sorted(quiz_only))[:3])
+    recs = model.recommend(user, k=100, candidates=None)
+    assert not {r.item_id for r in recs} & quiz_only
+    assert not {r.item_id for r in model.recommend(user, k=100, candidates=quiz_only)}
+    # A quiz-only wine can still anchor "you might also like" (recommendable results only).
+    similar = model.similar_items(sorted(quiz_only)[0], k=5)
+    assert len(similar) == 5
+    assert not {r.item_id for r in similar} & quiz_only
 
 
 def test_deterministic(model, user):
@@ -54,7 +72,7 @@ def test_explain_flag(model, user):
 
 
 def test_similar_items_excludes_anchor(model, demo_training):
-    anchor = demo_training.items[3].item_id
+    anchor = recommendable_ids(demo_training)[3]
     recs = model.similar_items(anchor, k=5)
     assert len(recs) == 5
     assert anchor not in {r.item_id for r in recs}
@@ -81,7 +99,7 @@ def test_save_load_round_trip(model, user, tmp_path):
 
 def test_popularity_orders_by_distinct_positive_users(demo_training):
     model = PopularityRecommender().fit(demo_training)
-    ids = [i.item_id for i in demo_training.items]
+    ids = recommendable_ids(demo_training)
     recs = model.recommend(UserContext(), k=5)
     assert [r.item_id for r in recs] == ids[:5]
     # The item with 10 dislikes has no popularity.

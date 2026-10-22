@@ -55,6 +55,7 @@ items = Table(
     Column("attributes", JSONType, nullable=False, default=dict),
     Column("image_url", String, nullable=False, default=""),
     Column("is_active", Boolean, nullable=False, default=True),
+    Column("recommendable", Boolean, nullable=False, default=True),
     # Hash of the content fields; refresh only rewrites (and later re-embeds)
     # items whose content actually changed.
     Column("content_hash", String, nullable=False),

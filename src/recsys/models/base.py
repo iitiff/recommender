@@ -142,11 +142,12 @@ class Recommender(ABC):
     ) -> list[ItemId]:
         if not self._fitted:
             raise NotFittedError(f"{self.name}: call fit() first")
-        if candidates is None:
-            ids: Sequence[ItemId] = [item.item_id for item in self._items]
-        else:
+        # Non-recommendable items stay in self._items (models learn from them and
+        # use them as explanation anchors) but never enter a candidate pool.
+        ids: Sequence[ItemId] = [item.item_id for item in self._items if item.recommendable]
+        if candidates is not None:
             allowed = set(candidates)
-            ids = [item.item_id for item in self._items if item.item_id in allowed]
+            ids = [i for i in ids if i in allowed]
         excluded = set(exclude)
         return [i for i in ids if i not in excluded]
 

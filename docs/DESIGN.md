@@ -26,6 +26,22 @@ events reference it. Price, stock and vintage change weekly and differ by
 retailer, so they live in `offers`, which a refresh replaces wholesale. The
 e-commerce analogue is product vs variant/inventory.
 
+**Rateable vs recommendable.** The catalog can be wider than what we
+recommend. `recommendable_when: {facet: [values]}` in `catalog.yaml` marks
+which items may be recommended; everything else is still loaded, rated, used in
+the quiz, learned from, and usable as a "because you liked X" anchor, but never
+enters a candidate pool. Example: quiz on well-known wines from a whole state
+(people recognise more of them, so the quiz extracts more taste signal), but
+recommend only within one region. This is a catalog property, not a request
+constraint, so the base class enforces it for every model; per-request
+constraints still go through `candidates=`. E-commerce analogue: products a
+shopper bought or viewed that are no longer sold still describe their taste.
+
+Cross-catalog transfer works through **shared style attributes** (varietal,
+body, tannin, oak, flavor notes), not through region tags: a liked full,
+oaky Cabernet from one region points to full, oaky Cabernets in another. That
+is why the controlled vocabulary for notes and the 1-5 scales matter.
+
 **Refresh is idempotent.** Items are upserted by `item_id` and rewritten only
 when their content hash changes (so later, only changed items get re-embedded).
 Items that disappear from the CSV are **soft-deleted** (`is_active=false`),
@@ -36,7 +52,7 @@ never removed, because historical events point at them.
 ```
 tenants        tenant_id, name
 items          (tenant_id, item_id), title, description, category, attributes, image_url,
-               is_active, content_hash, created_at, updated_at
+               is_active, recommendable, content_hash, created_at, updated_at
 item_tags      (tenant_id, item_id, facet, value)
 offers         (tenant_id, offer_id), item_id, retailer, variant, price, currency, url,
                in_stock, ships_to, updated_at
@@ -133,7 +149,10 @@ Evidence in stages, from cheapest to most trustworthy:
    orderings, with bootstrap confidence intervals.
 3. **Offline replay on logged data:** temporal split; recall@k, NDCG@k,
    catalog coverage, popularity bias, always against Random and MostPopular.
-   Full ranking over the whole catalog, never sampled negatives. Logged data
+   Full ranking over the whole catalog, never sampled negatives. Only
+   recommendable items count as possible hits: a held-out like on a quiz-only
+   item can't be recommended, so it's excluded from targets (but still used as
+   input). Logged data
    is biased toward the model that produced it, so offline results filter
    ideas; they don't decide.
 4. **Online:** per `model_id` and surface: recommendation CTR, share of 👍 on

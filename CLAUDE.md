@@ -66,6 +66,10 @@ uv run recsys load-catalog examples/demo  # syncs into RECSYS_DATABASE_URL
   `tests/test_recommender_contract.py`.
 - **Hard constraints (budget, stock, shipping) are candidate filters** passed
   via `candidates=`, never baked into a model.
+- **Rateable ≠ recommendable.** Items with `recommendable=False` (set by
+  `recommendable_when` in `catalog.yaml`) are learned from and can anchor
+  explanations but never appear in results; the base class enforces this. Eval
+  targets only count recommendable items.
 - **All events go through `EventLogger`** and must validate against
   `events/schema.py`. Schema changes bump `SCHEMA_VERSION` and are additive.
 - **Every model change gets measured** with the eval harness against the

@@ -52,6 +52,11 @@ class Item:
     attributes: Mapping[str, float] = field(default_factory=dict, hash=False)
     image_url: str = ""
     is_active: bool = True
+    # False = the item can be rated and used as a taste signal (in the quiz, as a
+    # "because you liked X" anchor, as training data) but is never recommended.
+    # E.g. well-known wines from other regions that help us learn taste, while
+    # recommendations stay within the niche we sell.
+    recommendable: bool = True
 
 
 @dataclass(frozen=True, slots=True)

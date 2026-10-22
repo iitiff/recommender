@@ -45,12 +45,21 @@ class CatalogSpec(BaseModel):
     # Numeric attributes also exposed as tags, e.g. body 4-5 -> Tag("body", "full").
     # Tags make scales usable by tag-overlap models and by explanations.
     bins: dict[str, list[Bin]] = Field(default_factory=dict)
+    # Which items may be recommended: {facet: [allowed values]}. An item is
+    # recommendable when, for every facet listed, it has at least one allowed
+    # value. Empty = everything is recommendable. Other items are still loaded
+    # so users can rate them and models can learn from them.
+    recommendable_when: dict[str, list[str]] = Field(default_factory=dict)
 
     @model_validator(mode="after")
-    def _check_bins(self) -> CatalogSpec:
+    def _check(self) -> CatalogSpec:
         unknown = set(self.bins) - set(self.numeric_attributes)
         if unknown:
             raise ValueError(f"bins defined for non-numeric attributes: {sorted(unknown)}")
+        facets = set(self.tag_facets) | set(self.bins)
+        unknown = set(self.recommendable_when) - facets
+        if unknown:
+            raise ValueError(f"recommendable_when uses unknown facets: {sorted(unknown)}")
         return self
 
     @classmethod

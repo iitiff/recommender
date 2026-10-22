@@ -8,6 +8,7 @@ image_url: image_url
 tag_facets:
   producer: {column: producer}
   varietal: {column: varietals, multi: true}
+  region: {column: region}
   subregion: {column: subregion}
   note: {column: flavor_notes, multi: true}
   pairing: {column: food_pairings, multi: true}
@@ -32,3 +33,8 @@ bins:
     - {label: unoaked, low: 1, high: 2}
     - {label: moderate, low: 3, high: 3}
     - {label: oaky, low: 4, high: 5}
+
+# Every wine can be rated (quiz, feedback), but only Demo Valley wines are
+# recommended. Far Coast wines teach the model a user's taste.
+recommendable_when:
+  region: [Demo Valley]

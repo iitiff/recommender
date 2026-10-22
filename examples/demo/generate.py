@@ -16,7 +16,13 @@ from pathlib import Path
 OUT = Path(__file__).parent
 rng = random.Random(42)
 
-SUBREGIONS = ["North Bench", "Cedar Hills", "River Flats", "Fog Gap", "Stone Ridge"]
+# The niche we "sell" (recommendable) vs a neighbouring region whose wines are
+# only used to learn taste (quiz, ratings), mirroring a real site that quizzes on
+# a broad region but recommends within one.
+REGIONS = {
+    "Demo Valley": ["North Bench", "Cedar Hills", "River Flats", "Fog Gap", "Stone Ridge"],
+    "Far Coast": ["Sea Bluff", "Sandy Hills"],
+}
 PRODUCERS = [
     "Alder Creek",
     "Bramble Hill",
@@ -80,7 +86,8 @@ def main() -> None:
         notes = rng.sample(note_pool, k=min(3, len(note_pool)))
         if oak >= 4:
             notes.append("vanilla")
-        subregion = rng.choice(SUBREGIONS)
+        region = "Demo Valley" if n < 30 else "Far Coast"
+        subregion = rng.choice(REGIONS[region])
         item_id = f"demo-{producer.lower().replace(' ', '-')}-{n:02d}"
         items.append(
             {
@@ -89,6 +96,7 @@ def main() -> None:
                 "producer": producer,
                 "wine_type": "red",
                 "varietals": ";".join(blend),
+                "region": region,
                 "subregion": subregion,
                 "body": body,
                 "tannin": tannin,
@@ -103,6 +111,8 @@ def main() -> None:
                 "image_url": "",
             }
         )
+        if region != "Demo Valley":
+            continue  # quiz-only wines: rated, never sold here, so no offers
         base = rng.choice([18, 24, 32, 45, 60, 85, 120, 140])
         for vintage in rng.sample(["2019", "2020", "2021", "2022"], k=rng.choice([1, 1, 2])):
             offers.append(

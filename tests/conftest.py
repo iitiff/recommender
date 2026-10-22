@@ -31,7 +31,7 @@ def demo_training(demo_catalog: Catalog) -> TrainingData:
     (Synthetic users are fine for catching bugs, never for comparing models.)
     """
     t0 = datetime(2026, 1, 1, tzinfo=UTC)
-    ids = [i.item_id for i in demo_catalog.items]
+    ids = [i.item_id for i in demo_catalog.items if i.recommendable]
     interactions = []
     # Item 0 liked by 5 users, item 1 by 4, ... item 4 by 1.
     for rank, item_id in enumerate(ids[:5]):

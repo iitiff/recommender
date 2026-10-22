@@ -30,6 +30,7 @@ def content_hash(item: Item) -> str:
         "tags": sorted(str(tag) for tag in item.tags),
         "attributes": dict(sorted(item.attributes.items())),
         "image_url": item.image_url,
+        "recommendable": item.recommendable,
     }
     return hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
 
@@ -85,6 +86,7 @@ def sync_catalog(
                 "category": item.category,
                 "attributes": dict(item.attributes),
                 "image_url": item.image_url,
+                "recommendable": item.recommendable,
                 "is_active": True,
                 "content_hash": digest,
                 "updated_at": now,
@@ -184,6 +186,7 @@ def load_items(engine: Engine, tenant_id: str, *, active_only: bool = True) -> l
                 attributes=dict(r.attributes),
                 image_url=r.image_url,
                 is_active=r.is_active,
+                recommendable=r.recommendable,
             )
             for r in conn.execute(query.order_by(t.items.c.item_id))
         ]

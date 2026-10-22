@@ -12,6 +12,7 @@ event design.
 
 - [x] Engine scaffold, domain types, `Recommender` interface, contract tests
 - [x] Catalog spec + loader + idempotent refresh (items vs offers, soft delete)
+- [x] Rateable vs recommendable items (`recommendable_when`): quiz wide, recommend narrow
 - [x] Event schema + logger; DB schema with `tenant_id` throughout
 - [x] Baselines: Random, MostPopular
 - [ ] Evaluation harness: temporal split, recall@k, NDCG@k, coverage, popularity

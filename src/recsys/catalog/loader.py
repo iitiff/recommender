@@ -89,6 +89,11 @@ def parse_items(rows: list[dict[str, str]], spec: CatalogSpec) -> tuple[list[Ite
                 if b.low <= attributes[name] <= b.high:
                     tags.add(Tag(name, b.label))
 
+        recommendable = all(
+            any(Tag(facet, normalize(v)) in tags for v in allowed)
+            for facet, allowed in spec.recommendable_when.items()
+        )
+
         items.append(
             Item(
                 item_id=item_id,
@@ -98,6 +103,7 @@ def parse_items(rows: list[dict[str, str]], spec: CatalogSpec) -> tuple[list[Ite
                 tags=frozenset(tags),
                 attributes=attributes,
                 image_url=row.get(spec.image_url, "") if spec.image_url else "",
+                recommendable=recommendable,
             )
         )
     return items, problems

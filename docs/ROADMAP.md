@@ -15,8 +15,10 @@ event design.
 - [x] Rateable vs recommendable items (`recommendable_when`): quiz wide, recommend narrow
 - [x] Event schema + logger; DB schema with `tenant_id` throughout
 - [x] Baselines: Random, MostPopular
-- [ ] Evaluation harness: temporal split, recall@k, NDCG@k, coverage, popularity
-      bias, bootstrap confidence intervals, markdown/JSON report
+- [x] Evaluation harness: temporal and leave-last-out splits, recall/NDCG/hit
+      rate@k, coverage, exposure Gini, popularity bias (ARP), bootstrap CIs with
+      paired comparisons, markdown/JSON reports, `recsys evaluate`
+- [ ] Feed the harness from the site's own DB (feedback + events), not only CSV
 - [ ] Taste quiz → tag affinities (cold start); profile update from ratings
 - [ ] Tag-similarity model (weighted tag overlap / TF-IDF over tags + numeric distance)
 - [ ] Web app: FastAPI + Jinja2 + HTMX; quiz, recs with "because you liked X",

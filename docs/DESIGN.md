@@ -163,3 +163,21 @@ Evidence in stages, from cheapest to most trustworthy:
 
 Synthetic users are only for catching bugs, never for comparing models: they
 are generated from the same assumptions the model makes.
+
+### The harness (`src/recsys/eval/`)
+
+- **Splits** (`split.py`): `temporal_split` (global cutoff; realistic; cold
+  users skipped and counted) and `leave_last_out` (last N positives per user;
+  more users, small leak). Targets are positives (like, save, affiliate click;
+  clicks alone are too noisy) on recommendable items not already excluded from
+  the user's recs. User contexts are rebuilt from training interactions with
+  the same latest-state logic the app uses, plus optional quiz profiles.
+- **Metrics** (`metrics.py`): per-user recall@k, NDCG@k, hit rate@k, average
+  recommendation popularity; population-level coverage@k and exposure Gini@k.
+- **Uncertainty** (`harness.py`): 95% bootstrap CIs over users; comparisons vs
+  the baseline use a *paired* bootstrap (same resampled users for both models),
+  which is much tighter than comparing two separate intervals.
+- **Reproducibility:** every report carries a fingerprint of the exact items
+  and train/test interactions, plus each `model_id` (name + params hash).
+- **Speed:** fit time and ms/user are reported; serving latency matters for the
+  multi-tenant product later.

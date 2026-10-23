@@ -125,6 +125,9 @@ class PopularityRecommender(Recommender):
         return self._scores(pool)
 
     def explain(self, user: UserContext, item_id: ItemId) -> Explanation | None:
+        # No interaction data yet means no popularity: don't claim it.
+        if not any(self._popularity.values()):
+            return Explanation(ExplanationKind.EXPLORATION)
         return Explanation(ExplanationKind.POPULAR)
 
     def score_breakdown(self, user: UserContext, item_id: ItemId) -> ScoreBreakdown | None:

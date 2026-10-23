@@ -105,6 +105,7 @@ class TagSimilarityRecommender(Recommender):
         self._parts: dict[str, np.ndarray] = {}
         self._sim = np.zeros((0, 0))
         self._popularity = np.zeros(0)
+        self._bin_facets: set[str] = set()
 
     @property
     def params(self) -> dict[str, Any]:
@@ -123,6 +124,7 @@ class TagSimilarityRecommender(Recommender):
         items = self._items
         n = len(items)
         all_attrs = {a for item in items for a in item.attributes}
+        self._bin_facets = all_attrs - set(self.ignore_attributes)
         numeric_attrs = sorted(all_attrs - set(self.ignore_attributes))
         tag_facets = sorted({t.facet for item in items for t in item.tags} - all_attrs)
 
@@ -216,14 +218,23 @@ class TagSimilarityRecommender(Recommender):
         shared = self._items[self._index[a]].tags & self._items[self._index[b]].tags
 
         def weight(tag: Tag) -> float:
-            # Bin tags (body:full) carry the numeric weight.
-            return self._weights.get(tag.facet, self._weights.get(NUMERIC, 0.0))
+            if tag.facet in self._weights:
+                return self._weights[tag.facet]
+            # Bin tags (body:full) carry the numeric weight; other facets weigh 0.
+            return self._weights.get(NUMERIC, 0.0) if tag.facet in self._bin_facets else 0.0
 
-        return tuple(sorted(shared, key=lambda t: (-weight(t), t))[:k])
+        # Only tags that actually contributed to the score are a reason.
+        relevant = [t for t in shared if weight(t) > 0]
+        return tuple(sorted(relevant, key=lambda t: (-weight(t), t))[:k])
 
     def explain(self, user: UserContext, item_id: ItemId) -> Explanation | None:
         if self._is_cold(user):
-            return Explanation(ExplanationKind.POPULAR)
+            # Without popularity data the fallback is just catalog order: say
+            # "explore", never claim "popular".
+            has_popularity = bool(self._popularity.size and self._popularity.max() > 0)
+            return Explanation(
+                ExplanationKind.POPULAR if has_popularity else ExplanationKind.EXPLORATION
+            )
         anchor = self._best_anchor(user.liked, item_id)
         if anchor is not None:
             return Explanation(
@@ -254,7 +265,10 @@ class TagSimilarityRecommender(Recommender):
             return ScoreBreakdown(
                 total=pop,
                 components=(ScoreComponent("popularity (cold-start fallback)", pop),),
-                formula="no likes or quiz answers yet → score = relative popularity",
+                formula=(
+                    "no likes or quiz answers yet → score = relative popularity"
+                    " (all 0 until there is interaction data: catalog order)"
+                ),
             )
 
         components: list[ScoreComponent] = []

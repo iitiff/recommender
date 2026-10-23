@@ -140,3 +140,19 @@ def test_params_change_model_id():
         TagSimilarityRecommender(popularity_weight=0.3).model_id
         != TagSimilarityRecommender().model_id
     )
+
+
+def test_explanations_only_cite_tags_that_were_scored():
+    items = [
+        Item("a", "a", tags=frozenset({Tag("varietal", "cab"), Tag("pairing", "lamb")})),
+        Item("b", "b", tags=frozenset({Tag("varietal", "cab"), Tag("pairing", "lamb")})),
+    ]
+    model = TagSimilarityRecommender(facet_weights={"varietal": 1.0}).fit(TrainingData(items))
+    exp = model.recommend(UserContext("u", liked=("a",)), k=1)[0].explanation
+    assert exp.shared_tags == (Tag("varietal", "cab"),)  # pairing had weight 0
+
+
+def test_cold_start_without_data_says_explore_not_popular():
+    model = TagSimilarityRecommender().fit(TrainingData(ITEMS))  # no interactions
+    rec = model.recommend(UserContext("new"), k=1)[0]
+    assert rec.explanation.kind == ExplanationKind.EXPLORATION

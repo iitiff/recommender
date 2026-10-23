@@ -384,4 +384,7 @@ def explanation_text(
     if exp.kind == ExplanationKind.POPULAR:
         detail = "We don't know your taste yet" if cold else "Not personalized"
         return "Popular with other visitors", detail
+    if exp.kind == ExplanationKind.EXPLORATION:
+        detail = "We don't know your taste yet" if cold else "Not personalized"
+        return "A good place to start", detail
     return "Recommended for you", tags

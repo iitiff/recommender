@@ -94,7 +94,7 @@
       <h2>Your picks</h2>
       <span class="muted small">{{ v.budget_label }}</span>
     </div>
-    {% if v.cold %}<div class="banner">We don't know your taste yet, so these are our most popular picks. Rate something, or take the quiz, to personalize.</div>{% endif %}
+    {% if v.cold %}<div class="banner">We don't know your taste yet, so here are some good places to start. Rate something, or take the quiz, to personalize.</div>{% endif %}
     {% if not v.recs %}<div class="empty">Nothing left in this budget. Widen the budget or reset feedback.</div>{% endif %}
     {% for r in v.recs %}
     <article class="rec{% if v.show_model and r.id == v.selected_id %} selected{% endif %}">

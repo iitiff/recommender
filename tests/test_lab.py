@@ -69,6 +69,7 @@ def test_cold_start_banner_for_new_visitor(client):
     act(client, "model", "2")
     html = act(client, "persona", "new")
     assert "We don&#39;t know your taste yet" in html
+    assert "Popular with other visitors" in html  # demo has interaction data
 
 
 def test_feedback_reranks_and_logs_a_rating_event(client):

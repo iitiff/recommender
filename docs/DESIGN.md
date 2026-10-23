@@ -202,3 +202,22 @@ derived, and later on-site feedback overrides quiz answers.
 pure content similarity did not beat MostPopular offline, because logged data
 carries popularity bias. A content + popularity hybrid matched or beat it with
 full catalog coverage.
+
+## 7. Rec Lab (`recsys lab`)
+
+A local explainability tool with three zones: **lab controls** (persona or
+live quiz, budget, model: the operator's inputs), **user experience** (what
+ships), and a **model view** overlay (how the model works, score breakdown,
+taste profile, candidate funnel, offline scorecard, event log).
+
+- **Real code paths only:** quiz → profile → candidate filters →
+  `Recommender.recommend` → explanations → the real event schema. Personas
+  are just pre-filled quiz answers. The scorecard comes from the eval harness.
+- **Never writes training data:** lab events go to an in-memory list.
+- **Models are fitted once:** lab 👍/👎 change the profile instantly
+  (in-session personalization); retraining is a scheduled job.
+- **Config, not code:** `lab.yaml` (models, personas, display facets) and
+  `quiz.yaml` live in each catalog directory; the Napa versions live in the
+  private repo.
+- Every button is a real form POST (works without JS); HTMX swaps the
+  `#lab` block when available.

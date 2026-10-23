@@ -43,6 +43,7 @@ src/recsys/
   profile/    taste quiz spec → profile (cold start)
   candidates.py  hard filters (budget, stock, shipping) with funnel counts
   eval/       splits, metrics, bootstrap CIs, harness, reports
+  lab/        Rec Lab: FastAPI + Jinja2 + HTMX explainability tool (never writes the DB)
   cli.py      `recsys` command
 examples/demo/  fictional catalog + generator
 docs/           DESIGN.md, ROADMAP.md, experiments/
@@ -59,6 +60,7 @@ uv run recsys validate-catalog examples/demo
 uv run recsys load-catalog examples/demo  # syncs into RECSYS_DATABASE_URL
 uv run recsys evaluate examples/demo examples/demo/interactions.csv  # offline eval
 uv run recsys evaluate examples/demo examples/demo/interactions.csv --model-config examples/demo/models.yaml
+uv run recsys lab examples/demo --interactions examples/demo/interactions.csv  # http://127.0.0.1:8000
 ```
 
 ## Conventions

@@ -14,6 +14,7 @@ interface, and an offline evaluation harness.
 uv sync
 uv run pytest
 uv run recsys load-catalog examples/demo   # fictional wine catalog
+uv run recsys lab examples/demo --interactions examples/demo/interactions.csv  # Rec Lab
 ```
 
 The demo catalog is fictional. A real deployment supplies its own catalog

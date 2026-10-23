@@ -13,7 +13,9 @@ synthetic interactions from `examples/demo/generate_interactions.py`
 ## Hypothesis
 
 If the harness is wired correctly:
-1. Random's recall@10 is close to 10/30 ≈ 0.33 (picking 10 of 30 wines blindly).
+1. Random's recall@10 matches chance. *(Corrected 2026-10-23: chance is not 10/30. Each user's
+   already-rated wines are excluded first, so the exact expectation is the mean of
+   min(10, pool)/pool over users: **0.357** temporal, **0.377** leave-last-out.)*
 2. MostPopular beats Random on accuracy, because the data has a popularity skew.
 3. MostPopular has lower coverage and higher exposure Gini (it shows the same hits to everyone).
 
@@ -48,10 +50,11 @@ Paired ΔNDCG@10: −0.161 [−0.218, −0.105] ✔
 
 ## Conclusion
 
-All three checks pass, so the harness behaves as expected. Things learned along the way:
+All three checks pass, so the harness behaves as expected (Random's 0.330 [0.253, 0.411] contains
+the exact chance value 0.357). Things learned along the way:
 
 - **Small catalogs make @10 coarse.** With 30 recommendable wines, k=10 is a
-  third of the catalog, so even random scores ~0.33 recall. Watch @5 and
+  third or more of each user's remaining pool, so even random scores ~0.36 recall. Watch @5 and
   NDCG (which rewards ranking hits *early*) as the main signals until the
   Napa catalog grows.
 - **With one held-out item per user, recall@k equals hit rate@k** (see the
@@ -66,3 +69,8 @@ All three checks pass, so the harness behaves as expected. Things learned along 
   for the next experiment.
 
 **Next:** the tag-similarity content model, evaluated against these baselines.
+
+> **Note (2026-10-23):** these Random numbers are from `random@843f5ee4` (v1), whose
+> scores depended on the candidate pool. v1 was replaced by `random@94f5bc47` (v2),
+> which hashes (seed, user, item). Model ids now include an algorithm version so
+> a changed algorithm can never reuse an old id.

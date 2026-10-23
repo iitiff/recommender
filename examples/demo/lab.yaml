@@ -1,0 +1,51 @@
+# Rec Lab config for the demo catalog: `recsys lab examples/demo --interactions examples/demo/interactions.csv`
+title: Demo Rec Lab
+meta_facets: [subregion, varietal]
+
+models:
+  - label: Random
+    model: random
+  - label: Most popular
+    model: most_popular
+  - label: Tag similarity
+    model: tag_similarity
+    params:
+      facet_weights: {varietal: 0.45, note: 0.20}
+      numeric_weight: 0.35
+  - label: Hybrid (tag + popularity)
+    model: tag_similarity
+    params:
+      facet_weights: {varietal: 0.45, note: 0.20}
+      numeric_weight: 0.35
+      popularity_weight: 0.6
+default_model: 3
+
+# Personas are pre-filled quiz answers, so they go through exactly the same
+# quiz → profile path as a real visitor.
+personas:
+  - id: bold
+    label: Big & bold
+    blurb: "Quiz: liked the big oaky Cabernet and Petite Sirah, not the light Pinot."
+    answers:
+      known_wines: {demo-kestrel-34: 1, demo-larkspur-35: 1, demo-copperline-38: -1}
+      style: bold
+  - id: elegant
+    label: Elegant & bright
+    blurb: "Quiz: liked the light Pinots, not the oaky Syrah."
+    answers:
+      known_wines: {demo-copperline-38: 1, demo-alder-creek-36: 1, demo-driftwood-39: -1}
+      style: bright
+  - id: spicy
+    label: Spice & BBQ
+    blurb: "Quiz: liked the peppery Syrah and Zinfandel."
+    answers:
+      known_wines: {demo-driftwood-39: 1, demo-granite-bay-30: 1}
+      style: spicy
+      budget: from_30_to_70
+  - id: new
+    label: New visitor
+    blurb: "Skipped the quiz. No signal at all: the cold-start case."
+  - id: quiz
+    label: Take the quiz
+    blurb: "The quiz appears in the user experience below, just as a visitor would see it."
+    interactive: true

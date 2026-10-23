@@ -63,7 +63,7 @@ def filter_candidates(
     if flt.min_price is not None or flt.max_price is not None:
         kept = []
         for item in pool:
-            price = _price(item, usable.get(item.item_id, []), flt.price_attribute)
+            price = price_of(item, usable.get(item.item_id, []), flt.price_attribute)
             if price is None:
                 unknown += 1
                 kept.append(item)
@@ -77,7 +77,8 @@ def filter_candidates(
     return CandidateResult(frozenset(i.item_id for i in pool), tuple(steps), unknown)
 
 
-def _price(item: Item, offers: list[Offer], attribute: str | None) -> float | None:
+def price_of(item: Item, offers: Sequence[Offer], attribute: str | None = "price") -> float | None:
+    """Cheapest of the given (usable) offers, else the curated price attribute, else None."""
     if offers:
         return min(o.price for o in offers)
     if attribute and attribute in item.attributes:

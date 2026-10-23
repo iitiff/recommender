@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ v.title }}</title>
+<link rel="stylesheet" href="/static/lab.css">
+<script src="https://unpkg.com/htmx.org@1.9.12/dist/htmx.min.js" defer></script>
+</head>
+<body>
+{% include "_lab.html" %}
+<script>
+  // Esc closes the model view (non-modal overlay).
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && document.querySelector("[data-model-open]") && window.htmx) {
+      htmx.ajax("POST", "/act", {target: "#lab", swap: "outerHTML", values: {action: "toggle_model"}});
+    }
+  });
+</script>
+</body>
+</html>

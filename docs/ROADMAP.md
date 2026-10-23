@@ -19,11 +19,13 @@ event design.
       rate@k, coverage, exposure Gini, popularity bias (ARP), bootstrap CIs with
       paired comparisons, markdown/JSON reports, `recsys evaluate`
 - [ ] Feed the harness from the site's own DB (feedback + events), not only CSV
-- [ ] Taste quiz → tag affinities (cold start); profile update from ratings
-- [ ] Tag-similarity model (weighted tag overlap / TF-IDF over tags + numeric distance)
+- [x] Taste quiz spec → profile (rated items, style affinities, budget); later feedback overrides quiz
+- [x] Tag-similarity model (per-facet Jaccard + numeric closeness, max over liked items,
+      dislike penalty, quiz affinities, popularity hybrid, cold-start fallback, score breakdowns)
+- [x] Candidate filters: budget, in stock, ships to region (with funnel counts)
+- [ ] Rec Lab: persona/quiz → model → user experience, with an explainability overlay
 - [ ] Web app: FastAPI + Jinja2 + HTMX; quiz, recs with "because you liked X",
       👍/👎, save, not interested; `/go/{item}` affiliate redirect; impression beacon
-- [ ] Candidate filters: budget, in stock, ships to region
 - [ ] Text-embedding model (local sentence-transformers) and tag/embedding hybrid
 - [ ] Tasting-panel protocol + first experiment write-up
 - [ ] Deploy: Alembic migrations, small VPS or PaaS, SQLite + Litestream backups

@@ -9,9 +9,15 @@ from __future__ import annotations
 import pytest
 
 from recsys.core.types import UserContext
-from recsys.models import NotFittedError, PopularityRecommender, RandomRecommender, Recommender
+from recsys.models import (
+    NotFittedError,
+    PopularityRecommender,
+    RandomRecommender,
+    Recommender,
+    TagSimilarityRecommender,
+)
 
-MODELS = [RandomRecommender, PopularityRecommender]
+MODELS = [RandomRecommender, PopularityRecommender, TagSimilarityRecommender]
 
 
 @pytest.fixture(params=MODELS, ids=lambda cls: cls.name)

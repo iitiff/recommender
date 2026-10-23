@@ -23,6 +23,7 @@ from recsys.core.types import (
     Explanation,
     Item,
     ItemId,
+    ScoreBreakdown,
     ScoredItem,
     TrainingData,
     UserContext,
@@ -105,6 +106,14 @@ class Recommender(ABC):
 
     def explain(self, user: UserContext, item_id: ItemId) -> Explanation | None:
         """Why `item_id` suits `user`. Models without a meaningful reason return None."""
+        return None
+
+    def score_breakdown(self, user: UserContext, item_id: ItemId) -> ScoreBreakdown | None:
+        """Optional: the components of `item_id`'s score for `user` (they sum to the score).
+
+        Powers explainability tools like the Rec Lab. Models that can't
+        decompose their score return None.
+        """
         return None
 
     def save(self, path: Path) -> None:

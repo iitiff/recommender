@@ -144,6 +144,27 @@ class Explanation:
 
 
 @dataclass(frozen=True, slots=True)
+class ScoreComponent:
+    label: str
+    value: float
+
+
+@dataclass(frozen=True, slots=True)
+class ScoreBreakdown:
+    """How a model arrived at one item's score, for explainability tools.
+
+    `components` must sum to `total`: an explanation that doesn't add up to the
+    real score is a story, not an explanation.
+    """
+
+    total: float
+    components: tuple[ScoreComponent, ...]
+    formula: str = ""
+    # Similarity to each item the user liked, best first (content models).
+    anchors: tuple[tuple[ItemId, float], ...] = ()
+
+
+@dataclass(frozen=True, slots=True)
 class ScoredItem:
     item_id: ItemId
     score: float

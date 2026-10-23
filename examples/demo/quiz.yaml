@@ -1,0 +1,40 @@
+# Demo taste quiz (fictional catalog). A real site's quiz lives in its private repo.
+version: demo-v1
+questions:
+  - id: known_wines
+    type: rate_items
+    prompt: Have you had any of these?
+    # Quiz-only "Far Coast" wines: rated for taste, never recommended.
+    items:
+      - demo-granite-bay-30
+      - demo-hollow-oak-31
+      - demo-ironwood-32
+      - demo-juniper-row-33
+      - demo-kestrel-34
+      - demo-larkspur-35
+      - demo-alder-creek-36
+      - demo-bramble-hill-37
+      - demo-copperline-38
+      - demo-driftwood-39
+
+  - id: style
+    type: choice
+    prompt: Which glass sounds best tonight?
+    options:
+      - id: bold
+        label: Big, rich and a little oaky
+        tags: {"body:full": 1.0, "oak:oaky": 0.5, "tannin:firm": 0.5}
+      - id: bright
+        label: Bright, juicy and fresh
+        tags: {"acidity:bright": 1.0, "body:light": 0.5, "oak:unoaked": 0.5}
+      - id: spicy
+        label: Peppery and savory
+        tags: {"note:black pepper": 1.0, "varietal:syrah": 0.5, "varietal:zinfandel": 0.5}
+
+  - id: budget
+    type: budget
+    prompt: What do you usually spend on a bottle?
+    options:
+      - {id: under_30, label: Under $30, max_price: 30}
+      - {id: from_30_to_70, label: $30-$70, min_price: 30, max_price: 70}
+      - {id: any, label: Up to $150, max_price: 150}

@@ -40,6 +40,8 @@ src/recsys/
   events/     event schema (pydantic) + EventLogger (the one place events are written)
   store/      SQLAlchemy Core tables, engine setup, repo functions (the only SQL)
   models/     Recommender base class + models (baselines, content-based, ...)
+  profile/    taste quiz spec → profile (cold start)
+  candidates.py  hard filters (budget, stock, shipping) with funnel counts
   eval/       splits, metrics, bootstrap CIs, harness, reports
   cli.py      `recsys` command
 examples/demo/  fictional catalog + generator
@@ -56,6 +58,7 @@ uv run ruff check . && uv run ruff format --check .
 uv run recsys validate-catalog examples/demo
 uv run recsys load-catalog examples/demo  # syncs into RECSYS_DATABASE_URL
 uv run recsys evaluate examples/demo examples/demo/interactions.csv  # offline eval
+uv run recsys evaluate examples/demo examples/demo/interactions.csv --model-config examples/demo/models.yaml
 ```
 
 ## Conventions
@@ -64,10 +67,14 @@ uv run recsys evaluate examples/demo examples/demo/interactions.csv  # offline e
   `ScoredItem`s. No DB, no HTTP. The same code runs in tests, offline eval, and
   serving.
 - **New models subclass `Recommender`** and implement `_score_user` (and
-  `_score_similar`, `explain` where meaningful). Add them to `MODELS` in
+  `_score_similar`, `explain`, `score_breakdown` where meaningful; breakdown
+  components must sum to the real score). Add them to `MODELS` in
   `tests/test_recommender_contract.py`.
-- **Hard constraints (budget, stock, shipping) are candidate filters** passed
-  via `candidates=`, never baked into a model.
+- **Hard constraints (budget, stock, shipping) are candidate filters**
+  (`recsys.candidates`) passed via `candidates=`, never baked into a model.
+  Price is never a taste feature.
+- **Hyperparameters live in config** (`load_model_config`), not code; niche
+  weights belong in the private repo.
 - **Rateable ≠ recommendable.** Items with `recommendable=False` (set by
   `recommendable_when` in `catalog.yaml`) are learned from and can anchor
   explanations but never appear in results; the base class enforces this. Eval

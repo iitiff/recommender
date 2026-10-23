@@ -181,3 +181,24 @@ are generated from the same assumptions the model makes.
   and train/test interactions, plus each `model_id` (name + params hash).
 - **Speed:** fit time and ms/user are reported; serving latency matters for the
   multi-tenant product later.
+
+## 6. Content model and cold start
+
+**Tag similarity** (`models/content.py`): item-item similarity S is a
+weighted sum of per-facet Jaccard overlap and closeness on numeric scales,
+precomputed in `fit`. A user's score for item c is the **max** similarity to
+any liked item (so two different tastes are each served, not averaged into a
+compromise), minus a penalty for similarity to disliked items, plus quiz tag
+affinities, plus an optional popularity prior (a simple hybrid). The best
+liked item becomes the "because you liked X" anchor, and `score_breakdown`
+returns components that sum exactly to the score.
+
+**Quiz** (`profile/quiz.py`): configuration, not code. "Have you had these?"
+answers become real likes and dislikes, style answers become tag affinities,
+and budget becomes a candidate filter. Raw answers are stored; the profile is
+derived, and later on-site feedback overrides quiz answers.
+
+**First result** (demo data, `docs/experiments/2026-10-23-tag-similarity-demo.md`):
+pure content similarity did not beat MostPopular offline, because logged data
+carries popularity bias. A content + popularity hybrid matched or beat it with
+full catalog coverage.

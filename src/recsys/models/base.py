@@ -39,6 +39,8 @@ class Recommender(ABC):
     # Bump when the algorithm changes in a way that changes results, so
     # model_id changes too. Two different algorithms must never share an id.
     version: ClassVar[int] = 1
+    # Does the model react to this user's own likes/quiz answers?
+    personalized: ClassVar[bool] = True
     # Plain-language description for explainability tools (the Rec Lab).
     summary: ClassVar[str] = ""
     uses: ClassVar[str] = ""

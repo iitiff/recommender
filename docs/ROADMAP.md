@@ -23,7 +23,8 @@ event design.
 - [x] Tag-similarity model (per-facet Jaccard + numeric closeness, max over liked items,
       dislike penalty, quiz affinities, popularity hybrid, cold-start fallback, score breakdowns)
 - [x] Candidate filters: budget, in stock, ships to region (with funnel counts)
-- [ ] Rec Lab: persona/quiz → model → user experience, with an explainability overlay
+- [x] Rec Lab: persona/quiz → model → user experience, with an explainability overlay
+- [ ] Rec Lab v2: catalog map (scatter of items by style/embedding), "what changed" diff after feedback, live weight sliders
 - [ ] Web app: FastAPI + Jinja2 + HTMX; quiz, recs with "because you liked X",
       👍/👎, save, not interested; `/go/{item}` affiliate redirect; impression beacon
 - [ ] Text-embedding model (local sentence-transformers) and tag/embedding hybrid

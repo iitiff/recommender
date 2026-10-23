@@ -276,7 +276,7 @@ class TagSimilarityRecommender(Recommender):
             worst = int(np.argmax(sims))
             components.append(
                 ScoreComponent(
-                    f"penalty: similar to disliked {self._items[disliked[worst]].item_id}",
+                    f"penalty: similar to disliked {self._items[disliked[worst]].title}",
                     -self.dislike_weight * float(sims[worst]),
                 )
             )

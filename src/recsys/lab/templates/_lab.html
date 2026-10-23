@@ -1,0 +1,204 @@
+{%- macro act(action, value="", cls="", aria=None, pressed=None, title=None) -%}
+<form method="post" action="/act" hx-post="/act" hx-target="#lab" hx-swap="outerHTML" class="act">
+<input type="hidden" name="action" value="{{ action }}"><input type="hidden" name="value" value="{{ value }}">
+<button type="submit" class="{{ cls }}"{% if aria %} aria-label="{{ aria }}"{% endif %}{% if title %} title="{{ title }}"{% endif %}{% if pressed is not none %} aria-pressed="{{ 'true' if pressed else 'false' }}"{% endif %}>{{ caller() }}</button>
+</form>
+{%- endmacro -%}
+
+<div id="lab" class="lab"{% if v.show_model %} data-model-open{% endif %}>
+<div class="wrap">
+
+<header class="top">
+  <div>
+    <div class="eyebrow wine">Rec Lab</div>
+    <h1>{{ v.title }}</h1>
+  </div>
+  <div class="chips">
+    <span class="chip">Catalog: {{ v.catalog_counts.total }} items · {{ v.catalog_counts.recommendable }} recommendable</span>
+    <span class="chip blue">Lab mode: feedback is never saved</span>
+  </div>
+</header>
+
+<section class="controls" aria-label="Lab controls">
+  <div class="controls-head">
+    <div class="eyebrow">Lab controls · your inputs</div>
+    <span class="muted">Pick who is visiting and which model serves them. Visitors never see this bar.</span>
+  </div>
+  <div class="group">
+    <div class="group-label">1 · Simulate a visitor</div>
+    <div class="row">
+      {% for p in v.personas %}{% call act("persona", p.id, "pill" ~ (" on" if p.on else ""), pressed=p.on) %}{{ p.label }}{% endcall %}{% endfor %}
+    </div>
+    <div class="muted small">{{ v.persona.blurb }}</div>
+  </div>
+  {% if v.budgets %}
+  <div class="group">
+    <div class="group-label">2 · Their budget (a quiz answer on the real site)</div>
+    <div class="row">
+      {% for b in v.budgets %}{% call act("budget", b.id, "pill" ~ (" on" if b.on else ""), pressed=b.on) %}{{ b.label }}{% endcall %}{% endfor %}
+    </div>
+  </div>
+  {% endif %}
+  <div class="group">
+    <div class="group-label">3 · Serve them with model</div>
+    <div class="row">
+      {% for m in v.models %}{% call act("model", m.index, "pill" ~ (" on" if m.on else ""), pressed=m.on) %}{{ m.label }}{% endcall %}{% endfor %}
+    </div>
+    <div class="muted small mono">model_id: {{ v.model.model_id }}</div>
+  </div>
+  <div class="group">
+    <div class="group-label">4 · Explain it</div>
+    {% call act("toggle_model", "", "switch", pressed=v.show_model) %}<span class="track{% if v.show_model %} on{% endif %}"><span class="knob"></span></span><span class="switch-label">Model view {{ "on" if v.show_model else "off" }}</span>{% endcall %}
+  </div>
+  <div class="group push">
+    <div class="group-label">Start over</div>
+    {% call act("reset", "", "pill") %}Reset 👍/👎 ({{ v.feedback_count }}){% endcall %}
+  </div>
+</section>
+
+<section class="ux" aria-label="User experience" {% if v.show_model %}data-shifted{% endif %}>
+  <div class="ux-head">
+    <div class="eyebrow wine">User experience · what the visitor sees</div>
+    <span class="muted small">{{ "Tap any item: the panel explains it" if v.show_model else "Exactly what ships" }}</span>
+  </div>
+
+  {% if v.quiz_rows or v.choice_questions %}
+  <section class="card" aria-label="Taste quiz">
+    <h2>Have you had any of these?</h2>
+    <p class="muted small">Tell us what you've tried and we'll find picks you'll love.</p>
+    <div class="quiz-grid">
+      {% for q in v.quiz_rows %}
+      <div class="quiz-item">
+        <div><strong>{{ q.title }}</strong><div class="muted small">{{ q.meta }}</div></div>
+        <div class="row">
+          {% call act("quiz_rate", q.id ~ ":1", "mini" ~ (" yes" if q.value == 1 else ""), pressed=q.value == 1) %}Liked it{% endcall %}
+          {% call act("quiz_rate", q.id ~ ":-1", "mini" ~ (" no" if q.value == -1 else ""), pressed=q.value == -1) %}Not for me{% endcall %}
+          {% call act("quiz_rate", q.id ~ ":0", "mini" ~ (" skip" if q.value == 0 else ""), pressed=q.value == 0) %}Haven't had it{% endcall %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% for cq in v.choice_questions %}
+    <div class="choice">
+      <div class="group-label">{{ cq.prompt }}</div>
+      <div class="row">
+        {% for o in cq.options %}{% call act("quiz_choice", cq.id ~ ":" ~ o.id, "pill" ~ (" on" if o.on else ""), pressed=o.on) %}{{ o.label }}{% endcall %}{% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </section>
+  {% endif %}
+
+  <section class="card" aria-label="Recommendations">
+    <div>
+      <h2>Your picks</h2>
+      <span class="muted small">{{ v.budget_label }}</span>
+    </div>
+    {% if v.cold %}<div class="banner">We don't know your taste yet, so these are our most popular picks. Rate something, or take the quiz, to personalize.</div>{% endif %}
+    {% if not v.recs %}<div class="empty">Nothing left in this budget. Widen the budget or reset feedback.</div>{% endif %}
+    {% for r in v.recs %}
+    <article class="rec{% if v.show_model and r.id == v.selected_id %} selected{% endif %}">
+      {% call act("select", r.id, "rec-main", aria="Why is " ~ r.title ~ " recommended?") %}
+        <span class="rank">{{ r.rank }}</span>
+        <span class="rec-text">
+          <span class="rec-title">{{ r.title }}</span>
+          <span class="muted small">{{ r.meta }}</span>
+          <span class="why">{{ r.why }}</span>
+          {% if r.detail %}<span class="muted small">{{ r.detail }}</span>{% endif %}
+        </span>
+      {% endcall %}
+      <div class="thumbs">
+        {% call act("like", r.id, "thumb up", aria="Like " ~ r.title) %}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10v11"/><path d="M15 5.9 14 10h5.8a2 2 0 0 1 2 2.3l-1.4 7A2 2 0 0 1 18.4 21H7V10l4-8a3 3 0 0 1 4 3.9Z"/></svg>{% endcall %}
+        {% call act("dislike", r.id, "thumb down", aria="Dislike " ~ r.title) %}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 14V3"/><path d="M9 18.1 10 14H4.2a2 2 0 0 1-2-2.3l1.4-7A2 2 0 0 1 5.6 3H17v11l-4 8a3 3 0 0 1-4-3.9Z"/></svg>{% endcall %}
+      </div>
+    </article>
+    {% endfor %}
+  </section>
+</section>
+
+{% if v.show_model %}
+<aside class="overlay" aria-label="Model view">
+  <div class="overlay-head">
+    <div class="eyebrow blue">Model view · explainability (internal only)</div>
+    <div class="row">
+      <span class="small blue-text">Visitors never see this panel</span>
+      {% call act("toggle_model", "", "close", aria="Close model view") %}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6 6 18"/></svg>{% endcall %}
+    </div>
+  </div>
+  {% if v.note %}<div class="note" role="status">{{ v.note }}</div>{% endif %}
+
+  <div class="panel">
+    <div class="panel-head"><h2>How {{ v.model_label }} works</h2><span class="muted small">Look up: {{ v.model.concepts }}</span></div>
+    <p>{{ v.model.summary }}</p>
+    <div class="facts">
+      <div class="fact"><span class="fact-label">Uses</span>{{ v.model.uses }}</div>
+      <div class="fact good"><span class="fact-label">Good at</span>{{ v.model.good_at }}</div>
+      <div class="fact weak"><span class="fact-label">Weak at</span>{{ v.model.weak_at }}</div>
+    </div>
+  </div>
+
+  <div class="panels">
+    <div class="panel">
+      {% if v.breakdown %}
+      <div class="panel-head"><h2>Why #{{ v.breakdown.rank }}: {{ v.breakdown.title }}</h2><span class="mono">score {{ "%.3f"|format(v.breakdown.total) }}</span></div>
+      <div class="formula mono">{{ v.breakdown.formula }}</div>
+      {% for c in v.breakdown.components %}
+      <div class="bar-row">
+        <div class="bar-label"><span>{{ c.label }}</span><span class="mono">{{ "%+.3f"|format(c.value) }}</span></div>
+        <div class="bar"><div class="fill{% if c.negative %} neg{% endif %}" style="width: {{ c.width }}%"></div></div>
+      </div>
+      {% endfor %}
+      {% if v.breakdown.anchors %}
+      <div class="sub">
+        <div class="group-label">Similarity to each item you liked (the best one becomes "because you liked…")</div>
+        {% for a in v.breakdown.anchors %}<div class="kv{% if a.best %} best{% endif %}"><span>{{ a.title }}</span><span class="mono">{{ "%.3f"|format(a.sim) }}</span></div>{% endfor %}
+      </div>
+      {% endif %}
+      {% else %}
+      <h2>Why this list</h2><p class="muted">Nothing to explain: no recommendations, or this model can't break its score down.</p>
+      {% endif %}
+    </div>
+
+    <div class="panel">
+      <h2>Taste profile</h2>
+      {% if not v.signals and not v.affinities %}<p class="muted small">No taste signal yet: no quiz answers and no likes. Personalized models have nothing to work from (cold start).</p>{% endif %}
+      {% for b in v.taste_bars %}
+      <div class="bar-row inline"><span class="bar-name">{{ b.label }}</span><div class="bar"><div class="fill" style="width: {{ b.width }}%"></div></div><span class="mono">{{ "%.1f"|format(b.value) }}</span></div>
+      {% endfor %}
+      {% if v.affinities %}<div class="row tags">{% for a in v.affinities %}<span class="tag">{{ a.label }}</span>{% endfor %}</div>{% endif %}
+      <div class="sub">
+        <div class="group-label">Signals ({{ v.signals|length }})</div>
+        {% for s in v.signals %}<div class="kv"><span>{{ s.title }}</span><span class="{{ 'pos' if s.positive else 'neg' }}">{{ s.source }} {{ s.kind }}</span></div>{% endfor %}
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Candidate funnel</h2>
+      {% for f in v.funnel %}
+      <div class="bar-row">
+        <div class="bar-label"><span>{{ f.label }}</span><span class="mono">{{ f.n }}</span></div>
+        <div class="bar tall"><div class="fill {{ 'model' if f.model else 'grey' }}" style="width: {{ f.width }}%"></div></div>
+      </div>
+      {% endfor %}
+      <p class="muted small">Grey steps are hard filters, the same for every model. Only the last step is the model's job.{% if v.unknown_price %} {{ v.unknown_price }} kept with unknown price.{% endif %}</p>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h2>Offline scorecard</h2>{% if v.scorecard_info %}<span class="muted small">{{ v.scorecard_info.users }} users · data {{ v.scorecard_info.fingerprint }}</span>{% endif %}</div>
+      <div class="scroll"><table>
+        <thead><tr><th scope="col">Model</th><th scope="col">NDCG@10 [95% CI]</th><th scope="col">Coverage</th><th scope="col">Avg popularity</th></tr></thead>
+        <tbody>{% for row in v.scorecard %}<tr{% if row.current %} class="current"{% endif %}><th scope="row">{{ row.label }}</th><td class="mono">{{ row.ndcg }}</td><td class="mono">{{ row.coverage }}</td><td class="mono">{{ row.popularity }}</td></tr>{% endfor %}</tbody>
+      </table></div>
+      <p class="muted small">One persona looking good is an anecdote; this table is the aggregate, with uncertainty.{% if not v.scorecard_info %} Pass <span class="mono">--interactions</span> to measure.{% endif %}</p>
+    </div>
+  </div>
+
+  <div class="events">
+    <div class="panel-head"><h2>Events this lab generated</h2><span class="small">Real event schema; in production these become training data. Here they stay in memory.</span></div>
+    <div class="event-lines mono">{% for e in v.events %}<div class="ev {{ e.type }}">{{ e.text }}</div>{% endfor %}</div>
+  </div>
+</aside>
+{% endif %}
+
+</div>
+</div>

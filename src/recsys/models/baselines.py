@@ -30,6 +30,7 @@ from recsys.models.base import Recommender
 class RandomRecommender(Recommender):
     name = "random"
     version = 2  # v2: per-(user, item) hash, independent of the candidate pool
+    personalized = False
     summary = "Gives every eligible item a random score. It never looks at the item or the user."
     uses = "Nothing"
     good_at = "Shows the whole catalog over time (coverage 1.0)."
@@ -76,6 +77,7 @@ class PopularityRecommender(Recommender):
     """Scores items by weighted count of distinct users with a positive signal."""
 
     name = "most_popular"
+    personalized = False
     summary = (
         "Scores each item by how many users liked, saved or clicked to buy it. "
         "Everyone sees the same order once hard filters are applied."

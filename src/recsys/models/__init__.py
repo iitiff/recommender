@@ -16,23 +16,31 @@ REGISTRY: dict[str, Callable[..., Recommender]] = {
 }
 
 
+def build_model_entries(entries: list[dict]) -> list[tuple[str, Recommender]]:
+    """Build (label, model) pairs from config entries like
+    {"label": "Hybrid", "model": "tag_similarity", "params": {...}}."""
+    built: list[tuple[str, Recommender]] = []
+    for entry in entries:
+        name = entry["model"]
+        if name not in REGISTRY:
+            raise ValueError(f"unknown model {name!r}; available: {sorted(REGISTRY)}")
+        model = REGISTRY[name](**(entry.get("params") or {}))
+        built.append((entry.get("label") or model.model_id, model))
+    return built
+
+
 def load_model_config(path: Path) -> list[Recommender]:
     """Build models from YAML, so hyperparameters live in config, not code:
 
     models:
-      - model: tag_similarity
+      - label: Hybrid            # optional, shown in the Rec Lab
+        model: tag_similarity
         params: {facet_weights: {varietal: 0.45, note: 0.2}, numeric_weight: 0.35}
 
     Niche-specific weights belong in the private site repo's config.
     """
     spec = yaml.safe_load(Path(path).read_text()) or {}
-    models: list[Recommender] = []
-    for entry in spec.get("models", []):
-        name = entry["model"]
-        if name not in REGISTRY:
-            raise ValueError(f"unknown model {name!r}; available: {sorted(REGISTRY)}")
-        models.append(REGISTRY[name](**(entry.get("params") or {})))
-    return models
+    return [model for _, model in build_model_entries(spec.get("models", []))]
 
 
 __all__ = [
@@ -42,5 +50,6 @@ __all__ = [
     "RandomRecommender",
     "Recommender",
     "TagSimilarityRecommender",
+    "build_model_entries",
     "load_model_config",
 ]

@@ -105,5 +105,32 @@ def evaluate(
     typer.echo(f"saved {md} and {js}")
 
 
+@app.command()
+def lab(
+    catalog_dir: Path,
+    interactions: Annotated[
+        Path | None, typer.Option(help="Interaction CSV: fits models and fills the scorecard")
+    ] = None,
+    host: str = "127.0.0.1",
+    port: int = 8000,
+) -> None:
+    """Open the Rec Lab: personas → model → user experience, with a model-view overlay.
+
+    Reads CATALOG_DIR/lab.yaml (models, personas) and CATALOG_DIR/quiz.yaml if present.
+    """
+    import uvicorn
+
+    from recsys.lab.app import create_app
+    from recsys.lab.core import Lab
+
+    try:
+        the_lab = Lab(catalog_dir, interactions)
+    except (CatalogError, ValueError) as exc:
+        typer.echo(str(exc), err=True)
+        raise typer.Exit(1) from exc
+    typer.echo(f"Rec Lab on http://{host}:{port}  (Ctrl+C to stop)")
+    uvicorn.run(create_app(the_lab), host=host, port=port, log_level="warning")
+
+
 if __name__ == "__main__":
     app()

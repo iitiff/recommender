@@ -1,7 +1,7 @@
 # 2026-10-23: Tag similarity vs baselines, and a popularity hybrid (demo data)
 
 **Status:** done
-**Model(s):** `tag_similarity` (4 configurations) vs `most_popular@63cb5f3b`, `random@843f5ee4`
+**Model(s):** `tag_similarity` (4 configurations) vs `most_popular@63cb5f3b`, `random@94f5bc47`
 **Data:** fictional demo catalog, synthetic interactions (300 users, 5,179 events).
 Temporal split `6e96e1ec7580` (77 users), leave-last-out `9209d3081d92` (213 users).
 
@@ -41,7 +41,7 @@ Configurations (from `examples/demo/models.yaml`):
 
 | Model | NDCG@10 | ΔNDCG@10 | Coverage@10 | Gini@10 |
 |---|---|---|---|---|
-| random | 0.218 | −0.216 [−0.309, −0.128] ✔ | 1.00 | 0.09 |
+| random | 0.248 | −0.186 [−0.264, −0.108] ✔ | 1.00 | 0.07 |
 | most_popular | 0.434 | | 0.53 | 0.63 |
 | tag, equal weights | 0.364 | −0.070 [−0.173, +0.028] | 1.00 | 0.13 |
 | tag, curated | 0.334 | −0.100 [−0.192, −0.004] ✔ | 1.00 | 0.16 |
@@ -52,6 +52,7 @@ Configurations (from `examples/demo/models.yaml`):
 
 | Model | NDCG@10 | ΔNDCG@10 | Coverage@10 | Gini@10 |
 |---|---|---|---|---|
+| random | 0.161 | −0.172 [−0.224, −0.119] ✔ | 1.00 | 0.07 |
 | most_popular | 0.333 | | 0.60 | 0.59 |
 | tag, equal weights | 0.341 | +0.008 [−0.051, +0.067] | 1.00 | 0.11 |
 | tag, curated | 0.307 | −0.027 [−0.085, +0.029] | 1.00 | 0.10 |

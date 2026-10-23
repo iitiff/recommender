@@ -36,6 +36,15 @@ class NotFittedError(RuntimeError):
 
 class Recommender(ABC):
     name: ClassVar[str]
+    # Bump when the algorithm changes in a way that changes results, so
+    # model_id changes too. Two different algorithms must never share an id.
+    version: ClassVar[int] = 1
+    # Plain-language description for explainability tools (the Rec Lab).
+    summary: ClassVar[str] = ""
+    uses: ClassVar[str] = ""
+    good_at: ClassVar[str] = ""
+    weak_at: ClassVar[str] = ""
+    concepts: ClassVar[str] = ""  # names to look up
 
     def __init__(self) -> None:
         self._items: list[Item] = []
@@ -51,8 +60,9 @@ class Recommender(ABC):
 
     @property
     def model_id(self) -> str:
-        """`name@hash(params)`: logged with every slate so outcomes are attributable."""
-        blob = json.dumps(self.params, sort_keys=True, default=str).encode()
+        """`name@hash(version, params)`: logged with every slate so outcomes are attributable."""
+        identity = self.params if self.version == 1 else {"_version": self.version, **self.params}
+        blob = json.dumps(identity, sort_keys=True, default=str).encode()
         return f"{self.name}@{hashlib.sha1(blob).hexdigest()[:8]}"
 
     # -- public API ---------------------------------------------------------

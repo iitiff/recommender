@@ -110,3 +110,20 @@ def test_popularity_orders_by_distinct_positive_users(demo_training):
     assert [r.item_id for r in recs] == ids[:5]
     # The item with 10 dislikes has no popularity.
     assert model._popularity.get(ids[6], 0.0) == 0.0
+
+
+def test_model_id_tracks_algorithm_version():
+    class Bumped(RandomRecommender):
+        version = 3
+
+    assert Bumped(seed=1).model_id != RandomRecommender(seed=1).model_id
+
+
+def test_random_scores_do_not_depend_on_the_pool(demo_training):
+    model = RandomRecommender().fit(demo_training)
+    user = UserContext(user_id="u")
+    full = {r.item_id: r.score for r in model.recommend(user, k=100)}
+    some = list(full)[:5]
+    narrowed = {r.item_id: r.score for r in model.recommend(user, k=100, candidates=some)}
+    assert narrowed == {i: full[i] for i in some}
+    assert model.score_breakdown(user, some[0]).total == full[some[0]]

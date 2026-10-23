@@ -59,6 +59,22 @@ NUMERIC = "numeric"
 
 class TagSimilarityRecommender(Recommender):
     name = "tag_similarity"
+    summary = (
+        "Compares each item with every item the user liked and keeps the best match: "
+        "weighted tag overlap per facet plus closeness on numeric scales. Items similar "
+        "to dislikes are pushed down; quiz style answers and an optional popularity "
+        "prior are added."
+    )
+    uses = "Curated item attributes plus this user's likes, dislikes and quiz answers"
+    good_at = (
+        "Explainable; works from one or two likes; carries taste across catalogs "
+        "(quiz-only items anchor recommendable ones)."
+    )
+    weak_at = (
+        'Only as good as the curated tags; can\'t learn "people like you also liked" '
+        "(that's collaborative filtering)."
+    )
+    concepts = "content-based filtering, item-item similarity, Jaccard index, cold start, hybrid"
 
     def __init__(
         self,

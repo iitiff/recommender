@@ -16,6 +16,32 @@ behaviour.
 | **Loyal** (3+ orders) | Retention | New arrivals in their categories, early access, fewer but better messages | Over-messaging (these are the people most likely to unsubscribe if annoyed) |
 | **Lapsing** (past their usual gap) | Win-back | A reason to return, timed from their own purchase rhythm | Treating a 2-day gap and a 60-day gap the same |
 
+## Inside each stage: momentum, style and the current visit
+
+A stage alone is too wide (`docs/experiments/2026-10-24-lifecycle-stages-deep-dive.md`).
+In both RetailRocket and REES46, near-term ordering differs 1.5–3× *within* a
+stage, and what shoppers cart next changes with what they are doing. Four
+layers describe a shopper at a moment:
+
+| Layer | Changes | Examples | What it changes |
+|---|---|---|---|
+| **Relationship** (stage) | slowly | new, browser, **abandoner**, 1 order, 2+, bulk | the job: first order, second order, habit |
+| **Momentum** | by the hour | open cart <1 day old, ordered in the last day, back within the hour | how close they are to buying: timing and urgency of messages |
+| **Style** | rarely | decisive (few visits per order), researcher (many), window shopper (never carts) | help deciding vs more options; whom not to message |
+| **Current visit** | by the click | depth (one product page vs several), focus (one department vs exploring), open cart | which source fills the slots right now |
+
+Findings that change behaviour:
+- **Abandoners** order almost as soon as first-time buyers, and half their
+  carts are *alternatives* to what they carted: show substitutes, not just a
+  reminder.
+- **Bulk and repeat buyers** mostly re-cart known items: reorder lists over
+  discovery.
+- **One product page in:** the shopper carts that page 82% of the time, so
+  recommendation slots should hold alternatives and complements, not the item.
+
+Humans get a handful of segments (stage + momentum + open cart). Models get
+the underlying features directly and personalize continuously.
+
 ## Two different jobs for a message
 
 1. **Next transaction (exploit):** predict what this customer will buy next in

@@ -29,7 +29,7 @@ describe a shopper at a moment:
 |---|---|---|---|
 | **Relationship** (stage) | slowly | new, browser, **abandoner**, 1 order, 2+, bulk | the job: first order, second order, habit |
 | **Momentum** | by the hour | open cart <1 day old, ordered in the last day, back within the hour | how close they are to buying: timing and urgency of messages |
-| **Style** | rarely | decisive (few visits per order), researcher (many), window shopper (never carts) | help deciding vs more options; whom not to message |
+| **Style** (traits) | slowly | decisive vs researcher, brand loyalty, mainstream vs niche, variety seeking | help deciding vs more options; same brand or not; popularity blend; exploration dial; whom not to message |
 | **Current visit** | by the click | depth (one product page vs several), focus (one department vs exploring), open cart | which source fills the slots right now |
 | **Product context** | per item | product type's deliberation time and comparison breadth; price relative to the item being viewed | how long to wait before a nudge; how many and which alternatives (price-banded) |
 
@@ -49,6 +49,13 @@ Findings that change behaviour:
   compare within about ±30% of the item in front of them, while a
   shopper's price tier barely carries across categories (correlation
   0.13–0.21).
+
+- **Traits are weaker than states** (`docs/experiments/2026-10-24-shopper-traits-stability.md`):
+  the most stable traits correlate 0.2–0.3 from one month to the next, while
+  momentum moves ordering 1.5–3×. Brand loyalty, mainstream-vs-niche, variety
+  and comparison breadth persist. Deal-seeking and weekday/weekend habits
+  don't: they belong to the moment. Profiles should decay old evidence and
+  let the current visit dominate.
 
 Humans get a handful of segments (stage + momentum + open cart). Models get
 the underlying features directly and personalize continuously.

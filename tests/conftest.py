@@ -43,3 +43,38 @@ def demo_training(demo_catalog: Catalog) -> TrainingData:
     for u in range(10):
         interactions.append(Interaction(f"x{u}", ids[6], InteractionKind.RATING, -1, t0))
     return TrainingData(items=demo_catalog.items, interactions=interactions)
+
+
+@pytest.fixture(scope="session")
+def shop_training(demo_training: TrainingData) -> TrainingData:
+    """demo_training plus synthetic shopping visits: visit j views three
+    neighbouring items and carts the last, so every item has co-visits."""
+    t0 = datetime(2026, 1, 2, tzinfo=UTC)
+    ids = [i.item_id for i in demo_training.items if i.recommendable]
+    visits = []
+    for j in range(len(ids)):
+        at = t0 + timedelta(hours=j)
+        for step, item_id in enumerate(ids[j : j + 3] or ids[:1]):
+            visits.append(
+                Interaction(
+                    f"s{j}",
+                    item_id,
+                    InteractionKind.VIEW,
+                    1,
+                    at + timedelta(minutes=step),
+                    f"s{j}:0",
+                )
+            )
+        visits.append(
+            Interaction(
+                f"s{j}",
+                ids[min(j + 2, len(ids) - 1)],
+                InteractionKind.ADD_TO_CART,
+                1,
+                at + timedelta(minutes=5),
+                f"s{j}:0",
+            )
+        )
+    return TrainingData(
+        items=demo_training.items, interactions=[*demo_training.interactions, *visits]
+    )

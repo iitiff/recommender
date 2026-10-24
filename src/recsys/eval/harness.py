@@ -25,7 +25,8 @@ from recsys.eval import metrics as m
 from recsys.eval.split import Split, train_popularity
 from recsys.models.base import Recommender
 
-PER_USER_METRICS = ("recall", "ndcg", "hit_rate", "avg_popularity")
+# Descriptive metrics: reported, but not compared as "better" or "worse".
+DESCRIPTIVE = ("avg_popularity", "new_category_share", "list_length")
 
 
 @dataclass(frozen=True)
@@ -53,6 +54,8 @@ class ModelResult:
     fit_seconds: float
     ms_per_user: float
     per_user: dict[str, np.ndarray] = field(repr=False, default_factory=dict)
+    # dimension -> segment -> metric -> estimate (when the split has segments)
+    segments: dict[str, dict[str, dict[str, Estimate]]] = field(default_factory=dict)
 
 
 @dataclass
@@ -63,6 +66,8 @@ class EvalReport:
     baseline: str | None
     # model_id -> metric -> (model - baseline) difference
     comparisons: dict[str, dict[str, Estimate]]
+    # dimension -> segment -> number of cases
+    segment_counts: dict[str, dict[str, int]] = field(default_factory=dict)
 
     def result(self, model_id: str) -> ModelResult:
         return next(r for r in self.results if r.model_id == model_id)
@@ -97,6 +102,7 @@ def evaluate(
     users: list[UserId] = sorted(split.targets)
     catalog = [i.item_id for i in split.train.items if i.is_active and i.recommendable]
     popularity = train_popularity(split.train)
+    segment_index = _segment_index(split, users)
 
     results: list[ModelResult] = []
     names: dict[str, str] = {}
@@ -107,7 +113,12 @@ def evaluate(
 
         start = time.perf_counter()
         recs: dict[UserId, list[ItemId]] = {
-            u: [r.item_id for r in model.recommend(split.contexts[u], max_k, explain=False)]
+            u: [
+                r.item_id
+                for r in model.recommend(
+                    split.contexts[u], max_k, candidates=split.candidates.get(u), explain=False
+                )
+            ]
             for u in users
         }
         ms_per_user = 1000 * (time.perf_counter() - start) / max(len(users), 1)
@@ -124,9 +135,22 @@ def evaluate(
             per_user[f"hit_rate@{k}"] = np.array(
                 [m.hit_rate_at_k(recs[u], split.targets[u], k) for u in users]
             )
+            per_user[f"mrr@{k}"] = np.array(
+                [m.mrr_at_k(recs[u], split.targets[u], k) for u in users]
+            )
             per_user[f"avg_popularity@{k}"] = np.array(
                 [m.average_popularity(recs[u], popularity, k) for u in users]
             )
+            per_user[f"list_length@{k}"] = np.array([min(len(recs[u]), k) for u in users], float)
+            if split.item_groups:
+                per_user[f"new_category_share@{k}"] = np.array(
+                    [
+                        m.new_group_share(
+                            recs[u], split.item_groups, split.known_groups.get(u, frozenset()), k
+                        )
+                        for u in users
+                    ]
+                )
             aggregates[f"coverage@{k}"] = m.catalog_coverage(recs, catalog, k)
             aggregates[f"gini@{k}"] = m.exposure_gini(recs, catalog, k)
 
@@ -141,6 +165,17 @@ def evaluate(
                 fit_seconds=fit_seconds,
                 ms_per_user=ms_per_user,
                 per_user=per_user,
+                segments={
+                    dim: {
+                        value: {
+                            name: bootstrap(v[idx], n_resamples=n_resamples, seed=seed)
+                            for name, v in per_user.items()
+                            if name.endswith(f"@{max_k}")
+                        }
+                        for value, idx in by_value.items()
+                    }
+                    for dim, by_value in segment_index.items()
+                },
             )
         )
         names[model.model_id] = model.name
@@ -157,7 +192,7 @@ def evaluate(
                     r.per_user[name] - base.per_user[name], n_resamples=n_resamples, seed=seed
                 )
                 for name in r.per_user
-                if not name.startswith("avg_popularity")
+                if not name.startswith(DESCRIPTIVE)
             }
 
     return EvalReport(
@@ -166,4 +201,20 @@ def evaluate(
         results=results,
         baseline=base.model_id if base else None,
         comparisons=comparisons,
+        segment_counts={
+            dim: {value: len(idx) for value, idx in by_value.items()}
+            for dim, by_value in segment_index.items()
+        },
     )
+
+
+def _segment_index(split: Split, users: list[UserId]) -> dict[str, dict[str, np.ndarray]]:
+    """dimension -> segment value -> positions of its cases in `users`."""
+    out: dict[str, dict[str, list[int]]] = {}
+    for n, u in enumerate(users):
+        for dim, value in split.segments.get(u, {}).items():
+            out.setdefault(dim, {}).setdefault(value, []).append(n)
+    return {
+        dim: {value: np.array(idx) for value, idx in sorted(by_value.items())}
+        for dim, by_value in out.items()
+    }

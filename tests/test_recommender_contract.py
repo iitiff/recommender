@@ -6,23 +6,35 @@ promises for free.
 
 from __future__ import annotations
 
+from datetime import UTC, datetime, timedelta
+
 import pytest
 
-from recsys.core.types import UserContext
+from recsys.core.types import Interaction, InteractionKind, UserContext
 from recsys.models import (
+    CoVisitationRecommender,
     NotFittedError,
     PopularityRecommender,
     RandomRecommender,
+    RecentlyViewedRecommender,
     Recommender,
     TagSimilarityRecommender,
+    TrendingRecommender,
 )
 
-MODELS = [RandomRecommender, PopularityRecommender, TagSimilarityRecommender]
+MODELS = [
+    RandomRecommender,
+    PopularityRecommender,
+    TagSimilarityRecommender,
+    RecentlyViewedRecommender,
+    CoVisitationRecommender,
+    TrendingRecommender,
+]
 
 
 @pytest.fixture(params=MODELS, ids=lambda cls: cls.name)
-def model(request, demo_training) -> Recommender:
-    return request.param().fit(demo_training)
+def model(request, shop_training) -> Recommender:
+    return request.param().fit(shop_training)
 
 
 def recommendable_ids(data) -> list[str]:
@@ -31,14 +43,33 @@ def recommendable_ids(data) -> list[str]:
 
 @pytest.fixture
 def user(demo_training) -> UserContext:
+    """Rated a few items and is mid-visit: viewed ten items, carted one."""
     ids = recommendable_ids(demo_training)
-    return UserContext(user_id="u-test", liked=(ids[0],), disliked=(ids[1],), hidden=(ids[2],))
+    t0 = datetime(2026, 2, 1, tzinfo=UTC)
+    events = [
+        Interaction("u-test", i, InteractionKind.VIEW, 1, t0 + timedelta(minutes=n), "u-test:0")
+        for n, i in enumerate(ids[3:13])
+    ]
+    events.append(
+        Interaction("u-test", ids[5], InteractionKind.ADD_TO_CART, 1, t0 + timedelta(minutes=20))
+    )
+    return UserContext(
+        user_id="u-test",
+        liked=(ids[0],),
+        disliked=(ids[1],),
+        hidden=(ids[2],),
+        events=tuple(events),
+        session_id="u-test:0",
+    )
 
 
 def test_returns_k_unique_sorted(model, user):
     recs = model.recommend(user, k=10)
-    assert len(recs) == 10
-    assert len({r.item_id for r in recs}) == 10
+    if model.exhaustive:
+        assert len(recs) == 10
+    else:  # candidate sources only return items they have evidence for
+        assert 0 < len(recs) <= 10
+    assert len({r.item_id for r in recs}) == len(recs)
     scores = [r.score for r in recs]
     assert scores == sorted(scores, reverse=True)
 
@@ -46,13 +77,26 @@ def test_returns_k_unique_sorted(model, user):
 def test_excludes_rated_and_hidden(model, user, demo_training):
     recs = model.recommend(user, k=100)
     assert not {r.item_id for r in recs} & user.excluded
-    assert len(recs) == len(recommendable_ids(demo_training)) - len(user.excluded)
+    if model.exhaustive:
+        assert len(recs) == len(recommendable_ids(demo_training)) - len(user.excluded)
 
 
 def test_respects_candidates(model, user, demo_training):
     allowed = set(recommendable_ids(demo_training)[10:15])
-    recs = model.recommend(user, k=10, candidates=allowed)
-    assert {r.item_id for r in recs} == allowed
+    recs = {r.item_id for r in model.recommend(user, k=10, candidates=allowed)}
+    assert recs == allowed if model.exhaustive else recs and recs <= allowed
+    # Any container with `in` works (e.g. "in stock at time t"), and lists too.
+    assert {r.item_id for r in model.recommend(user, k=10, candidates=sorted(allowed))} == recs
+
+
+def test_breakdown_adds_up(model, user):
+    for rec in model.recommend(user, k=5):
+        breakdown = model.score_breakdown(user, rec.item_id)
+        if breakdown is None:
+            continue
+        assert breakdown.total == pytest.approx(rec.score)
+        if breakdown.components:
+            assert sum(c.value for c in breakdown.components) == pytest.approx(breakdown.total)
 
 
 def test_never_recommends_non_recommendable(model, demo_training):
@@ -65,7 +109,7 @@ def test_never_recommends_non_recommendable(model, demo_training):
     assert not {r.item_id for r in model.recommend(user, k=100, candidates=quiz_only)}
     # A quiz-only wine can still anchor "you might also like" (recommendable results only).
     similar = model.similar_items(sorted(quiz_only)[0], k=5)
-    assert len(similar) == 5
+    assert len(similar) == 5 or not model.exhaustive
     assert not {r.item_id for r in similar} & quiz_only
 
 
@@ -80,7 +124,7 @@ def test_explain_flag(model, user):
 def test_similar_items_excludes_anchor(model, demo_training):
     anchor = recommendable_ids(demo_training)[3]
     recs = model.similar_items(anchor, k=5)
-    assert len(recs) == 5
+    assert len(recs) == 5 or (not model.exhaustive and len(recs) <= 5)
     assert anchor not in {r.item_id for r in recs}
 
 

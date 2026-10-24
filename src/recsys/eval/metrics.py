@@ -50,6 +50,36 @@ def ndcg_at_k(recommended: Sequence[ItemId], relevant: Collection[ItemId], k: in
     return float(dcg / ideal)
 
 
+def mrr_at_k(recommended: Sequence[ItemId], relevant: Collection[ItemId], k: int) -> float:
+    """Reciprocal rank of the first hit (1 at position 1, 1/2 at position 2...), 0 if none.
+
+    The standard metric for "predict the next item" tasks: it rewards putting
+    the right item near the top, where shoppers actually look.
+    """
+    for position, item in enumerate(recommended[:k]):
+        if item in relevant:
+            return 1.0 / (position + 1)
+    return 0.0
+
+
+def new_group_share(
+    recommended: Sequence[ItemId],
+    groups: Mapping[ItemId, str],
+    known: Collection[str],
+    k: int,
+) -> float:
+    """Share of the top k in categories the user has never interacted with.
+
+    A beyond-accuracy metric for the explore/exploit balance: 0 means every
+    recommendation stays in familiar categories. Items with unknown category
+    count as not new. Empty lists score 0.
+    """
+    top = recommended[:k]
+    if not top:
+        return 0.0
+    return sum(1 for item in top if item in groups and groups[item] not in known) / len(top)
+
+
 def catalog_coverage(
     recommendations: Mapping[str, Sequence[ItemId]], catalog: Collection[ItemId], k: int
 ) -> float:

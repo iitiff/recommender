@@ -387,4 +387,15 @@ def explanation_text(
     if exp.kind == ExplanationKind.EXPLORATION:
         detail = "We don't know your taste yet" if cold else "Not personalized"
         return "A good place to start", detail
+    if exp.kind == ExplanationKind.RECENTLY_VIEWED:
+        return "You looked at this recently", ""
+    if exp.kind == ExplanationKind.ALSO_VIEWED and exp.anchor_item_ids:
+        anchor = lab.by_id.get(exp.anchor_item_ids[0])
+        return (
+            f"Shoppers who viewed {anchor.title if anchor else exp.anchor_item_ids[0]} "
+            "also looked at this",
+            "",
+        )
+    if exp.kind == ExplanationKind.TRENDING:
+        return "Trending now", "Not personalized"
     return "Recommended for you", tags

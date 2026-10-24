@@ -49,9 +49,17 @@ message sent vs holdout (uplift), with unsubscribe and frequency guardrails.
 
 1. - [x] Dataset adapters + RetailRocket (sessions, catalog, availability over
          time) + re-engagement profile (`docs/experiments/2026-10-24-*`)
-2. - [ ] Session-based recommender (co-visitation item-item, time-decayed
-         trending), session-aware eval split, in-stock candidate filter over time;
-         eval split by lifecycle stage + category-novelty metric (docs/LIFECYCLE.md)
+2. Session-based, journey-aware recommendations (docs/LIFECYCLE.md: "one
+   recommender, many journeys")
+   - [x] 2a. Candidate sources that each do one job (recently viewed,
+         co-visitation, trending), a retrieval path for big catalogs, stock as of
+         request time, next-add-to-cart eval split by lifecycle stage and by what
+         the shopper did next, category-novelty metric
+         (`docs/experiments/2026-10-24-session-sources-retailrocket.md`)
+   - [ ] 2b. More sources (repeat/replenish, bought-together complements,
+         adjacent category from category transitions) and a blender whose
+         per-source weights depend on the shopper's state (rules by stage first,
+         then learned); measured segment by segment against 2a
 3. - [ ] Day-by-day replay: nightly retrain → eval gate → model registry
 4. - [ ] Lifecycle messaging (docs/LIFECYCLE.md): lifecycle stages; triggers
          (abandoned cart/browse, post-purchase, back-in-stock, win-back); two message

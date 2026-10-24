@@ -43,10 +43,15 @@ from recsys.core.types import (
 
 
 def is_positive(x: Interaction) -> bool:
-    """What counts as 'the user wanted this'. Clicks alone are too noisy."""
+    """What counts as 'the user wanted this'. Views and clicks alone are too noisy."""
     if x.kind == InteractionKind.RATING:
         return x.value > 0
-    return x.kind in (InteractionKind.SAVE, InteractionKind.AFFILIATE_CLICK)
+    return x.kind in (
+        InteractionKind.SAVE,
+        InteractionKind.AFFILIATE_CLICK,
+        InteractionKind.ADD_TO_CART,
+        InteractionKind.PURCHASE,
+    )
 
 
 @dataclass(frozen=True)

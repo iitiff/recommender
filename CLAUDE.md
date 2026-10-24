@@ -23,6 +23,7 @@ Never commit to this repo:
 - business plans, revenue numbers, affiliate details
 - secrets of any kind (they live in `.env` / the host's secret store, never in git)
 - model artifacts or databases (`artifacts/`, `data/` are gitignored; they are rebuilt)
+- public dataset files, raw or prepared (`data/`; licenses in docs/DATASETS.md)
 
 Those live in the **private site repo**, which installs this package
 (`uv pip install -e ../recommender`) and supplies the catalog directory,
@@ -30,6 +31,13 @@ configs, branding, deploy files, and real experiment write-ups.
 
 If a change needs niche-specific knowledge, make the engine configurable and
 put the niche specifics in the private repo.
+
+## Current focus
+
+The earlier niche-site work is **parked** (its private repo has a resume note).
+Current work is the e-commerce track in docs/ROADMAP.md: RetailRocket replay, session-based
+recs, then lifecycle messaging (docs/LIFECYCLE.md): move customers from first
+order to loyal, measured by uplift and second-order rate.
 
 ## Layout
 
@@ -42,6 +50,8 @@ src/recsys/
   models/     Recommender base class + models (baselines, content-based, ...)
   profile/    taste quiz spec → profile (cold start)
   candidates.py  hard filters (budget, stock, shipping) with funnel counts
+  sessions.py    split event streams into visits (30-min inactivity gap)
+  datasets/   public dataset adapters (raw → engine layout) + re-engagement profile
   eval/       splits, metrics, bootstrap CIs, harness, reports
   lab/        Rec Lab: FastAPI + Jinja2 + HTMX explainability tool (never writes the DB)
   cli.py      `recsys` command
@@ -61,6 +71,8 @@ uv run recsys load-catalog examples/demo  # syncs into RECSYS_DATABASE_URL
 uv run recsys evaluate examples/demo examples/demo/interactions.csv  # offline eval
 uv run recsys evaluate examples/demo examples/demo/interactions.csv --model-config examples/demo/models.yaml
 uv run recsys lab examples/demo --interactions examples/demo/interactions.csv  # http://127.0.0.1:8000
+uv sync --extra datasets && uv run recsys dataset prepare retailrocket RAW_DIR data/retailrocket
+uv run recsys dataset profile data/retailrocket
 ```
 
 ## Conventions

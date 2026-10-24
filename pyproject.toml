@@ -20,9 +20,15 @@ dependencies = [
 [project.scripts]
 recsys = "recsys.cli:app"
 
+[project.optional-dependencies]
+datasets = [
+    "pandas>=2.2",
+]
+
 [dependency-groups]
 dev = [
     "httpx2>=2.16.0",
+    "pandas>=2.2",
     "pytest>=8.0",
     "ruff>=0.5",
 ]

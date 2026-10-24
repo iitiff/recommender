@@ -1,12 +1,13 @@
 """Load interaction logs for offline evaluation.
 
 CSV format (one row per interaction):
-    user_id,item_id,kind,value,occurred_at
+    user_id,item_id,kind,value,occurred_at[,session_id]
     u1,ridge-geyserville,rating,1,2026-03-01T18:22:00Z
 
-`kind` is an InteractionKind (rating, save, click, affiliate_click,
-not_interested). Public datasets get converted to this format once; later the
-site's own feedback/events tables will feed the same harness.
+`kind` is an InteractionKind (rating, save, not_interested, view, click,
+add_to_cart, purchase, affiliate_click). `session_id` is optional.
+Public datasets get converted to this format once; later the site's own
+feedback/events tables will feed the same harness.
 """
 
 from __future__ import annotations
@@ -36,6 +37,7 @@ def load_interactions_csv(path: Path) -> list[Interaction]:
                         kind=InteractionKind(row["kind"].strip()),
                         value=float(row.get("value") or 1),
                         occurred_at=_parse_time(row["occurred_at"].strip()),
+                        session_id=(row.get("session_id") or "").strip() or None,
                     )
                 )
             except (KeyError, ValueError) as exc:
@@ -46,9 +48,12 @@ def load_interactions_csv(path: Path) -> list[Interaction]:
 
 
 def write_interactions_csv(path: Path, interactions: list[Interaction]) -> None:
+    with_sessions = any(x.session_id for x in interactions)
     with Path(path).open("w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
-        writer.writerow(["user_id", "item_id", "kind", "value", "occurred_at"])
+        header = ["user_id", "item_id", "kind", "value", "occurred_at"]
+        writer.writerow(header + (["session_id"] if with_sessions else []))
         for x in interactions:
             value = int(x.value) if float(x.value).is_integer() else x.value
-            writer.writerow([x.user_id, x.item_id, x.kind.value, value, x.occurred_at.isoformat()])
+            row = [x.user_id, x.item_id, x.kind.value, value, x.occurred_at.isoformat()]
+            writer.writerow(row + ([x.session_id or ""] if with_sessions else []))

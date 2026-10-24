@@ -79,11 +79,16 @@ class Offer:
 
 
 class InteractionKind(StrEnum):
+    # Explicit feedback (taste sites)
     RATING = "rating"  # value: +1 like / -1 dislike
     SAVE = "save"  # "want to try": fast intent signal, no tasting needed
-    CLICK = "click"
-    AFFILIATE_CLICK = "affiliate_click"
     NOT_INTERESTED = "not_interested"
+    # Implicit feedback (e-commerce funnel), weakest to strongest intent
+    VIEW = "view"  # product page view
+    CLICK = "click"  # clicked a recommendation
+    ADD_TO_CART = "add_to_cart"
+    PURCHASE = "purchase"
+    AFFILIATE_CLICK = "affiliate_click"  # outbound buy click (affiliate sites)
 
 
 @dataclass(frozen=True, slots=True)
@@ -93,6 +98,9 @@ class Interaction:
     kind: InteractionKind
     value: float
     occurred_at: datetime
+    # Visit the interaction belongs to (see recsys.sessions). E-commerce intent
+    # lives in sessions: "viewed X then Y" says more than a lifetime history.
+    session_id: str | None = None
 
 
 @dataclass(frozen=True, slots=True)

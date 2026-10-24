@@ -135,6 +135,16 @@ class Recommender(ABC):
 - **Structured explanations.** `Explanation(kind, anchor_item_ids,
   shared_tags)`; templates render text. The `kind` is logged per slate item so
   we can measure which explanation types earn clicks.
+- **Retrieve, then rank.** A model may override `_retrieve` to propose a short
+  list (co-viewed neighbours, the top of a popularity ranking) instead of
+  scoring the whole catalog; filters and exclusions apply to that list the
+  same way. Models with `exhaustive = False` are *candidate sources*: they
+  return only items they have evidence for, so lists can be short or empty
+  (recently viewed knows nothing about unseen items). A blender combines
+  sources per shopper (roadmap step 2b).
+- **Behaviour in the context.** `UserContext.events` carries recent views,
+  carts and purchases (current visit included, `session_id` marks it) and
+  `now` the request time, so session models stay pure functions of their input.
 
 ## 5. Evaluation (how we know it works)
 
@@ -181,6 +191,16 @@ are generated from the same assumptions the model makes.
   and train/test interactions, plus each `model_id` (name + params hash).
 - **Speed:** fit time and ms/user are reported; serving latency matters for the
   multi-tenant product later.
+- **Session-aware e-commerce split** (`next_event_split`): train up to a
+  cutoff; afterwards every add-to-cart is a *case* whose context is everything
+  the shopper did before it. Metrics are hit rate@k and MRR@k on that one item.
+  Each case is tagged with segments (lifecycle stage at that moment; what the
+  shopper did next: re-buy, item seen this visit, seen in an earlier visit,
+  new item in a browsed category, new item in a new category; and for buyers,
+  same or new category vs past orders) and the report shows every model per
+  segment. An optional stock timeline restricts each case to items in stock
+  then. `new_category_share@k` (share of recommendations in categories the
+  shopper never touched) makes the explore/exploit balance visible.
 
 ## 6. Content model and cold start
 

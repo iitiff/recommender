@@ -11,9 +11,13 @@ funnel: most "why wasn't X shown?" questions are answered here, not by a model.
 
 from __future__ import annotations
 
+import csv
+from bisect import bisect_right
 from collections import defaultdict
 from collections.abc import Sequence
 from dataclasses import dataclass
+from datetime import datetime
+from pathlib import Path
 
 from recsys.core.types import Item, ItemId, Offer
 
@@ -84,3 +88,55 @@ def price_of(item: Item, offers: Sequence[Offer], attribute: str | None = "price
     if attribute and attribute in item.attributes:
         return item.attributes[attribute]
     return None
+
+
+class AvailabilityTimeline:
+    """When each item was in or out of stock, for filtering *as of* a moment.
+
+    Offline evaluation must use the stock state at request time, not today's:
+    recommending an item that was sold out that day can't have been a hit, and
+    filtering by today's stock would leak the future. Items with no record
+    before `at` are treated as available (unknown is not the same as sold out).
+
+    CSV: item_id,valid_from,available (one row per change, see
+    `recsys dataset prepare`).
+    """
+
+    def __init__(self, changes: dict[ItemId, list[tuple[datetime, bool]]]) -> None:
+        self._times: dict[ItemId, list[datetime]] = {}
+        self._states: dict[ItemId, list[bool]] = {}
+        for item_id, rows in changes.items():
+            rows = sorted(rows)
+            self._times[item_id] = [t for t, _ in rows]
+            self._states[item_id] = [s for _, s in rows]
+
+    @classmethod
+    def load_csv(cls, path: Path) -> AvailabilityTimeline:
+        changes: dict[ItemId, list[tuple[datetime, bool]]] = defaultdict(list)
+        with Path(path).open(newline="", encoding="utf-8") as f:
+            for row in csv.DictReader(f):
+                when = datetime.fromisoformat(row["valid_from"].replace("Z", "+00:00"))
+                state = row["available"].strip().lower() in ("true", "1", "yes")
+                changes[row["item_id"].strip()].append((when, state))
+        return cls(changes)
+
+    def available(self, item_id: ItemId, at: datetime) -> bool | None:
+        """True/False as of `at`; None if nothing is known yet."""
+        times = self._times.get(item_id)
+        if not times:
+            return None
+        n = bisect_right(times, at)
+        return self._states[item_id][n - 1] if n else None
+
+    def at(self, when: datetime) -> InStockAt:
+        """A container of items not known to be sold out at `when` (pass as `candidates=`)."""
+        return InStockAt(self, when)
+
+
+@dataclass(frozen=True)
+class InStockAt:
+    timeline: AvailabilityTimeline
+    when: datetime
+
+    def __contains__(self, item_id: object) -> bool:
+        return self.timeline.available(str(item_id), self.when) is not False

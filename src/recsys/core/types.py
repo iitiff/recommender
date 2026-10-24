@@ -119,6 +119,18 @@ class UserContext:
     disliked: tuple[ItemId, ...] = ()
     saved: tuple[ItemId, ...] = ()
     hidden: tuple[ItemId, ...] = ()  # "not interested"
+    # Behaviour (views, carts, purchases), oldest first, including the current
+    # visit. E-commerce models read intent from this; taste models ignore it.
+    events: tuple[Interaction, ...] = ()
+    session_id: str | None = None  # the visit this request belongs to
+    now: datetime | None = None  # request time (None = live, "now")
+
+    @property
+    def session_events(self) -> tuple[Interaction, ...]:
+        """Events of the current visit only."""
+        if self.session_id is None:
+            return ()
+        return tuple(x for x in self.events if x.session_id == self.session_id)
 
     @property
     def excluded(self) -> frozenset[ItemId]:
@@ -136,6 +148,10 @@ class ExplanationKind(StrEnum):
     SIMILAR_TO = "similar_to"  # item-to-item ("you might also like")
     POPULAR = "popular"
     EXPLORATION = "exploration"
+    # E-commerce
+    RECENTLY_VIEWED = "recently_viewed"  # anchored on the item itself
+    ALSO_VIEWED = "also_viewed"  # "shoppers who viewed X also looked at this"
+    TRENDING = "trending"
 
 
 @dataclass(frozen=True, slots=True)

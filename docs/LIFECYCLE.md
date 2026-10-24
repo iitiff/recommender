@@ -109,4 +109,24 @@ buyers bought 29% of the items.
 - **Messages are logged like slates:** `message_sent` carries the action, the
   items, the model and the propensity, so uplift and bandit evaluation work later.
 
+## On-site recommendations: one recommender, many journeys
+
+The same stage logic applies on the site, not just in messages. No single
+model serves every journey, so recommendations come from several **candidate
+sources** that each do one job (recently viewed, viewed-together, trending;
+next: re-buy/replenish, complements, adjacent category), and a **blender**
+weights them per shopper from their state: visits, orders, recency, category
+breadth, what they're doing in this visit. The blender starts as rules by
+stage and becomes learned, so the mix is personal rather than one rule per stage.
+
+First measurements on RetailRocket
+(`docs/experiments/2026-10-24-session-sources-retailrocket.md`):
+- 63% of add-to-carts are an item already viewed in that visit (usually the
+  page the shopper is on), so accuracy must be reported separately for
+  *items seen before* and *new items*, or the trivial part dominates.
+- Viewed-together finds 23% of new-item carts in browsed categories; nothing
+  finds new-category carts yet, which is the gap an adjacent-category source fills.
+- Repeat and bulk buyers mostly re-cart what they know; first-time buyers and
+  returning browsers respond most to discovery.
+
 See `docs/experiments/2026-10-24-retailrocket-lifecycle.md` for the numbers behind this.

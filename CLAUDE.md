@@ -47,10 +47,11 @@ src/recsys/
   catalog/    catalog.yaml spec + CSV loader with full validation
   events/     event schema (pydantic) + EventLogger (the one place events are written)
   store/      SQLAlchemy Core tables, engine setup, repo functions (the only SQL)
-  models/     Recommender base class + models (baselines, content-based, ...)
+  models/     Recommender base class + models (baselines, content-based, session sources)
   profile/    taste quiz spec → profile (cold start)
-  candidates.py  hard filters (budget, stock, shipping) with funnel counts
+  candidates.py  hard filters (budget, stock, shipping) with funnel counts; stock over time
   sessions.py    split event streams into visits (30-min inactivity gap)
+  lifecycle.py   lifecycle stage of a shopper at a moment, derived from events
   datasets/   public dataset adapters (raw → engine layout) + re-engagement profile
   eval/       splits, metrics, bootstrap CIs, harness, reports
   lab/        Rec Lab: FastAPI + Jinja2 + HTMX explainability tool (never writes the DB)
@@ -73,6 +74,9 @@ uv run recsys evaluate examples/demo examples/demo/interactions.csv --model-conf
 uv run recsys lab examples/demo --interactions examples/demo/interactions.csv  # http://127.0.0.1:8000
 uv sync --extra datasets && uv run recsys dataset prepare retailrocket RAW_DIR data/retailrocket
 uv run recsys dataset profile data/retailrocket
+uv run recsys evaluate data/retailrocket/catalog data/retailrocket/interactions.csv --split next \
+  --test-fraction 0.1 --models most_popular,trending,recently_viewed,covisitation --k 5 --k 20 \
+  --group-facet department --availability data/retailrocket/availability.csv  # session eval
 ```
 
 ## Conventions
@@ -83,7 +87,9 @@ uv run recsys dataset profile data/retailrocket
 - **New models subclass `Recommender`** and implement `_score_user` (and
   `_score_similar`, `explain`, `score_breakdown` where meaningful; breakdown
   components must sum to the real score). Add them to `MODELS` in
-  `tests/test_recommender_contract.py`.
+  `tests/test_recommender_contract.py`. Large catalogs: override `_retrieve`
+  instead of scoring every item; sources that only know some items set
+  `exhaustive = False`.
 - **Hard constraints (budget, stock, shipping) are candidate filters**
   (`recsys.candidates`) passed via `candidates=`, never baked into a model.
   Price is never a taste feature.

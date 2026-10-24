@@ -51,6 +51,8 @@ image_url: null
 tag_facets:
   # Leaf category plus every ancestor, so items in sibling categories still overlap.
   category: {column: category_path, multi: true}
+  # Top-level category: the unit for "did the shopper move into a new category?"
+  department: {column: department}
 """
 
 
@@ -148,6 +150,7 @@ def prepare(raw_dir: Path, out_dir: Path, *, gap_minutes: float | None = None) -
     items["category_path"] = leaf.map(
         lambda c: ";".join(map(str, paths.get(int(c), [int(c)]))) if c is not pd.NA else ""
     )
+    items["department"] = items.category_path.str.split(";").str[0]
     items["item_id"] = items.item_id.astype(str)
 
     # -- availability changes over time (keep only actual flips) ------------------

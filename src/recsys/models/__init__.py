@@ -6,6 +6,11 @@ import yaml
 from recsys.models.base import NotFittedError, Recommender
 from recsys.models.baselines import PopularityRecommender, RandomRecommender
 from recsys.models.content import TagSimilarityRecommender
+from recsys.models.session import (
+    CoVisitationRecommender,
+    RecentlyViewedRecommender,
+    TrendingRecommender,
+)
 
 # Name -> factory with default params. The CLI and experiment scripts look
 # models up here, so adding a model is one line.
@@ -13,6 +18,9 @@ REGISTRY: dict[str, Callable[..., Recommender]] = {
     RandomRecommender.name: RandomRecommender,
     PopularityRecommender.name: PopularityRecommender,
     TagSimilarityRecommender.name: TagSimilarityRecommender,
+    RecentlyViewedRecommender.name: RecentlyViewedRecommender,
+    CoVisitationRecommender.name: CoVisitationRecommender,
+    TrendingRecommender.name: TrendingRecommender,
 }
 
 
@@ -45,11 +53,14 @@ def load_model_config(path: Path) -> list[Recommender]:
 
 __all__ = [
     "REGISTRY",
+    "CoVisitationRecommender",
     "NotFittedError",
     "PopularityRecommender",
     "RandomRecommender",
+    "RecentlyViewedRecommender",
     "Recommender",
     "TagSimilarityRecommender",
+    "TrendingRecommender",
     "build_model_entries",
     "load_model_config",
 ]

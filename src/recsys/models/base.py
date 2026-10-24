@@ -5,6 +5,13 @@ identical across models (candidate filtering, excluding already-rated items,
 top-k selection, attaching explanations), and subclasses only implement
 *scoring*. That keeps model comparisons fair: no model can look better in
 evaluation because it forgot to exclude items the user already rated.
+
+Two-stage serving: a model can override `_retrieve` to propose a short list
+of candidates (its neighbours of what the user just viewed, the top of a
+popularity ranking) so it never scores the whole catalog. With 235k items,
+scoring everything for every page view is too slow; real systems always
+*retrieve* a few hundred candidates, then *rank* them. Hard filters and
+exclusions apply to the retrieved list exactly as they do to the full catalog.
 """
 
 from __future__ import annotations
@@ -13,7 +20,7 @@ import hashlib
 import json
 import pickle
 from abc import ABC, abstractmethod
-from collections.abc import Collection, Sequence
+from collections.abc import Container, Mapping, Sequence
 from pathlib import Path
 from typing import Any, ClassVar, Self
 
@@ -41,6 +48,10 @@ class Recommender(ABC):
     version: ClassVar[int] = 1
     # Does the model react to this user's own likes/quiz answers?
     personalized: ClassVar[bool] = True
+    # True = ranks every eligible item. False = a *candidate source* that only
+    # returns items it has evidence for (e.g. co-viewed with something the user
+    # just looked at), so its lists can be shorter than k, or empty.
+    exhaustive: ClassVar[bool] = True
     # Plain-language description for explainability tools (the Rec Lab).
     summary: ClassVar[str] = ""
     uses: ClassVar[str] = ""
@@ -51,6 +62,8 @@ class Recommender(ABC):
     def __init__(self) -> None:
         self._items: list[Item] = []
         self._index: dict[ItemId, int] = {}
+        self._recommendable: list[ItemId] = []
+        self._recommendable_set: frozenset[ItemId] = frozenset()
         self._fitted = False
 
     # -- identity -----------------------------------------------------------
@@ -72,6 +85,10 @@ class Recommender(ABC):
     def fit(self, data: TrainingData) -> Self:
         self._items = [i for i in data.items if i.is_active]
         self._index = {item.item_id: n for n, item in enumerate(self._items)}
+        # Non-recommendable items stay in self._items (models learn from them and
+        # use them as explanation anchors) but never enter a candidate pool.
+        self._recommendable = [item.item_id for item in self._items if item.recommendable]
+        self._recommendable_set = frozenset(self._recommendable)
         self._fit(data)
         self._fitted = True
         return self
@@ -81,7 +98,7 @@ class Recommender(ABC):
         user: UserContext,
         k: int = 10,
         *,
-        candidates: Collection[ItemId] | None = None,
+        candidates: Container[ItemId] | None = None,
         explain: bool = True,
     ) -> list[ScoredItem]:
         """Top-k items for a user.
@@ -89,8 +106,12 @@ class Recommender(ABC):
         `candidates` restricts the pool. Hard business constraints (budget,
         in stock, ships to the user's state) are applied by the caller through
         this argument, not inside models, so every model obeys them the same way.
+        It can be any container with a fast `in` (a set, or a view such as
+        "in stock at time t").
         """
-        pool = self._pool(candidates, exclude=user.excluded)
+        self._check_fitted()
+        retrieved = self._retrieve(user, k + len(user.excluded))
+        pool = self._pool(candidates, exclude=user.excluded, retrieved=retrieved)
         if not pool:
             return []
         scores = self._score_user(user, pool)
@@ -104,10 +125,12 @@ class Recommender(ABC):
         item_id: ItemId,
         k: int = 10,
         *,
-        candidates: Collection[ItemId] | None = None,
+        candidates: Container[ItemId] | None = None,
     ) -> list[ScoredItem]:
         """Item-to-item recommendations ("you might also like")."""
-        pool = self._pool(candidates, exclude={item_id})
+        self._check_fitted()
+        retrieved = self._retrieve_similar(item_id, k + 1)
+        pool = self._pool(candidates, exclude={item_id}, retrieved=retrieved)
         if not pool:
             return []
         scores = self._score_similar(item_id, pool)
@@ -146,6 +169,18 @@ class Recommender(ABC):
     def _fit(self, data: TrainingData) -> None:  # noqa: B027 - optional hook
         """Learn from `data`. `self._items` and `self._index` are already set."""
 
+    def _retrieve(self, user: UserContext, n: int) -> Sequence[ItemId] | None:
+        """Candidate items worth scoring for `user` (about `n` are needed).
+
+        None (the default) means the whole catalog. Sources that only know
+        about some items return just those.
+        """
+        return None
+
+    def _retrieve_similar(self, item_id: ItemId, n: int) -> Sequence[ItemId] | None:
+        """Like `_retrieve`, for `similar_items`."""
+        return None
+
     @abstractmethod
     def _score_user(self, user: UserContext, pool: Sequence[ItemId]) -> np.ndarray:
         """Score every item in `pool` for `user`. Higher is better."""
@@ -158,19 +193,36 @@ class Recommender(ABC):
 
     # -- helpers ------------------------------------------------------------
 
-    def _pool(
-        self, candidates: Collection[ItemId] | None, exclude: Collection[ItemId]
-    ) -> list[ItemId]:
+    def _check_fitted(self) -> None:
         if not self._fitted:
             raise NotFittedError(f"{self.name}: call fit() first")
-        # Non-recommendable items stay in self._items (models learn from them and
-        # use them as explanation anchors) but never enter a candidate pool.
-        ids: Sequence[ItemId] = [item.item_id for item in self._items if item.recommendable]
+
+    def _rank(self, scores: Mapping[ItemId, float]) -> list[ItemId]:
+        """Every recommendable item, best score first; ties keep catalog order.
+
+        User-independent models compute this once at fit time, and `_retrieve`
+        then just slices the top of it.
+        """
+        values = np.array([scores.get(i, 0.0) for i in self._recommendable], dtype=float)
+        return [self._recommendable[n] for n in np.argsort(-values, kind="stable")]
+
+    def _pool(
+        self,
+        candidates: Container[ItemId] | None,
+        exclude: Container[ItemId],
+        retrieved: Sequence[ItemId] | None = None,
+    ) -> list[ItemId]:
+        self._check_fitted()
+        if retrieved is None:
+            ids: Sequence[ItemId] = self._recommendable
+        else:  # dedupe, keep the retrieval order (it breaks score ties)
+            ok = self._recommendable_set
+            ids = [i for i in dict.fromkeys(retrieved) if i in ok]
         if candidates is not None:
-            allowed = set(candidates)
+            # Lists and tuples have slow `in`; anything else is used as is.
+            allowed = set(candidates) if isinstance(candidates, Sequence) else candidates
             ids = [i for i in ids if i in allowed]
-        excluded = set(exclude)
-        return [i for i in ids if i not in excluded]
+        return [i for i in ids if i not in exclude]
 
 
 def _top_k(pool: Sequence[ItemId], scores: np.ndarray, k: int) -> list[tuple[ItemId, float]]:

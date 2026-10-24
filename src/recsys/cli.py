@@ -13,6 +13,7 @@ from recsys.config import Settings
 from recsys.eval import evaluate as run_evaluation
 from recsys.eval import leave_last_out, load_interactions_csv, temporal_split, to_markdown
 from recsys.eval.report import write_report
+from recsys.eval.split import groups_from_facet, next_event_split
 from recsys.models import REGISTRY, load_model_config
 from recsys.store import init_db, make_engine
 from recsys.store.repo import sync_catalog
@@ -62,7 +63,9 @@ def evaluate(
         str, typer.Option(help="Comma-separated model names from the registry")
     ] = ",".join(REGISTRY),
     k: Annotated[list[int] | None, typer.Option(help="Cutoffs; repeat for several")] = None,
-    split: Annotated[str, typer.Option(help="temporal | last")] = "temporal",
+    split: Annotated[
+        str, typer.Option(help="temporal | last | next (session-aware next add-to-cart)")
+    ] = "temporal",
     test_fraction: Annotated[float, typer.Option(help="temporal: share of latest data")] = 0.2,
     last_n: Annotated[int, typer.Option(help="last: positives held out per user")] = 1,
     baseline: Annotated[str, typer.Option(help="Model name others are compared to")] = (
@@ -71,6 +74,15 @@ def evaluate(
     out: Annotated[Path, typer.Option(help="Where report .md/.json go")] = Path("artifacts/eval"),
     model_config: Annotated[
         Path | None, typer.Option(help="YAML of models + params (overrides --models)")
+    ] = None,
+    target: Annotated[
+        str, typer.Option(help="next: the event to predict (add_to_cart | purchase)")
+    ] = "add_to_cart",
+    availability: Annotated[
+        Path | None, typer.Option(help="next: stock timeline CSV; filters to items in stock then")
+    ] = None,
+    group_facet: Annotated[
+        str | None, typer.Option(help="next: tag facet used as 'category' for novelty segments")
     ] = None,
 ) -> None:
     """Fit models on a time-based split of INTERACTIONS and report metrics with CIs."""
@@ -94,8 +106,20 @@ def evaluate(
         s = temporal_split(catalog.items, data, test_fraction=test_fraction)
     elif split == "last":
         s = leave_last_out(catalog.items, data, n=last_n)
+    elif split == "next":
+        from recsys.candidates import AvailabilityTimeline
+        from recsys.core.types import InteractionKind
+
+        s = next_event_split(
+            catalog.items,
+            data,
+            test_fraction=test_fraction,
+            target_kind=InteractionKind(target),
+            item_groups=groups_from_facet(catalog.items, group_facet) if group_facet else None,
+            availability=AvailabilityTimeline.load_csv(availability) if availability else None,
+        )
     else:
-        typer.echo("--split must be 'temporal' or 'last'", err=True)
+        typer.echo("--split must be 'temporal', 'last' or 'next'", err=True)
         raise typer.Exit(1)
 
     report = run_evaluation(built, s, ks=tuple(k or (5, 10, 20)), baseline=baseline)

@@ -112,6 +112,7 @@ def test_catalog_has_category_paths(prepared):
         Tag("category", "2"),
         Tag("category", "3"),
     }
+    assert Tag("department", "1") in items["10"].tags  # top-level category
     assert items["12"].tags == frozenset()  # no category known
 
 

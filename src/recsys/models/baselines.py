@@ -70,6 +70,10 @@ DEFAULT_POPULARITY_WEIGHTS: dict[str, float] = {
     InteractionKind.SAVE: 1.0,
     InteractionKind.AFFILIATE_CLICK: 1.0,
     InteractionKind.CLICK: 0.25,
+    # E-commerce funnel: a page view is a weak signal, a cart or purchase a strong one.
+    InteractionKind.VIEW: 0.25,
+    InteractionKind.ADD_TO_CART: 1.0,
+    InteractionKind.PURCHASE: 1.0,
 }
 
 
@@ -79,7 +83,7 @@ class PopularityRecommender(Recommender):
     name = "most_popular"
     personalized = False
     summary = (
-        "Scores each item by how many users liked, saved or clicked to buy it. "
+        "Scores each item by how many users liked, saved, carted or bought it. "
         "Everyone sees the same order once hard filters are applied."
     )
     uses = "Everyone else's feedback"
@@ -89,14 +93,21 @@ class PopularityRecommender(Recommender):
     )
     concepts = "popularity baseline, popularity bias"
 
-    def __init__(self, weights: dict[str, float] | None = None) -> None:
+    def __init__(
+        self, weights: dict[str, float] | None = None, retrieval_depth: int = 1000
+    ) -> None:
         super().__init__()
         self.weights = dict(weights or DEFAULT_POPULARITY_WEIGHTS)
+        # Only the top `retrieval_depth` items are ever scored (plus enough to
+        # cover the user's exclusions): the rest of a 235k catalog can't reach
+        # a top 20 anyway, unless hard filters remove nearly everything above it.
+        self.retrieval_depth = retrieval_depth
         self._popularity: dict[ItemId, float] = {}
+        self._ranked: list[ItemId] = []
 
     @property
     def params(self) -> dict[str, Any]:
-        return {"weights": self.weights}
+        return {"weights": self.weights, "retrieval_depth": self.retrieval_depth}
 
     def _fit(self, data: TrainingData) -> None:
         # Max weight per (user, item): one enthusiastic user who clicks 50 times
@@ -114,6 +125,13 @@ class PopularityRecommender(Recommender):
         for (_, item_id), w in best.items():
             popularity[item_id] += w
         self._popularity = dict(popularity)
+        self._ranked = self._rank(self._popularity)
+
+    def _retrieve(self, user: UserContext, n: int) -> Sequence[ItemId]:
+        return self._ranked[: max(n, self.retrieval_depth)]
+
+    def _retrieve_similar(self, item_id: ItemId, n: int) -> Sequence[ItemId]:
+        return self._ranked[: max(n, self.retrieval_depth)]
 
     def _scores(self, pool: Sequence[ItemId]) -> np.ndarray:
         return np.array([self._popularity.get(i, 0.0) for i in pool], dtype=float)
@@ -135,5 +153,8 @@ class PopularityRecommender(Recommender):
         return ScoreBreakdown(
             total=value,
             components=(ScoreComponent("weighted count of users with a positive signal", value),),
-            formula="score = Σ users: max weight of their signals (like/save/buy 1.0, click 0.25)",
+            formula=(
+                "score = Σ users: max weight of their signals "
+                "(like/save/cart/buy 1.0, click/view 0.25)"
+            ),
         )

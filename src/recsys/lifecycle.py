@@ -23,7 +23,10 @@ BULK_ITEMS = 10
 
 class Stage(StrEnum):
     NEW_VISITOR = "new visitor"  # nothing before this visit
-    RETURNING = "returning, no order"
+    BROWSER = "browser"  # came back, never carted
+    # Carted in an earlier visit, never bought: as close to buying as a
+    # first-time buyer (docs/experiments/2026-10-24-lifecycle-stages-deep-dive.md).
+    ABANDONER = "abandoner"
     FIRST_ORDER = "1 order"
     REPEAT = "2+ orders"
     BULK = "bulk buyer"
@@ -47,6 +50,9 @@ def lifecycle_stage(events: Sequence[Interaction], session_id: str | None = None
         return Stage.REPEAT
     if n == 1:
         return Stage.FIRST_ORDER
-    if any(x.session_id != session_id or session_id is None for x in events):
-        return Stage.RETURNING
+    earlier = [x for x in events if x.session_id != session_id or session_id is None]
+    if any(x.kind == InteractionKind.ADD_TO_CART for x in earlier):
+        return Stage.ABANDONER
+    if earlier:
+        return Stage.BROWSER
     return Stage.NEW_VISITOR

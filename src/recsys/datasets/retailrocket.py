@@ -53,6 +53,8 @@ tag_facets:
   category: {column: category_path, multi: true}
   # Top-level category: the unit for "did the shopper move into a new category?"
   department: {column: department}
+  # Second level (136 of them): the "product type" for shopper profiles.
+  type: {column: type}
 """
 
 
@@ -151,6 +153,8 @@ def prepare(raw_dir: Path, out_dir: Path, *, gap_minutes: float | None = None) -
         lambda c: ";".join(map(str, paths.get(int(c), [int(c)]))) if c is not pd.NA else ""
     )
     items["department"] = items.category_path.str.split(";").str[0]
+    levels = items.category_path.str.split(";")
+    items["type"] = levels.str[1].where(levels.str.len() > 1, items.department)
     items["item_id"] = items.item_id.astype(str)
 
     # -- availability changes over time (keep only actual flips) ------------------

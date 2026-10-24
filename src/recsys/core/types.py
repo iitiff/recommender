@@ -152,6 +152,9 @@ class ExplanationKind(StrEnum):
     RECENTLY_VIEWED = "recently_viewed"  # anchored on the item itself
     ALSO_VIEWED = "also_viewed"  # "shoppers who viewed X also looked at this"
     TRENDING = "trending"
+    BUY_AGAIN = "buy_again"  # anchored on the item itself
+    ALTERNATIVE = "alternative"  # anchored on the cart item it replaces
+    NEW_FOR_YOU = "new_for_you"  # a product type new to the shopper (shared_tags)
 
 
 @dataclass(frozen=True, slots=True)

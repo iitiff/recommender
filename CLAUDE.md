@@ -47,11 +47,12 @@ src/recsys/
   catalog/    catalog.yaml spec + CSV loader with full validation
   events/     event schema (pydantic) + EventLogger (the one place events are written)
   store/      SQLAlchemy Core tables, engine setup, repo functions (the only SQL)
-  models/     Recommender base class + models (baselines, content-based, session sources)
+  models/     Recommender base class + models (baselines, content-based, session and journey sources)
   profile/    taste quiz spec → profile (cold start)
   candidates.py  hard filters (budget, stock, shipping) with funnel counts; stock over time
   sessions.py    split event streams into visits (30-min inactivity gap)
   lifecycle.py   lifecycle stage of a shopper at a moment, derived from events
+  shopper.py     shopper profile at request time (docs/SHOPPER-PROFILE.md): ShopperState, ItemFacts
   datasets/   public dataset adapters (raw → engine layout) + re-engagement profile
   eval/       splits, metrics, bootstrap CIs, harness, reports
   lab/        Rec Lab: FastAPI + Jinja2 + HTMX explainability tool (never writes the DB)

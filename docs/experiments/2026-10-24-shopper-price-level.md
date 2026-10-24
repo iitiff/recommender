@@ -115,7 +115,8 @@ Spearman 0.16 across all of them.
 | Shopper's band in this product type | this type, over time | 74% of type-level price position |
 | Shopper's general price level | across types, needs history | 14% of a type's position; forecasts new-category tier (1.8× premium) |
 
-**Design: a hierarchical price profile.**
+**Design: a hierarchical price profile** (adopted as the engine convention
+"Price is context, not taste" in CLAUDE.md).
 - Estimate each shopper's band per product type, shrunk toward their general
   level when that type has little data, and the general level shrunk toward
   the store average when history is thin. Concepts: **hierarchical (multilevel)

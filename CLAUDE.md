@@ -92,7 +92,17 @@ uv run recsys evaluate data/retailrocket/catalog data/retailrocket/interactions.
   `exhaustive = False`.
 - **Hard constraints (budget, stock, shipping) are candidate filters**
   (`recsys.candidates`) passed via `candidates=`, never baked into a model.
-  Price is never a taste feature.
+- **Price is context, not taste.** Taste/content similarity never uses price
+  (tag similarity ignores the `price` attribute). Price may be a *soft
+  ranking signal* at three levels:
+  - distance to the price of the item being viewed (this visit);
+  - the shopper's price band in that product type;
+  - their general price level, pooled across their history and partially
+    pooled toward the type and store averages when evidence is thin.
+
+  Evidence: docs/experiments/2026-10-24-shopper-price-level.md. Price never
+  filters beyond the shopper's own budget, never labels shoppers (no income
+  inference), and never changes the price a shopper is charged.
 - **Hyperparameters live in config** (`load_model_config`), not code; niche
   weights belong in the private repo.
 - **Rateable ≠ recommendable.** Items with `recommendable=False` (set by

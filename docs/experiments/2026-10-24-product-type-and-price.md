@@ -154,7 +154,8 @@ components → peripherals 7%.
 - **Convention to revisit:** CLAUDE.md says "Price is never a taste feature."
   Superseded by the proposal in `2026-10-24-shopper-price-level.md`: three
   price signals (anchor band, per-type band, general level) as soft ranking
-  priors; budget stays a hard filter. Pending the owner's decision.
+  priors; budget stays a hard filter. Adopted 2026-10-24 (CLAUDE.md,
+  "Price is context, not taste").
 
 **Caveats:**
 - One store, electronics-heavy (smartphones are 39% of the purchases analyzed), two months.

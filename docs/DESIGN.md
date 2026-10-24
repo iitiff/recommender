@@ -132,6 +132,14 @@ class Recommender(ABC):
 - **Hard constraints are candidate filters.** Budget, stock and shipping
   region remove items *before* ranking; preferences only reorder. Every model
   obeys constraints identically.
+- **Price is context, not taste.**
+  - Content similarity ignores price.
+  - Ranking may use three soft price signals: the price band around the
+    item being viewed, the shopper's band in that product type, and their
+    general level pooled across history (a hierarchical, partially pooled
+    profile).
+  - Price is never used to label shoppers or to set prices.
+  - Evidence: `docs/experiments/2026-10-24-shopper-price-level.md`.
 - **Structured explanations.** `Explanation(kind, anchor_item_ids,
   shared_tags)`; templates render text. The `kind` is logged per slate item so
   we can measure which explanation types earn clicks.

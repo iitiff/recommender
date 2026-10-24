@@ -58,8 +58,26 @@ increasing sophistication, measuring each step:
 |---|---|---|
 | North star (loyalty) | **Second-order rate** of first-time buyers within N days; **90-day retained customers** | The bottleneck, and the outcome loyalty is made of |
 | Per message | **Incremental** conversions (or new-category purchases) per message vs a randomized holdout | Organic return rates are high (28% of abandoned carts return anyway) |
+| Leading indicator | **Incremental return visits within 7 days** per message vs holdout | Visits come long before orders, so experiments can read out faster; never the decision metric on its own |
 | Long term | Incremental orders (or revenue) per customer over 90 days | Catches messages that win now but hurt later (e.g. discounts training discount-seeking) |
 | Guardrails | Unsubscribes, complaints, messages per customer per week, relevance of expansion picks | Fatigue destroys the channel you're optimizing |
+
+## Visits: the leading signal
+
+Orders are rare and slow; visits arrive early. In REES46 the median number of
+visits in a customer's first 30 days climbs with loyalty: **2** (browse only)
+→ **5** (one order) → **7** (two) → **10** (three or more). Cart abandoners
+visit as much as one-order buyers (they're interested; something blocks them).
+A first order typically takes 2 visits over 2 days, and the second order comes
+about **2 visits after the first**
+(`docs/experiments/2026-10-24-visits-by-cohort.md`).
+
+So:
+- **Lifecycle features include visit frequency and recency**, RFM-style
+  (recency, frequency, monetary value), not just orders.
+- **Messages get a leading metric:** return visit within 7 days, fast to
+  measure. Purchases (and the second-order rate) remain the lagging metric
+  that decides. Never optimize visits alone; that rewards clickbait.
 
 ## What varies by store (so it must be learned, per tenant)
 

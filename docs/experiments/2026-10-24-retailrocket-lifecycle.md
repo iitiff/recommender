@@ -11,6 +11,7 @@
 >   Olist, REES46 or H&M. It is specific to this store.
 > - "Order = session" counted same-day returns as repeat purchases; the
 >   cross-dataset analysis uses "order = customer-day" and fixed horizons.
+
 **Data:** RetailRocket prepared (CC BY-NC-SA 4.0; derived statistics shared under the
 same license). An *order* = a session containing at least one purchase. The
 window is 137 days, so late first orders had less time to repeat (right-censoring).

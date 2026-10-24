@@ -60,6 +60,7 @@ message sent vs holdout (uplift), with unsubscribe and frequency guardrails.
          adjacent category from category transitions) and a blender whose
          per-source weights depend on the shopper's state (rules by stage first,
          then learned); measured segment by segment against 2a
+         Spec for the shopper-state features: docs/SHOPPER-PROFILE.md
 3. - [ ] Day-by-day replay: nightly retrain → eval gate → model registry
 4. - [ ] Lifecycle messaging (docs/LIFECYCLE.md): lifecycle stages; triggers
          (abandoned cart/browse, post-purchase, back-in-stock, win-back); two message

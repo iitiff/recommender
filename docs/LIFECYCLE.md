@@ -165,6 +165,9 @@ buyers bought 29% of the items.
 - **Messages are logged like slates:** `message_sent` carries the action, the
   items, the model and the propensity, so uplift and bandit evaluation work later.
 
+The full shopper model (every dimension, its evidence, stability and the
+decision it drives) is in `docs/SHOPPER-PROFILE.md`.
+
 ## On-site recommendations: one recommender, many journeys
 
 The same stage logic applies on the site, not just in messages. No single

@@ -6,6 +6,11 @@ import yaml
 from recsys.models.base import NotFittedError, Recommender
 from recsys.models.baselines import PopularityRecommender, RandomRecommender
 from recsys.models.content import TagSimilarityRecommender
+from recsys.models.journey import (
+    AdjacentCategoryRecommender,
+    CartSubstitutesRecommender,
+    RebuyRecommender,
+)
 from recsys.models.session import (
     CoVisitationRecommender,
     RecentlyViewedRecommender,
@@ -21,6 +26,9 @@ REGISTRY: dict[str, Callable[..., Recommender]] = {
     RecentlyViewedRecommender.name: RecentlyViewedRecommender,
     CoVisitationRecommender.name: CoVisitationRecommender,
     TrendingRecommender.name: TrendingRecommender,
+    RebuyRecommender.name: RebuyRecommender,
+    CartSubstitutesRecommender.name: CartSubstitutesRecommender,
+    AdjacentCategoryRecommender.name: AdjacentCategoryRecommender,
 }
 
 
@@ -53,10 +61,13 @@ def load_model_config(path: Path) -> list[Recommender]:
 
 __all__ = [
     "REGISTRY",
+    "AdjacentCategoryRecommender",
+    "CartSubstitutesRecommender",
     "CoVisitationRecommender",
     "NotFittedError",
     "PopularityRecommender",
     "RandomRecommender",
+    "RebuyRecommender",
     "RecentlyViewedRecommender",
     "Recommender",
     "TagSimilarityRecommender",

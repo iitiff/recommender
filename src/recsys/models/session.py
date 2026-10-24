@@ -44,15 +44,7 @@ from recsys.core.types import (
 )
 from recsys.models.base import Recommender
 from recsys.sessions import sessionize
-
-# How much each behaviour says about intent. Untuned defaults: carting or
-# buying says more than a page view. Override in config.
-DEFAULT_EVENT_WEIGHTS: dict[str, float] = {
-    InteractionKind.VIEW: 1.0,
-    InteractionKind.CLICK: 1.0,
-    InteractionKind.ADD_TO_CART: 3.0,
-    InteractionKind.PURCHASE: 3.0,
-}
+from recsys.shopper import DEFAULT_EVENT_WEIGHTS
 
 _VERB = {
     InteractionKind.VIEW: "viewed",
@@ -174,6 +166,9 @@ class CoVisitationRecommender(Recommender):
     good_at = "Continuing the current shopping trip into items the shopper hasn't seen yet."
     weak_at = "Nothing to go on before the first view; favours items many people browse."
     concepts = "co-visitation, item-to-item collaborative filtering, association rules"
+    # Wording, so subclasses that pick different anchors explain themselves.
+    _anchor_label = "viewed together with {title}"
+    _explanation_kind = ExplanationKind.ALSO_VIEWED
 
     def __init__(
         self,
@@ -295,8 +290,14 @@ class CoVisitationRecommender(Recommender):
         out: dict[ItemId, dict[ItemId, float]] = defaultdict(dict)
         for anchor, weight in self._anchors(user):
             for other, conf in self.neighbors(anchor):
-                out[other][anchor] = weight * conf
+                pair = self._pair_weight(anchor, other)
+                if pair > 0:
+                    out[other][anchor] = weight * conf * pair
         return out
+
+    def _pair_weight(self, anchor: ItemId, other: ItemId) -> float:
+        """Multiplier on a neighbour (0 drops it). Subclasses restrict or re-weight pairs."""
+        return 1.0
 
     def _user_scores(self, user: UserContext) -> dict[ItemId, float]:
         return {item: sum(parts.values()) for item, parts in self._contributions(user).items()}
@@ -306,7 +307,9 @@ class CoVisitationRecommender(Recommender):
         return sorted(scores, key=lambda i: -scores[i])
 
     def _retrieve_similar(self, item_id: ItemId, n: int) -> Sequence[ItemId]:
-        return [other for other, _ in self.neighbors(item_id)]
+        return [
+            other for other, _ in self.neighbors(item_id) if self._pair_weight(item_id, other) > 0
+        ]
 
     def _score_user(self, user: UserContext, pool: Sequence[ItemId]) -> np.ndarray:
         scores = self._user_scores(user)
@@ -314,17 +317,19 @@ class CoVisitationRecommender(Recommender):
 
     def _score_similar(self, item_id: ItemId, pool: Sequence[ItemId]) -> np.ndarray:
         conf = dict(self.neighbors(item_id))
-        return np.array([conf.get(i, 0.0) for i in pool], dtype=float)
+        return np.array(
+            [conf.get(i, 0.0) * self._pair_weight(item_id, i) for i in pool], dtype=float
+        )
 
     def explain(self, user: UserContext, item_id: ItemId) -> Explanation | None:
         parts = self._contributions(user).get(item_id)
         if not parts:
             return None
         anchor = max(parts, key=lambda a: parts[a])
-        return Explanation(ExplanationKind.ALSO_VIEWED, anchor_item_ids=(anchor,))
+        return Explanation(self._explanation_kind, anchor_item_ids=(anchor,))
 
     def _explain_similar(self, item_id: ItemId, other: ItemId) -> Explanation | None:
-        return Explanation(ExplanationKind.ALSO_VIEWED, anchor_item_ids=(item_id,))
+        return Explanation(self._explanation_kind, anchor_item_ids=(item_id,))
 
     def score_breakdown(self, user: UserContext, item_id: ItemId) -> ScoreBreakdown | None:
         parts = self._contributions(user).get(item_id, {})
@@ -333,11 +338,12 @@ class CoVisitationRecommender(Recommender):
         return ScoreBreakdown(
             total=sum(parts.values()),
             components=tuple(
-                ScoreComponent(f"viewed together with {titles.get(a, a)}", v) for a, v in ranked
+                ScoreComponent(self._anchor_label.format(title=titles.get(a, a)), v)
+                for a, v in ranked
             ),
             formula=(
-                "score = Σ your latest items a: (signal weight × "
-                f"{self.anchor_decay:g}^rank) × confidence(a → item)"
+                "score = Σ anchors a: (anchor weight × "
+                f"{self.anchor_decay:g}^rank) × confidence(a → item) × pair weight"
             ),
             anchors=tuple(ranked),
         )

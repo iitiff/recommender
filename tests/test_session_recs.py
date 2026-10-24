@@ -155,7 +155,7 @@ def test_popularity_retrieval_depth_still_respects_filters():
 def test_lifecycle_stage():
     assert lifecycle_stage([], "s:0") == Stage.NEW_VISITOR
     assert lifecycle_stage([ev("s", "a", session="s:0")], "s:0") == Stage.NEW_VISITOR
-    assert lifecycle_stage([ev("s", "a", session="s:0")], "s:1") == Stage.RETURNING
+    assert lifecycle_stage([ev("s", "a", session="s:0")], "s:1") == Stage.BROWSER
     one = [ev("s", "a", P), ev("s", "b", P, minutes=60)]  # same day: one order
     assert lifecycle_stage(one, "s:9") == Stage.FIRST_ORDER
     two = [*one, ev("s", "c", P, minutes=2 * 24 * 60)]

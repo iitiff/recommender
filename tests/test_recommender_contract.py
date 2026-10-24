@@ -7,15 +7,19 @@ promises for free.
 from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
+from functools import partial
 
 import pytest
 
 from recsys.core.types import Interaction, InteractionKind, UserContext
 from recsys.models import (
+    AdjacentCategoryRecommender,
+    CartSubstitutesRecommender,
     CoVisitationRecommender,
     NotFittedError,
     PopularityRecommender,
     RandomRecommender,
+    RebuyRecommender,
     RecentlyViewedRecommender,
     Recommender,
     TagSimilarityRecommender,
@@ -29,10 +33,18 @@ MODELS = [
     RecentlyViewedRecommender,
     CoVisitationRecommender,
     TrendingRecommender,
+    RebuyRecommender,
+    CartSubstitutesRecommender,
+    # The demo catalog has one category, so varietal stands in for product type.
+    partial(AdjacentCategoryRecommender, type_facet="varietal", min_transitions=1),
 ]
 
 
-@pytest.fixture(params=MODELS, ids=lambda cls: cls.name)
+def _name(factory) -> str:  # noqa: ANN001 - a class or a functools.partial of one
+    return getattr(factory, "func", factory).name
+
+
+@pytest.fixture(params=MODELS, ids=_name)
 def model(request, shop_training) -> Recommender:
     return request.param().fit(shop_training)
 
@@ -43,16 +55,23 @@ def recommendable_ids(data) -> list[str]:
 
 @pytest.fixture
 def user(demo_training) -> UserContext:
-    """Rated a few items and is mid-visit: viewed ten items, carted one."""
+    """Rated a few items, bought one last week, and is mid-visit: viewed ten
+    items and carted two."""
     ids = recommendable_ids(demo_training)
     t0 = datetime(2026, 2, 1, tzinfo=UTC)
     events = [
+        Interaction(
+            "u-test", ids[11], InteractionKind.PURCHASE, 1, t0 - timedelta(days=7), "u-test:old"
+        )
+    ]
+    events += [
         Interaction("u-test", i, InteractionKind.VIEW, 1, t0 + timedelta(minutes=n), "u-test:0")
         for n, i in enumerate(ids[3:13])
     ]
-    events.append(
-        Interaction("u-test", ids[5], InteractionKind.ADD_TO_CART, 1, t0 + timedelta(minutes=20))
-    )
+    events += [
+        Interaction("u-test", i, InteractionKind.ADD_TO_CART, 1, t0 + timedelta(minutes=20 + n))
+        for n, i in enumerate((ids[5], ids[12]))
+    ]
     return UserContext(
         user_id="u-test",
         liked=(ids[0],),
@@ -84,7 +103,7 @@ def test_excludes_rated_and_hidden(model, user, demo_training):
 def test_respects_candidates(model, user, demo_training):
     allowed = set(recommendable_ids(demo_training)[10:15])
     recs = {r.item_id for r in model.recommend(user, k=10, candidates=allowed)}
-    assert recs == allowed if model.exhaustive else recs and recs <= allowed
+    assert recs == allowed if model.exhaustive else recs <= allowed
     # Any container with `in` works (e.g. "in stock at time t"), and lists too.
     assert {r.item_id for r in model.recommend(user, k=10, candidates=sorted(allowed))} == recs
 

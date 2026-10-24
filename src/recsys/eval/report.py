@@ -12,7 +12,8 @@ from recsys.eval.harness import EvalReport
 # Segments in journey order rather than alphabetical.
 SEGMENT_ORDER = (
     "new visitor",
-    "returning, no order",
+    "browser",
+    "abandoner",
     "1 order",
     "2+ orders",
     "bulk buyer",

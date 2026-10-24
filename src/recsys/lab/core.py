@@ -398,4 +398,16 @@ def explanation_text(
         )
     if exp.kind == ExplanationKind.TRENDING:
         return "Trending now", "Not personalized"
+    if exp.kind == ExplanationKind.BUY_AGAIN:
+        return "Buy it again", "You bought this before"
+    if exp.kind == ExplanationKind.ALTERNATIVE and exp.anchor_item_ids:
+        anchor = lab.by_id.get(exp.anchor_item_ids[0])
+        return (
+            f"An alternative to {anchor.title if anchor else exp.anchor_item_ids[0]}",
+            "In your cart",
+        )
+    if exp.kind == ExplanationKind.NEW_FOR_YOU:
+        anchor = lab.by_id.get(exp.anchor_item_ids[0]) if exp.anchor_item_ids else None
+        detail = f"Shoppers who liked {anchor.title} often try this next" if anchor else ""
+        return "Something new for you", detail
     return "Recommended for you", tags

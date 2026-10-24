@@ -56,10 +56,13 @@ message sent vs holdout (uplift), with unsubscribe and frequency guardrails.
          request time, next-add-to-cart eval split by lifecycle stage and by what
          the shopper did next, category-novelty metric
          (`docs/experiments/2026-10-24-session-sources-retailrocket.md`)
-   - [ ] 2b. More sources (repeat/replenish, bought-together complements,
-         adjacent category from category transitions) and a blender whose
-         per-source weights depend on the shopper's state (rules by stage first,
-         then learned); measured segment by segment against 2a
+   - [x] 2b part 1. `ShopperState` (recsys.shopper), abandoner stage, re-buy,
+         cart-substitute and adjacent-category sources
+         (`docs/experiments/2026-10-24-journey-sources-retailrocket.md`)
+   - [ ] 2b part 2. A blender whose per-source weights depend on the
+         shopper's state (rules by stage and momentum first, then learned), a
+         small dial of adjacent-category slots, and "discovery" vs "return"
+         headline metrics; measured segment by segment against 2a
          Spec for the shopper-state features: docs/SHOPPER-PROFILE.md
 3. - [ ] Day-by-day replay: nightly retrain → eval gate → model registry
 4. - [ ] Lifecycle messaging (docs/LIFECYCLE.md): lifecycle stages; triggers

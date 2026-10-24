@@ -20,8 +20,10 @@ behaviour.
 
 A stage alone is too wide (`docs/experiments/2026-10-24-lifecycle-stages-deep-dive.md`).
 In both RetailRocket and REES46, near-term ordering differs 1.5–3× *within* a
-stage, and what shoppers cart next changes with what they are doing. Four
-layers describe a shopper at a moment:
+stage, and what shoppers cart next changes with what they are doing. And
+what they're shopping for changes how they decide
+(`docs/experiments/2026-10-24-product-type-and-price.md`). Five layers
+describe a shopper at a moment:
 
 | Layer | Changes | Examples | What it changes |
 |---|---|---|---|
@@ -29,6 +31,7 @@ layers describe a shopper at a moment:
 | **Momentum** | by the hour | open cart <1 day old, ordered in the last day, back within the hour | how close they are to buying: timing and urgency of messages |
 | **Style** | rarely | decisive (few visits per order), researcher (many), window shopper (never carts) | help deciding vs more options; whom not to message |
 | **Current visit** | by the click | depth (one product page vs several), focus (one department vs exploring), open cart | which source fills the slots right now |
+| **Product context** | per item | product type's deliberation time and comparison breadth; price relative to the item being viewed | how long to wait before a nudge; how many and which alternatives (price-banded) |
 
 Findings that change behaviour:
 - **Abandoners** order almost as soon as first-time buyers, and half their
@@ -38,6 +41,14 @@ Findings that change behaviour:
   discovery.
 - **One product page in:** the shopper carts that page 82% of the time, so
   recommendation slots should hold alternatives and complements, not the item.
+
+- **High-involvement products** (smartphones, premium tiers) are decided over
+  days and visits; **low-involvement** ones (irons, small appliances) in
+  minutes. Message timing follows the product, not just the shopper.
+- **Price is a property of the moment more than of the person:** shoppers
+  compare within about ±30% of the item in front of them, while a
+  shopper's price tier barely carries across categories (correlation
+  0.13–0.21).
 
 Humans get a handful of segments (stage + momentum + open cart). Models get
 the underlying features directly and personalize continuously.

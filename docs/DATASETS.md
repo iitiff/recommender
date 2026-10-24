@@ -31,6 +31,7 @@ Lifecycle comparison in `docs/experiments/2026-10-24-lifecycle-across-datasets.m
 | **REES46** multi-category store, Oct–Nov 2019 | "© Original Authors" (aggregate statistics only) | Kaggle `mkechinov/...` (HF mirror `kevykibbz/...oct-nov_2019`, 14.8 GB, streamed) |
 | **H&M** Personalized Fashion | Kaggle competition rules (aggregate statistics only) | HF mirror `dinhlnd1610/HM-Personalized-Fashion-Recommendations` |
 | **Online Retail II** (UK gift wholesaler, B2B) | UCI repository (CC BY 4.0, unverified) | HF mirror `attik/Online-Retail-II-UCI` |
+| **Amazon Reviews 2023** (McAuley Lab, UCSD): Electronics, Home & Kitchen, Grocery | Not stated on the dataset card; earlier Amazon releases were "non-commercial research only" (aggregate statistics only) | HF `McAuley-Lab/Amazon-Reviews-2023`: `benchmark/0core/rating_only/*.csv` + `raw/meta_categories/meta_*.jsonl`, streamed (`docs/experiments/scripts/stream_amazon.py`) |
 
 ## Candidates (not yet adapted)
 
@@ -40,7 +41,8 @@ Lifecycle comparison in `docs/experiments/2026-10-24-lifecycle-across-datasets.m
 | **Criteo Uplift** | ~13M users, randomized treatment/control, visit and conversion | Uplift at scale |
 | **OTTO** (otto-de/recsys-dataset) | ~12M sessions of clicks, carts, orders | Session-based recs at scale; well-known benchmark |
 | **Instacart** | Grocery orders and reorders | Repeat purchase, basket completion |
-| **Amazon Reviews 2023** (McAuley Lab) | Reviews + rich product metadata | Product text for embeddings |
+| **Amazon Reviews 2023**, more categories and review text | Review text (what shoppers value), more categories | Product and review text for embeddings and "what they value" |
+| **Amazon-M2** (KDD Cup 2023) | Browsing sessions in 6 countries with title, brand, price; **Apache 2.0** per the NeurIPS 2023 paper | Session recs with a clean license; cross-country comparison. No user ids across sessions |
 
 Check each license at the original source before downloading; Hugging Face
 re-uploads often omit it. Most are non-commercial or research-only: fine for

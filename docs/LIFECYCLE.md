@@ -54,6 +54,13 @@ Findings that change behaviour:
     the tier they'll buy in a new category (premium 29% vs 16%).
 
   Discount chasing, by contrast, is not a lasting trait.
+- **Over years** (`docs/experiments/2026-10-24-amazon-traits-over-years.md`):
+  - price level, mainstream taste and per-type price bands persist but fade
+    slowly (0.15–0.20 a year or more later);
+  - brand loyalty lasts for years, strongest for consumables (7× chance after
+    3+ years in grocery);
+  - shoppers add about 0.4 new product types a year, with mild adjacency
+    (TV → home audio 2.4×).
 
 - **Traits are weaker than states** (`docs/experiments/2026-10-24-shopper-traits-stability.md`):
   the most stable traits correlate 0.2–0.3 from one month to the next, while

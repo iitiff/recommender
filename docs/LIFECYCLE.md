@@ -11,7 +11,7 @@ behaviour.
 |---|---|---|---|
 | **Visitor** (browsing, anonymous) | First real intent (cart, sign-up) | On-site recs, session-based "you might also like" | Messaging people who never opted in (you can only email or push the reachable) |
 | **Carted, not bought** | First order | Abandoned-cart message with the carted item first | Discounts for people who'd buy anyway |
-| **First-time buyer** | **Second order** (the bottleneck: 5.9% in RetailRocket) | Post-purchase: replenishment if the product repeats, complements, "how's it going?" | Generic newsletters |
+| **First-time buyer** | **Second order** (often the bottleneck: 2–5% in a marketplace and a general store; much higher in electronics, fashion, B2B) | Post-purchase: replenishment if the product repeats, complements, "how's it going?" | Generic newsletters |
 | **Repeat buyer** | Habit and **breadth** | A mix of next-transaction and *adjacent*-category content | Pushing unrelated categories |
 | **Loyal** (3+ orders) | Retention | New arrivals in their categories, early access, fewer but better messages | Over-messaging (these are the people most likely to unsubscribe if annoyed) |
 | **Lapsing** (past their usual gap) | Win-back | A reason to return, timed from their own purchase rhythm | Treating a 2-day gap and a 60-day gap the same |
@@ -25,6 +25,11 @@ behaviour.
    people like them tend to move into next (learned from category transitions
    in purchase histories), to build breadth. Measured by new-category purchases
    and, ultimately, whether the customer keeps coming back.
+
+**Caution from five datasets:** in RetailRocket, customers whose second order
+was in a new category placed a third order about twice as often, but Olist,
+REES46 and H&M show no such effect. So category expansion is a hypothesis to
+test per store with a randomized holdout, not a default.
 
 A recommender trained only on "what will they click next" drifts toward job 1
 and keeps customers in their current category. That maximizes the next click,
@@ -55,6 +60,20 @@ increasing sophistication, measuring each step:
 | Per message | **Incremental** conversions (or new-category purchases) per message vs a randomized holdout | Organic return rates are high (28% of abandoned carts return anyway) |
 | Long term | Incremental orders (or revenue) per customer over 90 days | Catches messages that win now but hurt later (e.g. discounts training discount-seeking) |
 | Guardrails | Unsubscribes, complaints, messages per customer per week, relevance of expansion picks | Fatigue destroys the channel you're optimizing |
+
+## What varies by store (so it must be learned, per tenant)
+
+Across RetailRocket, Olist, REES46, H&M and a B2B wholesaler
+(`docs/experiments/2026-10-24-lifecycle-across-datasets.md`):
+- the median gap from first to second order ranges from **4 to 74 days**,
+- the 30-day second-order rate from **0.7% to 35%**,
+- exact re-buys of the same item from **9% to 76%**.
+
+A fixed "send at 1 h and 24 h" rule, or a fixed definition of "lapsing", would
+be wrong by an order of magnitude somewhere. Timing, lapse thresholds and
+trigger priorities are learned per store from its own data. And before any
+loyalty analysis, **screen out resellers/B2B buyers**: in RetailRocket, 1.2% of
+buyers bought 29% of the items.
 
 ## What this means for the engine
 

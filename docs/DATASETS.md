@@ -21,6 +21,17 @@ Prepared layout (the engine's standard one): `catalog/` (`catalog.yaml` +
 `items.csv`), `interactions.csv` (`user_id,item_id,kind,value,occurred_at,session_id`),
 `availability.csv` (`item_id,valid_from,available`, one row per stock change).
 
+## Used for analysis only (no adapter yet)
+
+Lifecycle comparison in `docs/experiments/2026-10-24-lifecycle-across-datasets.md`.
+
+| Dataset | License | Source used |
+|---|---|---|
+| **Olist** Brazilian marketplace | CC BY-NC-SA 4.0 | Kaggle `olistbr/brazilian-ecommerce` (HF mirror `bulutttt/olist-raw-data`) |
+| **REES46** multi-category store, Oct–Nov 2019 | "© Original Authors" (aggregate statistics only) | Kaggle `mkechinov/...` (HF mirror `kevykibbz/...oct-nov_2019`, 14.8 GB, streamed) |
+| **H&M** Personalized Fashion | Kaggle competition rules (aggregate statistics only) | HF mirror `dinhlnd1610/HM-Personalized-Fashion-Recommendations` |
+| **Online Retail II** (UK gift wholesaler, B2B) | UCI repository (CC BY 4.0, unverified) | HF mirror `attik/Online-Retail-II-UCI` |
+
 ## Candidates (not yet adapted)
 
 | Dataset | What it adds | Notes |
@@ -28,8 +39,6 @@ Prepared layout (the engine's standard one): `catalog/` (`catalog.yaml` +
 | **Hillstrom e-mail** (MineThatData) | 64k customers **randomly** assigned to men's email / women's email / no email, with visit, conversion, spend | Real randomized holdout: the classic dataset for learning **uplift** (incremental effect of a message) |
 | **Criteo Uplift** | ~13M users, randomized treatment/control, visit and conversion | Uplift at scale |
 | **OTTO** (otto-de/recsys-dataset) | ~12M sessions of clicks, carts, orders | Session-based recs at scale; well-known benchmark |
-| **REES46** multi-category store | Views, carts, purchases **with prices** | Revenue metrics |
-| **H&M Personalized Fashion** | Transactions + article attributes + images | Content features, seasonality |
 | **Instacart** | Grocery orders and reorders | Repeat purchase, basket completion |
 | **Amazon Reviews 2023** (McAuley Lab) | Reviews + rich product metadata | Product text for embeddings |
 
@@ -50,5 +59,13 @@ hosted outside Hugging Face, license unchecked).
   `astype("int64")` doesn't give nanoseconds. Use Timedelta arithmetic
   (`(t - epoch) / pd.Timedelta(seconds=1)`). This made every return gap look
   1000× shorter until fixed.
+- **pandas + URLs:** `pd.read_csv(url)` downloads the whole file into memory
+  before parsing. For big files pass an open stream (`urllib.request.urlopen`)
+  with `chunksize`; that's how REES46 (14.8 GB) was processed in flat memory.
+- **"Order" definitions:** sessions and marketplace order ids both create fake
+  "repeat purchases" minutes apart. Use customer-day for lifecycle work.
+- **Censoring:** use fixed horizons and only count customers with enough data
+  left (right-censoring); remember that a dataset's first order isn't the
+  customer's first ever (left-censoring).
 - **Mixed ISO formats:** timestamps with and without fractional seconds in one
   column need `format="ISO8601"` when parsing.

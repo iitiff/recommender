@@ -1,6 +1,16 @@
 # 2026-10-24: RetailRocket lifecycle: from first order to loyal customer
 
-**Status:** done (descriptive, observational)
+**Status:** done (descriptive, observational). **Superseded in part** by
+`2026-10-24-lifecycle-across-datasets.md`; see the corrections below.
+
+> **Corrections (same day, after replicating on four more datasets):**
+> - The "36% of items bought by 2+ order customers" is mostly **resellers**:
+>   1.2% of buyers (>10 items each, max 559) buy 29% of items. Without them,
+>   repeat buyers' share is ~9%.
+> - The "expanders come back twice as often" pattern **does not replicate** in
+>   Olist, REES46 or H&M. It is specific to this store.
+> - "Order = session" counted same-day returns as repeat purchases; the
+>   cross-dataset analysis uses "order = customer-day" and fixed horizons.
 **Data:** RetailRocket prepared (CC BY-NC-SA 4.0; derived statistics shared under the
 same license). An *order* = a session containing at least one purchase. The
 window is 137 days, so late first orders had less time to repeat (right-censoring).

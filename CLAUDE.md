@@ -36,7 +36,8 @@ put the niche specifics in the private repo.
 
 The earlier niche-site work is **parked** (its private repo has a resume note).
 Current work is the e-commerce track in docs/ROADMAP.md: RetailRocket replay, session-based
-recs, then push/email re-engagement measured by uplift.
+recs, then lifecycle messaging (docs/LIFECYCLE.md): move customers from first
+order to loyal, measured by uplift and second-order rate.
 
 ## Layout
 

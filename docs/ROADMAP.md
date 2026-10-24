@@ -50,11 +50,14 @@ message sent vs holdout (uplift), with unsubscribe and frequency guardrails.
 1. - [x] Dataset adapters + RetailRocket (sessions, catalog, availability over
          time) + re-engagement profile (`docs/experiments/2026-10-24-*`)
 2. - [ ] Session-based recommender (co-visitation item-item, time-decayed
-         trending), session-aware eval split, in-stock candidate filter over time
+         trending), session-aware eval split, in-stock candidate filter over time;
+         eval split by lifecycle stage + category-novelty metric (docs/LIFECYCLE.md)
 3. - [ ] Day-by-day replay: nightly retrain → eval gate → model registry
-4. - [ ] Re-engagement: triggers (abandoned cart/browse, post-purchase,
-         back-in-stock), message content ranking, return-and-buy propensity,
-         uplift on a randomized dataset (Hillstrom / Criteo); `message_*` events
+4. - [ ] Lifecycle messaging (docs/LIFECYCLE.md): lifecycle stages; triggers
+         (abandoned cart/browse, post-purchase, back-in-stock, win-back); two message
+         jobs (next transaction vs category expansion); next-best-action from
+         rules → propensity → uplift (Hillstrom / Criteo) → contextual bandit;
+         `message_*` events. North star: second-order rate, 90-day retention.
 5. - [ ] Rec Lab: live session view and an "Inbox" view (what message, why)
 
 ## Phase 2: Collaborative filtering

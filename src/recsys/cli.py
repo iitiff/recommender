@@ -105,6 +105,49 @@ def evaluate(
     typer.echo(f"saved {md} and {js}")
 
 
+dataset_app = typer.Typer(no_args_is_help=True, help="Public datasets: download, prepare, profile.")
+app.add_typer(dataset_app, name="dataset")
+
+
+def _adapter(name: str):  # type: ignore[no-untyped-def]
+    from recsys.datasets import ADAPTERS
+
+    if name not in ADAPTERS:
+        typer.echo(f"unknown dataset {name!r}; available: {sorted(ADAPTERS)}", err=True)
+        raise typer.Exit(1)
+    return ADAPTERS[name]
+
+
+@dataset_app.command("download")
+def dataset_download(name: str, raw_dir: Path) -> None:
+    """Download a dataset's raw files into RAW_DIR (check its license first)."""
+    adapter = _adapter(name)
+    typer.echo(f"{name}: license {adapter.LICENSE}\nsource: {adapter.SOURCE}")
+    for path in adapter.download(raw_dir):
+        typer.echo(f"  {path} ({path.stat().st_size / 1e6:.0f} MB)")
+
+
+@dataset_app.command("prepare")
+def dataset_prepare(
+    name: str,
+    raw_dir: Path,
+    out_dir: Path,
+    gap_minutes: Annotated[float, typer.Option(help="Inactivity that ends a session")] = 30,
+) -> None:
+    """Convert raw files into the engine layout (catalog/, interactions.csv, ...)."""
+    counts = _adapter(name).prepare(raw_dir, out_dir, gap_minutes=gap_minutes)
+    typer.echo(", ".join(f"{k}: {v:,}" for k, v in counts.items()))
+    typer.echo(f"prepared → {out_dir}")
+
+
+@dataset_app.command("profile")
+def dataset_profile(prepared_dir: Path) -> None:
+    """Re-engagement profile: who comes back after which kind of visit, and buys."""
+    from recsys.datasets.profile import profile
+
+    typer.echo(profile(prepared_dir).to_markdown())
+
+
 @app.command()
 def lab(
     catalog_dir: Path,

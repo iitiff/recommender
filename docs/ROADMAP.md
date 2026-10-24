@@ -34,6 +34,29 @@ event design.
 **Done when:** the content model beats MostPopular on the tasting panel and on
 offline eval, and the site is live, logging clean events.
 
+## E-commerce track: replay a real store, then re-engagement ← now
+
+The niche-site work is parked (too static: small curated catalog, slow
+explicit feedback). This track uses public e-commerce logs replayed day by day, the
+world the Shopify app lives in. Surface #1: "you might also like" on a product
+page; then push/email re-engagement.
+
+**Metrics.** Offline primary: Recall@20 / MRR@20 on the next add-to-cart or
+purchase in the session. Guardrails: share of recommended items in stock,
+coverage, popularity bias, latency. Online (real store): incremental revenue
+per visitor vs a randomized holdout. For messages: incremental conversions per
+message sent vs holdout (uplift), with unsubscribe and frequency guardrails.
+
+1. - [x] Dataset adapters + RetailRocket (sessions, catalog, availability over
+         time) + re-engagement profile (`docs/experiments/2026-10-24-*`)
+2. - [ ] Session-based recommender (co-visitation item-item, time-decayed
+         trending), session-aware eval split, in-stock candidate filter over time
+3. - [ ] Day-by-day replay: nightly retrain → eval gate → model registry
+4. - [ ] Re-engagement: triggers (abandoned cart/browse, post-purchase,
+         back-in-stock), message content ranking, return-and-buy propensity,
+         uplift on a randomized dataset (Hillstrom / Criteo); `message_*` events
+5. - [ ] Rec Lab: live session view and an "Inbox" view (what message, why)
+
 ## Phase 2: Collaborative filtering
 
 **Learn:** matrix factorization for implicit feedback (ALS, BPR), negative

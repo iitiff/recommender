@@ -57,7 +57,7 @@ src/recsys/
   lab/        Rec Lab: FastAPI + Jinja2 + HTMX explainability tool (never writes the DB)
   cli.py      `recsys` command
 examples/demo/  fictional catalog + generator
-docs/           DESIGN.md, ROADMAP.md, experiments/
+docs/           DESIGN.md, ROADMAP.md, LIFECYCLE.md, SHOPPER-PROFILE.md, DATASETS.md, experiments/
 tests/
 ```
 

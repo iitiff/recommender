@@ -15,7 +15,10 @@ ev = pd.read_csv(sys.argv[1])
 ev = ev.sort_values(["visitorid", "timestamp"]).reset_index(drop=True)
 print("== Events")
 print(ev["event"].value_counts().to_string())
-start, end = pd.to_datetime(ev.timestamp.min(), unit="ms"), pd.to_datetime(ev.timestamp.max(), unit="ms")
+start, end = (
+    pd.to_datetime(ev.timestamp.min(), unit="ms"),
+    pd.to_datetime(ev.timestamp.max(), unit="ms"),
+)
 print(f"range: {start:%Y-%m-%d} → {end:%Y-%m-%d} ({(end - start).days} days)")
 print(f"visitors: {ev.visitorid.nunique():,}   items: {ev.itemid.nunique():,}")
 

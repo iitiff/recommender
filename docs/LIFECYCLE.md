@@ -22,7 +22,7 @@ A stage alone is too wide (`docs/experiments/2026-10-24-lifecycle-stages-deep-di
 In both RetailRocket and REES46, near-term ordering differs 1.5–3× *within* a
 stage, and what shoppers cart next changes with what they are doing. And
 what they're shopping for changes how they decide
-(`docs/experiments/2026-10-24-product-type-and-price.md`). Five layers
+(`docs/experiments/2026-10-24-product-type-and-price.md`). Six layers
 describe a shopper at a moment:
 
 | Layer | Changes | Examples | What it changes |
@@ -32,6 +32,7 @@ describe a shopper at a moment:
 | **Style** (traits) | slowly | decisive vs researcher, brand loyalty, mainstream vs niche, variety seeking | help deciding vs more options; same brand or not; popularity blend; exploration dial; whom not to message |
 | **Current visit** | by the click | depth (one product page vs several), focus (one department vs exploring), open cart | which source fills the slots right now |
 | **Product context** | per item | product type's deliberation time and comparison breadth; price relative to the item being viewed | how long to wait before a nudge; how many and which alternatives (price-banded) |
+| **Price profile** | slowly | band per product type, general price level (pooled across their history) | which tier to lead with, especially in a category new to them |
 
 Findings that change behaviour:
 - **Abandoners** order almost as soon as first-time buyers, and half their
@@ -45,10 +46,14 @@ Findings that change behaviour:
 - **High-involvement products** (smartphones, premium tiers) are decided over
   days and visits; **low-involvement** ones (irons, small appliances) in
   minutes. Message timing follows the product, not just the shopper.
-- **Price is a property of the moment more than of the person:** shoppers
-  compare within about ±30% of the item in front of them, while a
-  shopper's price tier barely carries across categories (correlation
-  0.13–0.21).
+- **Price works at three levels** (`docs/experiments/2026-10-24-shopper-price-level.md`):
+  - in the moment, shoppers compare within about ±30% of the item in front
+    of them;
+  - each shopper has a band per product type (most of their price position);
+  - a general price level emerges from their collective history and predicts
+    the tier they'll buy in a new category (premium 29% vs 16%).
+
+  Discount chasing, by contrast, is not a lasting trait.
 
 - **Traits are weaker than states** (`docs/experiments/2026-10-24-shopper-traits-stability.md`):
   the most stable traits correlate 0.2–0.3 from one month to the next, while

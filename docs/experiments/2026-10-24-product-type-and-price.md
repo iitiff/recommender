@@ -1,6 +1,17 @@
 # 2026-10-24: How behaviour differs by product type and price tier
 
-**Status:** done (descriptive, observational)
+**Status:** done (descriptive, observational). **Corrected in part** by
+`2026-10-24-shopper-price-level.md`.
+
+> **Correction (same day):** conclusion 3 ("price is mostly a property of the
+> moment, not of the person") was wrong. It rested on correlating one
+> purchase with one other purchase, which is too noisy to reveal a general
+> level. Averaged over a shopper's collective history, a general price level
+> is real: it carries month to month (up to 0.49 in categories never browsed
+> before) and forecasts the tier of a first purchase in a new category
+> (premium 29% vs 16%). Per-type bands still dominate (74% of a type-level
+> price position).
+
 **Data:** REES46 multi-category store, Oct–Nov 2019 ("© Original Authors";
 aggregates only). 107M events, 204k products, 1.23M purchases after removing
 11,700 bulk buyers (>10 items). 73% of purchases have a readable category.
@@ -110,9 +121,11 @@ components → peripherals 7%.
    premium items take 4× longer than budget ones (3.3 vs 0.8 days), with the
    same number of alternatives. Tier hardly matters for cart conversion; type
    does (apparel carts convert least, likely size and fit).
-3. **Price is mostly a property of the moment, not of the person.**
-   - A shopper's price position carries over only weakly across categories
-     (0.13–0.21): the premium-phone buyer often buys a budget kettle.
+3. **~~Price is mostly a property of the moment, not of the person.~~** (See
+   the correction above: a general level exists but needs collective history.)
+   - A shopper's price position carries over only weakly from *one* purchase
+     to *one* other category (0.13–0.21): the premium-phone buyer often buys a
+     budget kettle.
    - Within one decision, shoppers compare in a **price band** about twice
      as tight as chance (±34% vs ±86%).
    - The useful signal is "near the price of what they're looking at", not
@@ -139,13 +152,9 @@ components → peripherals 7%.
   sit within roughly ±30% of its price. This is a re-ranking signal around
   an anchor, not a global budget filter.
 - **Convention to revisit:** CLAUDE.md says "Price is never a taste feature."
-  The data agrees that price isn't a stable *taste* (cross-category
-  correlation 0.13–0.21). But *relative price vs the current anchor item* is
-  a strong *contextual* signal. Proposal, pending the owner's decision:
-  - budget stays a hard filter;
-  - price is never a long-term taste feature;
-  - price distance to the anchor item (within its category) may be a
-    ranking feature.
+  Superseded by the proposal in `2026-10-24-shopper-price-level.md`: three
+  price signals (anchor band, per-type band, general level) as soft ranking
+  priors; budget stays a hard filter. Pending the owner's decision.
 
 **Caveats:**
 - One store, electronics-heavy (smartphones are 39% of the purchases analyzed), two months.

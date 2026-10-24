@@ -83,8 +83,9 @@ contained 18.6%. Personal timing barely beats "evening".
 3. **Deal-seeking is a moment, not a person.** Someone who bought on
    discount in October was no more likely to do so in November. Price-drop
    messages should be triggered by the *product and the moment* ("the item
-   you viewed just dropped"), not by a "deal seeker" label. This fits the
-   product/price finding that price is mostly a property of the moment.
+   you viewed just dropped"), not by a "deal seeker" label. Note this is
+   about *discounts*, not *price level*: a shopper's price level is a real
+   trait once enough history is pooled (`2026-10-24-shopper-price-level.md`).
 4. **Personal send times aren't worth it here.** Nearly everyone shops in
    the evening, and a person's own hour adds about 1 point. Message timing
    should follow momentum (open cart age, days since order), not the clock.

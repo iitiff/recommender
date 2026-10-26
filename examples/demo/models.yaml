@@ -1,0 +1,23 @@
+# Models to compare on the demo catalog: `recsys evaluate ... --model-config examples/demo/models.yaml`
+models:
+  - model: random
+  - model: most_popular
+  # Default weights: every tag facet shares weight equally with the numeric scales.
+  - model: tag_similarity
+  # Curated weights: grape and structure matter most, flavor notes some,
+  # producer/region/pairing not at all.
+  - model: tag_similarity
+    params:
+      facet_weights: {varietal: 0.45, note: 0.20}
+      numeric_weight: 0.35
+  # Hybrids: curated content similarity plus a popularity prior.
+  - model: tag_similarity
+    params:
+      facet_weights: {varietal: 0.45, note: 0.20}
+      numeric_weight: 0.35
+      popularity_weight: 0.3
+  - model: tag_similarity
+    params:
+      facet_weights: {varietal: 0.45, note: 0.20}
+      numeric_weight: 0.35
+      popularity_weight: 0.6

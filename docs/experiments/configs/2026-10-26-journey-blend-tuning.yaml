@@ -1,0 +1,73 @@
+# Tuning recently_viewed's weight in the journey blend, chosen on the validation window only.
+# (docs/experiments/2026-10-26-journey-blend-retailrocket.md)
+models:
+- model: recently_viewed
+- model: journey_blend
+  params:
+    explore_stages: []
+- model: journey_blend
+  params:
+    weights:
+      cold start:
+        trending: 1.0
+      new visitor:
+        recently_viewed: 2.0
+        covisitation: 1.0
+        cart_substitutes: 0.5
+        trending: 0.2
+      browser:
+        recently_viewed: 2.0
+        covisitation: 1.0
+        cart_substitutes: 0.5
+        trending: 0.2
+      abandoner:
+        recently_viewed: 2.0
+        cart_substitutes: 1.0
+        covisitation: 0.8
+      1 order:
+        recently_viewed: 2.0
+        covisitation: 0.8
+        rebuy: 0.6
+        cart_substitutes: 0.4
+      2+ orders:
+        recently_viewed: 2.0
+        rebuy: 0.8
+        covisitation: 0.5
+      bulk buyer:
+        recently_viewed: 2.0
+        rebuy: 0.8
+        covisitation: 0.2
+    explore_stages: []
+- model: journey_blend
+  params:
+    weights:
+      cold start:
+        trending: 1.0
+      new visitor:
+        recently_viewed: 3.0
+        covisitation: 1.0
+        cart_substitutes: 0.5
+        trending: 0.2
+      browser:
+        recently_viewed: 3.0
+        covisitation: 1.0
+        cart_substitutes: 0.5
+        trending: 0.2
+      abandoner:
+        recently_viewed: 3.0
+        cart_substitutes: 1.0
+        covisitation: 0.8
+      1 order:
+        recently_viewed: 3.0
+        covisitation: 0.8
+        rebuy: 0.6
+        cart_substitutes: 0.4
+      2+ orders:
+        recently_viewed: 3.0
+        rebuy: 0.8
+        covisitation: 0.5
+      bulk buyer:
+        recently_viewed: 3.0
+        rebuy: 0.8
+        covisitation: 0.2
+    explore_stages: []

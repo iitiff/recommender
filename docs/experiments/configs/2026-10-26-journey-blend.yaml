@@ -1,0 +1,15 @@
+# Journey blend vs its parts on RetailRocket (docs/experiments/2026-10-26-journey-blend-retailrocket.md).
+# Public dataset, generic defaults: nothing here is store-specific.
+models:
+  - model: most_popular
+  - model: trending
+  - model: recently_viewed
+  - model: covisitation
+  # Control: every source counts the same for everyone, no exploration slots.
+  - model: journey_blend
+    params: {weights: {}, explore_stages: []}
+  # Rules by journey (DEFAULT_WEIGHTS in recsys/models/blend.py), no exploration...
+  - model: journey_blend
+    params: {explore_stages: []}
+  # ...and with every 10th slot reserved for adjacent-category exploration.
+  - model: journey_blend

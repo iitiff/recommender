@@ -239,6 +239,20 @@ def groups_from_facet(items: Iterable[Item], facet: str) -> dict[ItemId, str]:
     return out
 
 
+# The two headline jobs: help them get back to something they already found
+# (return), or find something new (discovery). One blended hit rate would be
+# dominated by "return": most carts are the product page the shopper is on.
+NEED = {
+    "no history (cold start)": "cold start",
+    "seen this visit": "return",
+    "seen in an earlier visit": "return",
+    "re-buy": "return",
+    "new item, browsed category": "discovery",
+    "new item, new category": "discovery",
+    "new item, category unknown": "discovery",
+}
+
+
 def next_action(
     history: Sequence[Interaction],
     session_id: str | None,
@@ -340,9 +354,11 @@ def next_event_split(
             case = f"{user_id}#{len(done)}"
             contexts[case] = context
             targets[case] = frozenset({x.item_id})
+            action = next_action(before, x.session_id, x.item_id, groups)
             segments[case] = {
+                "need": NEED[action],
                 "stage": str(lifecycle_stage(before, x.session_id)),
-                "next action": next_action(before, x.session_id, x.item_id, groups),
+                "next action": action,
                 "vs past orders": vs_past_orders(before, x.item_id, groups),
             }
             if groups:

@@ -16,6 +16,7 @@ from recsys.models import (
     AdjacentCategoryRecommender,
     CartSubstitutesRecommender,
     CoVisitationRecommender,
+    JourneyBlender,
     NotFittedError,
     PopularityRecommender,
     RandomRecommender,
@@ -37,6 +38,18 @@ MODELS = [
     CartSubstitutesRecommender,
     # The demo catalog has one category, so varietal stands in for product type.
     partial(AdjacentCategoryRecommender, type_facet="varietal", min_transitions=1),
+    partial(
+        JourneyBlender,
+        sources={
+            "recently_viewed": {},
+            "covisitation": {},
+            "trending": {},
+            "rebuy": {},
+            "cart_substitutes": {},
+            "adjacent_category": {"type_facet": "varietal", "min_transitions": 1},
+        },
+        explore_every=3,
+    ),
 ]
 
 

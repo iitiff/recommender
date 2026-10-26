@@ -11,6 +11,9 @@ from recsys.eval.harness import EvalReport
 
 # Segments in journey order rather than alphabetical.
 SEGMENT_ORDER = (
+    "return",
+    "discovery",
+    "cold start",
     "new visitor",
     "browser",
     "abandoner",
@@ -105,12 +108,18 @@ def _segment_tables(report: EvalReport) -> list[str]:
         "",
         f"**By segment** (Hit rate@{k} [95% CI]; columns are models in the order above)",
     ]
+    names = [r.model_id.split("@")[0] for r in report.results]
+
+    def label(model_id: str) -> str:
+        """The bare name, unless several configurations of one model are compared."""
+        name = model_id.split("@")[0]
+        return model_id if names.count(name) > 1 else name
+
     for dim, counts in report.segment_counts.items():
         total = sum(counts.values())
         lines += [
             "",
-            f"| {dim} | {unit} |"
-            + "".join(f" `{r.model_id.split('@')[0]}` |" for r in report.results),
+            f"| {dim} | {unit} |" + "".join(f" `{label(r.model_id)}` |" for r in report.results),
             "|---|---|" + "---|" * len(report.results),
         ]
         for value in sorted(counts, key=_order):

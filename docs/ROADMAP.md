@@ -59,10 +59,12 @@ message sent vs holdout (uplift), with unsubscribe and frequency guardrails.
    - [x] 2b part 1. `ShopperState` (recsys.shopper), abandoner stage, re-buy,
          cart-substitute and adjacent-category sources
          (`docs/experiments/2026-10-24-journey-sources-retailrocket.md`)
-   - [ ] 2b part 2. A blender whose per-source weights depend on the
-         shopper's state (rules by stage and momentum first, then learned), a
-         small dial of adjacent-category slots, and "discovery" vs "return"
-         headline metrics; measured segment by segment against 2a
+   - [x] 2b part 2. Journey blend: per-journey weights (rules), weighted
+         reciprocal rank fusion, adjacent-category exploration slots, and
+         "return" / "discovery" / "cold start" headline metrics
+         (`docs/experiments/2026-10-26-journey-blend-retailrocket.md`)
+   - [ ] 2c. Learned per-journey weights, then a learned ranker over
+         `ShopperState` features; replicate on a REES46 sample (prices, brands)
          Spec for the shopper-state features: docs/SHOPPER-PROFILE.md
 3. - [ ] Day-by-day replay: nightly retrain → eval gate → model registry
 4. - [ ] Lifecycle messaging (docs/LIFECYCLE.md): lifecycle stages; triggers

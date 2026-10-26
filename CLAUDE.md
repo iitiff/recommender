@@ -78,6 +78,10 @@ uv run recsys dataset profile data/retailrocket
 uv run recsys evaluate data/retailrocket/catalog data/retailrocket/interactions.csv --split next \
   --test-fraction 0.1 --models most_popular,trending,recently_viewed,covisitation --k 5 --k 20 \
   --group-facet department --availability data/retailrocket/availability.csv  # session eval
+uv run recsys evaluate data/retailrocket/catalog data/retailrocket/interactions.csv --split next \
+  --test-fraction 0.1 --k 5 --k 20 --group-facet department \
+  --availability data/retailrocket/availability.csv \
+  --model-config docs/experiments/configs/2026-10-26-journey-blend.yaml  # journey blend
 ```
 
 ## Conventions

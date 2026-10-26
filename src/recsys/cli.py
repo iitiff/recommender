@@ -84,6 +84,10 @@ def evaluate(
     group_facet: Annotated[
         str | None, typer.Option(help="next: tag facet used as 'category' for novelty segments")
     ] = None,
+    until: Annotated[
+        str | None,
+        typer.Option(help="Drop interactions at/after this ISO time (evaluate an earlier window)"),
+    ] = None,
 ) -> None:
     """Fit models on a time-based split of INTERACTIONS and report metrics with CIs."""
     try:
@@ -102,6 +106,10 @@ def evaluate(
         built = [REGISTRY[n]() for n in names]
 
     data = load_interactions_csv(interactions)
+    if until:
+        end = datetime.fromisoformat(until.replace("Z", "+00:00"))
+        end = end if end.tzinfo else end.replace(tzinfo=UTC)
+        data = [x for x in data if x.occurred_at < end]
     if split == "temporal":
         s = temporal_split(catalog.items, data, test_fraction=test_fraction)
     elif split == "last":

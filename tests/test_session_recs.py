@@ -219,6 +219,7 @@ def test_next_event_split_cases_and_segments(shop):
     # The context is exactly what happened before the cart, nothing after.
     assert [x.item_id for x in split.contexts[b_case].events] == ["a"]
     assert split.segments[b_case] == {
+        "need": "discovery",
         "stage": "new visitor",
         "next action": "new item, browsed category",
         "vs past orders": "no past order",
@@ -227,6 +228,7 @@ def test_next_event_split_cases_and_segments(shop):
     assert split.segments[c_case]["stage"] == "new visitor"
     assert split.segments[c_case]["next action"] == "no history (cold start)"
     assert split.segments[z_case] == {
+        "need": "discovery",
         "stage": "1 order",
         "next action": "new item, new category",
         "vs past orders": "new category vs past orders",

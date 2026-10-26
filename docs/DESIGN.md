@@ -150,6 +150,11 @@ class Recommender(ABC):
   return only items they have evidence for, so lists can be short or empty
   (recently viewed knows nothing about unseen items). A blender combines
   sources per shopper (roadmap step 2b).
+- **Blending sources by journey.** `JourneyBlender` fuses candidate sources
+  with weighted reciprocal rank fusion (ranks, because sources' scores aren't
+  comparable). Weights depend on the shopper's journey (cold start or
+  lifecycle stage), and every Nth slot can be reserved for exploration. Each
+  source applies the hard filters itself, so the blend only reorders.
 - **Behaviour in the context.** `UserContext.events` carries recent views,
   carts and purchases (current visit included, `session_id` marks it) and
   `now` the request time, so session models stay pure functions of their input.

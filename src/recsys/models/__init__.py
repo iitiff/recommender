@@ -5,6 +5,7 @@ import yaml
 
 from recsys.models.base import NotFittedError, Recommender
 from recsys.models.baselines import PopularityRecommender, RandomRecommender
+from recsys.models.blend import JourneyBlender
 from recsys.models.content import TagSimilarityRecommender
 from recsys.models.journey import (
     AdjacentCategoryRecommender,
@@ -29,6 +30,7 @@ REGISTRY: dict[str, Callable[..., Recommender]] = {
     RebuyRecommender.name: RebuyRecommender,
     CartSubstitutesRecommender.name: CartSubstitutesRecommender,
     AdjacentCategoryRecommender.name: AdjacentCategoryRecommender,
+    JourneyBlender.name: JourneyBlender,
 }
 
 
@@ -64,6 +66,7 @@ __all__ = [
     "AdjacentCategoryRecommender",
     "CartSubstitutesRecommender",
     "CoVisitationRecommender",
+    "JourneyBlender",
     "NotFittedError",
     "PopularityRecommender",
     "RandomRecommender",

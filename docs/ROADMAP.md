@@ -69,7 +69,8 @@ message sent vs holdout (uplift), with unsubscribe and frequency guardrails.
          per store on a validation window, docs/experiments/2026-10-27-journey-blend-otto.md)
          Spec for the shopper-state features: docs/SHOPPER-PROFILE.md
 3. - [ ] Day-by-day replay: nightly retrain → eval gate → model registry
-4. - [ ] Lifecycle messaging (docs/LIFECYCLE.md): lifecycle stages; triggers
+4. - [ ] Lifecycle messaging (docs/LIFECYCLE.md; validations and experiments to run on a
+         retailer's own data: docs/VALIDATION-PLAN.md): lifecycle stages; triggers
          (abandoned cart/browse, post-purchase, back-in-stock, win-back); two message
          jobs (next transaction vs category expansion); next-best-action from
          rules → propensity → uplift (Hillstrom / Criteo / X5) → contextual bandit;

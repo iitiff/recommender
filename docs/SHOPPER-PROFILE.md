@@ -142,6 +142,9 @@ grocery-type shopping only.
 - **What they value** (quality, price, durability, looks): review text
   (Amazon Reviews with text).
 - **Replenishment cycles:** order data with re-buys (Instacart).
+- **Who an abandoned-cart message persuades:** organic data only shows
+  propensity (2+ order shoppers recover 13.6%, new visitors 3.3%; REES46),
+  not uplift (`docs/experiments/2026-10-27-cart-abandonment.md`).
 - **Lapsing over months:** windows longer than REES46's 61 days, with visits.
 
 ## `ShopperState`: what step 2b computes at request time

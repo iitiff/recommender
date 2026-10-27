@@ -183,6 +183,33 @@ So:
   measure. Purchases (and the second-order rate) remain the lagging metric
   that decides. Never optimize visits alone; that rewards clickbait.
 
+## Abandoned carts: high intent isn't the same as high value
+
+From `docs/experiments/2026-10-27-cart-abandonment.md` (REES46, RetailRocket):
+- **Most of the organic outcome is a return, not a purchase.** 61% (REES46)
+  and 24% (RR) of abandoners come back within 7 days, but only 6.5% and 4.2%
+  buy a carted item. In REES46, 5.2% buy a same-category substitute instead.
+- **The cart message is a small audience with sure things in it.** Cart
+  abandoners are 2–8% of active shoppers. Browse abandoners are 1.2–2.4×
+  as many, so a browse message wins if its uplift is at least 0.42–0.85×
+  the cart message's. Only a randomized holdout tells which.
+- **Timing:**
+  - A field experiment (Li et al., *Journal of Marketing* 2021) found
+    reminders at 30–60 minutes *reduced* purchases, while reminders at 1–3
+    days increased them.
+  - Default: no send within the first hour; a first send around the same
+    time the next day; one follow-up at 48–72 h if the shopper hasn't
+    returned.
+- **Suppress** the message once the shopper has returned to the site,
+  bought the item or a substitute, or when the item is out of stock (send
+  alternatives instead).
+- **Content:** the carted item plus 2–3 close alternatives (cart
+  substitutes).
+- **The experiment:**
+  - Arms: a holdout, plus send delays of 1 / 4 / 24 / 72 h.
+  - Outcome: any purchase within 7 and 30 days.
+  - Size: about 20,000 abandoners per arm to detect a 1-point lift.
+
 ## What varies by store (so it must be learned, per tenant)
 
 Across RetailRocket, Olist, REES46, H&M and a B2B wholesaler

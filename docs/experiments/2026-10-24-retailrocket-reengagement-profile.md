@@ -38,6 +38,13 @@ an item that was in the abandoned cart.
 
 ## Conclusion
 
+> **Correction (2026-10-27, `2026-10-27-cart-abandonment.md`):** the trigger
+> priority below ranks by *organic* purchase rate, which measures intent, not
+> what a message adds. Browse abandonment can yield more incremental orders
+> if its uplift is at least 0.42–0.85× the cart message's. On timing, a field
+> experiment found reminders at 30–60 minutes *reduced* purchases while 1–3
+> days increased them, so the "1 hour" send doesn't fit.
+
 - **Trigger priority:** abandoned cart (31× the 1-view purchase rate) >
   post-purchase cross-sell (highest return and repurchase) > abandoned browse
   (6×, but 4× the volume of carts). One-view visitors aren't worth messaging.

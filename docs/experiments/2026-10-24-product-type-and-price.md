@@ -145,7 +145,9 @@ components → peripherals 7%.
   - **High-involvement** (smartphones, premium): keep "recently compared"
     across visits; send re-engagement after days, not hours.
   - **Low-involvement** (irons, small appliances): win within the visit; an
-    abandoned-cart nudge must come within hours.
+    abandoned-cart nudge must come within hours. *(Corrected 2026-10-27:
+    not within the first hour, where a field experiment found reminders
+    reduce purchases; see `2026-10-27-cart-abandonment.md`.)*
   - **Style-driven** (shoes, furniture): show many visually varied
     alternatives (diversity re-ranking).
 - **Price-banded substitutes:** alternatives to the item being viewed should

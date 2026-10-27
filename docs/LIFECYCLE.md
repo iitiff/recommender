@@ -249,6 +249,16 @@ Two cautions from research:
   (Meyer-Waarden & Benavent). Test program effects; don't read them from
   member vs non-member comparisons.
 
+**The path to loyal *and* valuable shows by day 90**
+(`docs/experiments/2026-10-27-paths-to-value.md`, H&M):
+- **3+ orders by day 90:** 36% become true friends, vs 2.5% with one order.
+- **Both store and online:** 33%, vs 7–9% with a single channel.
+- **Some, not most, items on sale:** 23%.
+- **Best early profile:** a second order by day 30, both channels, some
+  sale buying. 41% become true friends.
+- **Butterflies:** a big, wide, full-price online first month, then they
+  fade.
+
 ## When is a customer lapsed? Per customer, not a fixed cutoff
 
 From `docs/experiments/2026-10-27-loyalty-models.md` (CDNOW, H&M):

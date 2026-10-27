@@ -16,6 +16,54 @@ behaviour.
 | **Loyal** (3+ orders) | Retention | New arrivals in their categories, early access, fewer but better messages | Over-messaging (these are the people most likely to unsubscribe if annoyed) |
 | **Lapsing** (past their usual gap) | Win-back | A reason to return, timed from their own purchase rhythm | Treating a 2-day gap and a 60-day gap the same |
 
+## Rhythm: due, overdue, lapsing
+
+Stage says where a customer is in the relationship. **Rhythm** says where
+they are in their own buying cycle. The two decide between a replenishment
+reminder, a new-category campaign, and silence.
+
+The rhythm is measured against **their own** usual gap (median days between
+orders), not a store-wide rule. In groceries (Instacart,
+`docs/experiments/2026-10-27-replenish-or-explore.md`), a regular weekly
+shopper orders on day 7 with a 37% chance, then 24% on day 8 and 15% on
+day 9; 55% of next orders come within 1× their gap, 76% within 1.5×.
+
+| Rhythm state (days since last order ÷ their usual gap) | What it means | Default message |
+|---|---|---|
+| Within cycle (< 0.75) | Stocked up | No replenishment; new-category ideas if early in the lifecycle |
+| Due (0.75–1.25) | Most will order anyway | Usually nothing (sure things) |
+| **Overdue** (1.25–2) | Missed their usual slot | **Replenishment reminder**: their usual basket, items whose own cycle has passed first |
+| Lapsing (> 2) | Drifting away | Win-back |
+
+Products have their own, longer cycles (milk 11 days, eggs 15, cheese 21),
+so a reminder replenishes the *basket* and lists the items most likely due.
+
+New categories fit early in the lifecycle (orders 2–10: about half the items
+are new to the shopper) and still in 1 of 4 orders for veterans. Success is
+adoption (bought again within 3 orders: 38% of trials), not a single trial.
+The exposure cap depends on how the category is bought: about 2–3 showings
+for need-driven and high-ticket categories (electronics, computers), which
+convert early and wear out; 5–9 for style and browse categories (apparel,
+accessories, furniture), which wear in. Then rotate to the next adjacent
+category. All of it is to be tuned with impression logs.
+
+## How the industry names lifecycle stages
+
+There is no single standard, but the common frameworks map onto ours:
+
+| Framework | Stages | In our terms |
+|---|---|---|
+| E-commerce CRM lifecycle (typical in email/CRM tools) | Subscriber/prospect → first-time buyer → repeat → loyal/VIP → at risk → lapsed → reactivated | Relationship stage + rhythm state |
+| RFM segments (Recency, Frequency, Monetary) | e.g. champions, loyal, potential loyalists, new, promising, need attention, about to sleep, at risk, can't lose, hibernating, lost | Stage × rhythm × spend, in fixed bins; our version uses each customer's *own* rhythm instead of store-wide recency bins |
+| AARRR ("pirate metrics") | Acquisition → activation → retention → referral → revenue | Funnel metrics: visitor → first order → second order → loyal |
+| Grocery retail | Loyalty by share of wallet (primary / secondary / occasional shopper), frequency tiers (weekly, biweekly, monthly), **trip missions** (stock-up, top-up, for tonight, special occasion), household life stage | Cadence + regularity (rhythm), basket size and mission per order; life stage is sensitive (see SHOPPER-PROFILE ethics) |
+| Buy-till-you-die models (Pareto/NBD, BG/NBD) | A continuous P(alive) and expected purchases instead of stages | A model-based version of the rhythm state, for when we need a probability rather than bins |
+
+Amazon doesn't publish its internal lifecycle model. Its public touchpoints
+show the same jobs: Prime trial → paid → renewal (relationship), Subscribe
+& Save and "Buy it again" (replenishment), and cross-category
+recommendations (expansion).
+
 ## Inside each stage: momentum, style and the current visit
 
 A stage alone is too wide (`docs/experiments/2026-10-24-lifecycle-stages-deep-dive.md`).

@@ -114,7 +114,9 @@ Guardrails (CLAUDE.md "Price is context, not taste"):
 | Cart conversion | apparel 25%, electronics 43% | Abandoned-cart priority |
 | Adjacency (next type entered) | TV → home audio 2.4×, camera → security 2.1×, pantry → bakery 2.3× (Amazon) | Adjacent-category source; expansion is a mild nudge |
 | Time-of-week rhythm | Most categories follow the store's rhythm; a few don't: alcohol late-week afternoons 1.2×, stock-up groceries on the big shopping days 1.1×, furniture/appliances at weekends 1.2× (Instacart, REES46; `2026-10-27-category-timing.md`) | Campaign timing per category, only where distinctive; learn per store **and channel** |
-| Repeat cycle | Groceries: median 7 days between orders, but the next order day is hard to predict (±5 days) (Instacart). Not measurable in the review data | Replenishment reminders: cadence windows, not exact days |
+| Repeat cycle | Groceries: 46% shop weekly; a regular weekly shopper orders on day 7 with a 37% chance, then 24%, 15%… Product cycles are longer (milk 11 days, eggs 15, cheese 21) (Instacart; `2026-10-27-replenish-or-explore.md`) | **Rhythm state** vs the shopper's own gap (within cycle / due / overdue / lapsing): replenishment reminders when overdue (≥ 1.25–1.5× their gap), for the basket with the items that are due |
+| Exposure to a new category | Depends on how the category is bought (REES46, self-chosen views). Need/spec-driven categories front-load: electronics peaks at the 1st exposure, computers fade to 0.58× by the 10th. Style/browse categories wear in: apparel rises 4.8× to a peak at the 9th, accessories and kids peak at the 6th–7th. Pooled: a peak at the 3rd–4th | Exposure cap per category: about 2–3 for need-driven and high-ticket items, 5–9 for style and browse; tune with impression logs |
+| Room to explore | Items new to the shopper: 65% of orders 2–3 → 19% after order 30; a new aisle in 1 of 4 veteran orders; 38% of trials adopted within 3 orders (Instacart) | New-category campaigns early in the lifecycle; measure adoption, not trial |
 
 ## Rejected (failed the stability test)
 
@@ -179,6 +181,7 @@ stay about products ("similar to what you viewed"), never about the person
 | `experiments/2026-10-24-lifecycle-stages-deep-dive.md` | RR, REES46 | Abandoner stage; momentum; style; in-visit needs |
 | `experiments/2026-10-24-product-type-and-price.md` | REES46 | Product context; anchor price band |
 | `experiments/2026-10-27-category-timing.md` | Instacart, Olist, REES46 | Category rhythms; personal routines in groceries |
+| `experiments/2026-10-27-replenish-or-explore.md` | Instacart, REES46 | Rhythm states and reminder timing; product cycles; room to explore; exposure curve |
 | `experiments/2026-10-24-shopper-traits-stability.md` | REES46 | Which traits are stable; rejected traits |
 | `experiments/2026-10-24-shopper-price-level.md` | REES46 | Hierarchical price profile |
 | `experiments/2026-10-24-amazon-traits-over-years.md` | Amazon | Traits over years; brand decay; adjacency |

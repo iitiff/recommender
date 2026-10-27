@@ -259,6 +259,17 @@ Two cautions from research:
 - **Butterflies:** a big, wide, full-price online first month, then they
   fade.
 
+**In grocery** (`docs/experiments/2026-10-27-grocery-paths.md`: Complete
+Journey, X5, Instacart):
+- **Loyalty is a ladder climbed one rung at a time:** light → mid 36% per
+  quarter, light → regular 5%, and 80% of regulars stay. Aim for the next
+  rung.
+- **The grocery cliff is 1–2 weeks:** a second order within 7 days → 60%
+  become weekly regulars.
+- **Grocery barnacles are frequent small top-up shoppers** (about $17 a
+  trip). That's a share-of-wallet problem, not a discount one.
+- **Some deal use goes with loyalty; heavy deal use doesn't.**
+
 ## When is a customer lapsed? Per customer, not a fixed cutoff
 
 From `docs/experiments/2026-10-27-loyalty-models.md` (CDNOW, H&M):

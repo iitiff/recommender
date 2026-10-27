@@ -85,6 +85,29 @@ For comparison, REES46 (electronics): personal window 19.7% vs store peak 18.6%.
   from 5.7 to 5.2 days.
 - Gaps are capped at 30 days in the data, so long gaps are lumped together.
 
+**Lead time: does online ordering run 1–2 hours ahead of the in-store peak?**
+
+The owner's hypothesis: delivery takes 1–2 hours, so online grocery orders
+should peak 1–2 hours before the in-store dinner peak (around 3–5pm).
+Shares of Instacart orders by hour band (`hour_bands` in the script output):
+
+| Ordering time | 0–6 | 7–9 | 10–12 | 13–15 | 16–18 | 19–23 |
+|---|---|---|---|---|---|---|
+| All orders | 2.7% | 15.5% | 24.8% | 24.7% | 19.9% | 12.4% |
+| Alcohol (lift) | 0.68× | 0.72× | 0.99× | **1.14×** | **1.23×** | 0.79× |
+| Meat & seafood (lift) | 0.98× | 0.96× | 1.00× | 1.03× | 1.00× | 0.99× |
+| Breakfast (lift) | 0.98× | **1.08×** | 0.99× | 0.97× | 0.97× | 1.04× |
+| Babies (lift) | 0.98× | **1.18×** | 0.92× | 0.98× | 0.89× | **1.17×** |
+
+- **The pattern fits alcohol:** afternoon ordering, up to 1.23×.
+- **It doesn't fit dinner staples:** meat, deli and produce follow the store
+  across the whole day. Only 20% of all orders fall in 4–6pm.
+- **The likely reason:** online grocery customers choose a delivery slot,
+  often later the same day or the next day. The lag between ordering and
+  receiving varies, so it isn't a fixed 1–2 hours.
+- **Not testable here:** Instacart has no delivery-slot times, so the lag
+  can't be measured.
+
 ## Conclusion
 
 1. **Category rhythm is real for a few categories, not for most.**
@@ -123,6 +146,10 @@ For comparison, REES46 (electronics): personal window 19.7% vs store peak 18.6%.
 - **Channel** (online, in store, pickup, delivery), since rhythms differ by
   channel.
 - **Message send and open times,** for the send-time experiment.
+- **Order placed time vs fulfilment slot** (delivery or pickup window), so
+  the lead time between ordering and receiving is measured, not assumed.
+  Online send times should be learned from *ordering* times per channel and
+  customer, not derived as "store peak minus 2 hours".
 - Category rhythms are computed from transactions and the catalog; they
   need no new customer attribute.
 

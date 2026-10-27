@@ -191,6 +191,22 @@ customers, each followed for a year):
     that fades, one late return). They are the group to work on.
 - **Breadth of the first basket barely matters;** store and mixed-channel
   starts do better.
+- **Replicated** in CDNOW (true first-ever buyers) and a B2B wholesaler: the
+  same families, the same 60-day cliff
+  (`docs/experiments/2026-10-27-paths-across-datasets.md`).
+- **The one-order share depends mostly on the business model:** 36% in
+  fashion, 54% in music, 97% in a marketplace, where nothing in the first
+  order changes it.
+- **One-order buyers aren't all lost at day 90.** A quarter to a third
+  return within the year, but rarely become loyal. So: win the second
+  order in days 1–60, then switch to light reactivation.
+- **In grocery, categories enter in a typical order:**
+  - staples first: produce, dairy, beverages, snacks;
+  - then frozen, pantry, bakery and deli by the second order;
+  - then household, personal care and breakfast by the third.
+
+  That order is a candidate next-category sequence. Loyal customers are
+  more *frequent*, not broader.
 
 ## Visits: the leading signal
 

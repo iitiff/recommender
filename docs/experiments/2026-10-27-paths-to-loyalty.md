@@ -28,14 +28,16 @@ To follow customers from their first order to loyalty, we need three things:
 | Online Retail II | 2 years | Wholesale (B2B) buyers, a different business |
 | dunnhumby Complete Journey | 2 years | Established households, not new ones (not downloaded) |
 
-So this is **one dataset, one category (fashion)**. The method is built to
+So this is **one dataset, one category (fashion)**. *(Update: CDNOW, Olist, a
+B2B wholesaler, X5 and Instacart were added in
+`2026-10-27-paths-across-datasets.md`; the shape replicates.)* The method is built to
 rerun on any store with two years of orders, including Walmart data.
 
 ## Method
 
 ```bash
 uv run --no-project --with pandas --with pyarrow python -I \
-  docs/experiments/scripts/paths_to_loyalty.py TRANSACTIONS_DIR articles.parquet
+  docs/experiments/scripts/paths_to_loyalty.py hm TRANSACTIONS_DIR articles.parquet
 ```
 
 **Cohort:**

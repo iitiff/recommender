@@ -165,9 +165,14 @@ def dataset_prepare(
     raw_dir: Path,
     out_dir: Path,
     gap_minutes: Annotated[float, typer.Option(help="Inactivity that ends a session")] = 30,
+    sample_every: Annotated[
+        int | None,
+        typer.Option(help="Keep 1 in N shoppers (large datasets such as otto; default 64)"),
+    ] = None,
 ) -> None:
     """Convert raw files into the engine layout (catalog/, interactions.csv, ...)."""
-    counts = _adapter(name).prepare(raw_dir, out_dir, gap_minutes=gap_minutes)
+    extra = {} if sample_every is None else {"sample_every": sample_every}
+    counts = _adapter(name).prepare(raw_dir, out_dir, gap_minutes=gap_minutes, **extra)
     typer.echo(", ".join(f"{k}: {v:,}" for k, v in counts.items()))
     typer.echo(f"prepared → {out_dir}")
 

@@ -1,0 +1,31 @@
+# Journey blend on OTTO, test window (docs/experiments/2026-10-27-journey-blend-otto.md).
+# The OTTO variant was chosen on the validation window only
+# (configs/2026-10-27-journey-blend-otto-tuning.yaml, variant D). Public dataset, generic
+# defaults: nothing here is store-specific business knowledge.
+models:
+  - model: most_popular
+  - model: trending
+  - model: recently_viewed
+  - model: covisitation
+  # The RetailRocket rules unchanged (recently viewed 3, up to 50 items boosted).
+  - model: journey_blend
+    params: {explore_stages: []}
+  # Tuned for OTTO: recently viewed 6, only the 5 most recent items boosted.
+  - model: journey_blend
+    params:
+      explore_stages: []
+      weights:
+        cold start: {trending: 1.0}
+        new visitor: {recently_viewed: 6.0, covisitation: 1.0, cart_substitutes: 0.5, trending: 0.2}
+        browser: {recently_viewed: 6.0, covisitation: 1.0, cart_substitutes: 0.5, trending: 0.2}
+        abandoner: {recently_viewed: 6.0, cart_substitutes: 1.0, covisitation: 0.8}
+        1 order: {recently_viewed: 6.0, covisitation: 0.8, rebuy: 0.6, cart_substitutes: 0.4}
+        2+ orders: {recently_viewed: 6.0, rebuy: 0.8, covisitation: 0.5}
+        bulk buyer: {recently_viewed: 6.0, rebuy: 0.8, covisitation: 0.2}
+      sources:
+        recently_viewed: {max_items: 5}
+        covisitation: {}
+        trending: {}
+        rebuy: {}
+        cart_substitutes: {}
+        adjacent_category: {}

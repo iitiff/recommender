@@ -8,7 +8,7 @@ import pytest
 
 from recsys.catalog import load_catalog
 from recsys.core.types import Interaction, InteractionKind, Tag
-from recsys.datasets import retailrocket
+from recsys.datasets import otto, retailrocket
 from recsys.datasets.profile import profile
 from recsys.eval import load_interactions_csv
 from recsys.sessions import sessionize
@@ -144,3 +144,60 @@ def test_sessionize_gap_boundary():
         Interaction("v", "a", InteractionKind.VIEW, 1, t),
     ]
     assert [x.session_id for x in sessionize(xs)] == ["u:0", "u:0", "u:1", "v:0"]
+
+
+# -- OTTO ----------------------------------------------------------------------------
+
+
+def write_otto_zip(d, sessions):
+    import json
+    import zipfile
+
+    d.mkdir()
+    lines = "".join(
+        json.dumps({"session": sid, "events": ev}, separators=(",", ":")) + "\n"
+        for sid, ev in sessions
+    )
+    with zipfile.ZipFile(d / otto.RAW_FILE, "w") as z:
+        z.writestr("otto-recsys-train.jsonl", lines)
+
+
+def test_otto_prepare_samples_shoppers_and_sessionizes(tmp_path):
+    def e(aid, ms, kind):
+        return {"aid": aid, "ts": T0 + ms, "type": kind}
+
+    write_otto_zip(
+        tmp_path / "raw",
+        [
+            (
+                0,
+                [
+                    e(5, 0, "clicks"),
+                    e(5, MIN, "carts"),
+                    e(6, 2 * HOUR, "clicks"),
+                    e(5, 2 * HOUR + MIN, "orders"),
+                ],
+            ),  # fmt: skip
+            (1, [e(7, 0, "clicks")]),  # not sampled (1 % 2)
+            (2, [e(6, 0, "clicks"), e(6, 31 * MIN, "clicks")]),  # 31 min > gap: 2 sessions
+        ],
+    )
+    out = tmp_path / "prepared"
+    counts = otto.prepare(tmp_path / "raw", out, sample_every=2)
+    assert counts == {"items": 2, "interactions": 6, "sessions": 4, "users": 2}
+
+    xs = load_interactions_csv(out / "interactions.csv")
+    assert [x.kind for x in xs if x.user_id == "0"] == [
+        InteractionKind.VIEW,
+        InteractionKind.ADD_TO_CART,
+        InteractionKind.VIEW,
+        InteractionKind.PURCHASE,
+    ]
+    assert [x.session_id for x in xs if x.user_id == "0"] == ["0:0", "0:0", "0:1", "0:1"]
+    assert [x.session_id for x in xs if x.user_id == "2"] == ["2:0", "2:1"]
+    resessioned = sessionize(replace(x, session_id=None) for x in xs)
+    assert [x.session_id for x in resessioned] == [x.session_id for x in xs]
+
+    items = load_catalog(out / "catalog").items
+    assert sorted(i.item_id for i in items) == ["5", "6"]
+    assert all(not i.category and not i.tags for i in items)

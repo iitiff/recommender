@@ -1,0 +1,53 @@
+# Tuning the journey blend for OTTO, chosen on the validation window only
+# (docs/experiments/2026-10-27-journey-blend-otto.md). Two knobs:
+#   - recently viewed's weight in the rules (RetailRocket chose 3);
+#   - how many recently viewed items the blend boosts (max_items; default 50).
+# OTTO has no categories, so cart_substitutes and adjacent_category stay idle.
+models:
+- model: recently_viewed
+- model: covisitation
+# A: the RetailRocket rules as they are (recently viewed 3, up to 50 items).
+- model: journey_blend
+  params:
+    explore_stages: []
+# B: recently viewed weighs 6.
+- model: journey_blend
+  params:
+    explore_stages: []
+    weights: &w6
+      cold start: {trending: 1.0}
+      new visitor: {recently_viewed: 6.0, covisitation: 1.0, cart_substitutes: 0.5, trending: 0.2}
+      browser: {recently_viewed: 6.0, covisitation: 1.0, cart_substitutes: 0.5, trending: 0.2}
+      abandoner: {recently_viewed: 6.0, cart_substitutes: 1.0, covisitation: 0.8}
+      1 order: {recently_viewed: 6.0, covisitation: 0.8, rebuy: 0.6, cart_substitutes: 0.4}
+      2+ orders: {recently_viewed: 6.0, rebuy: 0.8, covisitation: 0.5}
+      bulk buyer: {recently_viewed: 6.0, rebuy: 0.8, covisitation: 0.2}
+# C: weight 3, but only the 5 most recent items are boosted; co-visitation fills the rest.
+- model: journey_blend
+  params:
+    explore_stages: []
+    sources: &rv5
+      recently_viewed: {max_items: 5}
+      covisitation: {}
+      trending: {}
+      rebuy: {}
+      cart_substitutes: {}
+      adjacent_category: {}
+# D: weight 6 and only the 5 most recent items.
+- model: journey_blend
+  params:
+    explore_stages: []
+    weights: *w6
+    sources: *rv5
+# E: weight 6 and the 10 most recent items.
+- model: journey_blend
+  params:
+    explore_stages: []
+    weights: *w6
+    sources:
+      recently_viewed: {max_items: 10}
+      covisitation: {}
+      trending: {}
+      rebuy: {}
+      cart_substitutes: {}
+      adjacent_category: {}

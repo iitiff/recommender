@@ -59,8 +59,13 @@ uv run --no-project --with pandas --with scikit-learn python -I \
    - Compared with a simple rule: message the least likely buyers first,
      ranked by the control model's predicted propensity.
 
-**What we don't know:** the SMS content (probably an offer, possibly with
-points) and the length of the campaign window.
+**What we don't know:**
+- The SMS content. The competition calls it a *promotional* campaign, but the
+  offer (discount, bonus points or other) isn't disclosed.
+- The length of the campaign window.
+
+So the results describe the effect of a **promotional offer**, not of a
+message in general.
 
 ## Results
 
@@ -125,7 +130,7 @@ chance)
 
 ## Conclusion
 
-1. **Attribution overstates a message's value about 19-fold here.** The
+1. **Attribution overstates the promotion's value about 19-fold here.** The
    SMS lifted purchases by 3.3 points on a 60% base. Any report that counts
    purchases after a message, without a holdout, is mostly measuring
    propensity. This makes a holdout a standing requirement, not a one-off.
@@ -138,15 +143,27 @@ chance)
    - New, narrow and occasional shoppers gain the most: 1–10 visits,
      tenure under 6 months, fewest categories.
    - Same lesson as the cart work: **high intent ≠ high value**.
-3. **Deal orientation is the strongest single signal.** Clients who often
-   spend points gain **+8.4 points**, 2.5× the average. So do those buying
-   the cheapest options (+4.7) and small baskets (+5.4).
-   - This is consistent with an offer-type SMS.
-   - It is *behavioral* deal responsiveness, measured per client from
-     their own choices. That differs from labeling shoppers by income,
-     which we never do.
-   - It also carries the risk the cart write-up named: repeatedly
-     messaging deal-seekers with offers can train them to wait for one.
+3. **Deal orientation is the strongest single signal, because this was a
+   promotion.**
+   - Clients who often spend points gain **+8.4 points**, 2.5× the
+     average. So do those buying the cheapest options (+4.7) and small
+     baskets (+5.4).
+   - That is close to saying "people who use deals respond to a deal". It
+     tells us little about reminders or recommendations that carry no
+     incentive; those need their own tests.
+   - **It must not decide who gets a lower price.** Sending discounts only
+     to deal-responsive shoppers means different shoppers pay different
+     prices: personalized pricing. The engine's rule is that price never
+     changes the price a shopper is charged. Changing that would be an
+     explicit business and ethics decision, not a modeling one.
+   - **The economics are unknown.** The outcome is purchases, not margin.
+     A discount is also paid to the 95% who would have bought anyway, if
+     they redeem it. Net value = margin on the 3.3 points of extra
+     purchases minus the discount on *all* redemptions. A lift this size
+     on a 60% base can lose money. Without the offer's cost and redemption
+     data, this dataset can't say.
+   - Repeated offers can also train shoppers to wait for one (the cart
+     write-up's warning).
 4. **Rhythm state did not change the effect of this SMS.**
    - Within cycle, due, overdue and lapsing all gain about +3 points.
    - This tests the decision sketch in
@@ -158,7 +175,10 @@ chance)
      content depends on what is due. That needs its own test.
    - The decision sketch and LIFECYCLE.md are updated to say so.
 5. **Targeting: a model helps at the top; a simple rule is nearly as good
-   for broad sends.**
+   for broad sends.** For a promotion, targeting decides who is *offered* a
+   lower price, so the rule in point 3 applies. The targeting lessons
+   transfer to messages without an incentive (skip the sure things), but
+   their sizes don't.
    - Messaging the top 10% by predicted uplift captures 22% of incremental
      purchases (2.2×). The top 30% captures 46%.
    - "Message the least likely buyers first" is simpler, needs no
@@ -168,12 +188,14 @@ chance)
      Rules → propensity → uplift is the roadmap order.
 
 **What this means for the profile and for data requests:**
-- **Deal responsiveness** (share of visits using points or promotions) is
-  worth adding as a behavioral trait.
-  - It needs promotion and points data per transaction: ask the memory
-    team for it.
-  - Test its stability like the other traits (Oct vs Nov) before relying on
-    it.
+- **Deal responsiveness is not a targeting trait for discounts** (see
+  point 3).
+  - At most, it could shape *content* within public prices: for example,
+    surfacing items already on sale to everyone, or value packs. That use
+    would need its own test.
+- **For offers, ask for cost and redemption data:** offer value, who
+  redeemed, and margin. Without it, an offer's uplift can't be turned into
+  profit.
 - **Message logs with holdout flags:** confirmed again as the most valuable
   missing data.
 
@@ -183,6 +205,8 @@ chance)
   new-category) may differ.
 - **The outcome is any purchase,** not revenue or margin. An offer can lift
   purchases while cutting margin.
+- **The results apply to a promotion:** the content of the SMS is not
+  disclosed, but the campaign was promotional.
 - **Decile CIs are about ±1.4 points:** small differences between
   neighboring deciles are noise.
 - **Segments overlap:** heavy shoppers are both recent and broad. The

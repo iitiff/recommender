@@ -181,7 +181,7 @@ category and by its median price paid)
 **Decision sketch for messaging (to be validated by uplift tests):**
 
 > **Tested in part (2026-10-27, `2026-10-27-x5-sms-uplift.md`):** in a
-> randomized grocery SMS campaign, shoppers within their cycle gained as much
+> randomized grocery promotional SMS campaign, shoppers within their cycle gained as much
 > from the message (+3.4 points) as overdue (+3.0) and lapsing (+3.4) ones. So
 > "stay quiet within the cycle" does not hold for a generic offer message. It
 > may still hold for a replenishment reminder, which needs its own test.

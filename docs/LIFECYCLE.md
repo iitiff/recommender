@@ -194,21 +194,24 @@ So:
 
 ## Abandoned carts: high intent isn't the same as high value
 
-From `docs/experiments/2026-10-27-cart-abandonment.md` (REES46, RetailRocket):
-- **Most of the organic outcome is a return, not a purchase.** 61% (REES46)
-  and 24% (RR) of abandoners come back within 7 days, but only 6.5% and 4.2%
-  buy a carted item. In REES46, 5.2% buy a same-category substitute instead.
-- **The cart message is a small audience with sure things in it.** Cart
-  abandoners are 2–8% of active shoppers. Browse abandoners are 1.2–2.4×
-  as many, so a browse message wins if its uplift is at least 0.42–0.85×
-  the cart message's. Only a randomized holdout tells which.
+From `docs/experiments/2026-10-27-cart-abandonment.md` (REES46, RetailRocket, OTTO):
+- **Most of the organic outcome is a return, not a purchase.** 61% (REES46),
+  24% (RR) and 66% (OTTO) of abandoners come back within 7 days, but only
+  6.5%, 4.2% and 9.8% buy a carted item. In REES46, 5.2% buy a
+  same-category substitute instead.
+- **Which trigger has the bigger audience is store-specific.**
+  - A browse message wins if its uplift is at least *(cart abandoners ÷
+    browse abandoners)* × the cart message's.
+  - That ratio is 0.42 in REES46, 0.85 in RR, and 1.31 in OTTO, where
+    shoppers cart often.
+  - Only a randomized holdout tells which message actually works better.
 - **Timing:**
   - A field experiment (Li et al., *Journal of Marketing* 2021) found
     reminders at 30–60 minutes *reduced* purchases, while reminders at 1–3
     days increased them.
   - Default: no send within the first hour; a first send around the same
-    time the next day; one follow-up at 48–72 h if the shopper hasn't
-    returned.
+    time the next day (OTTO's recovery rate rises again at 21–24 h); one
+    follow-up at 48–72 h if the shopper hasn't returned.
 - **Suppress** the message once the shopper has returned to the site,
   bought the item or a substitute, or when the item is out of stock (send
   alternatives instead).

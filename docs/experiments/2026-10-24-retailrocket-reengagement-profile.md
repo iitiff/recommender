@@ -40,8 +40,9 @@ an item that was in the abandoned cart.
 
 > **Correction (2026-10-27, `2026-10-27-cart-abandonment.md`):** the trigger
 > priority below ranks by *organic* purchase rate, which measures intent, not
-> what a message adds. Browse abandonment can yield more incremental orders
-> if its uplift is at least 0.42–0.85× the cart message's. On timing, a field
+> what a message adds. Which trigger yields more incremental orders depends on
+> the store: browse abandonment wins if its uplift is at least 0.42× (REES46),
+> 0.85× (RR) or 1.31× (OTTO) the cart message's. On timing, a field
 > experiment found reminders at 30–60 minutes *reduced* purchases while 1–3
 > days increased them, so the "1 hour" send doesn't fit.
 

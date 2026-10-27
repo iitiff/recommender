@@ -32,6 +32,7 @@ Lifecycle comparison in `docs/experiments/2026-10-24-lifecycle-across-datasets.m
 | **H&M** Personalized Fashion | Kaggle competition rules (aggregate statistics only) | HF mirror `dinhlnd1610/HM-Personalized-Fashion-Recommendations` |
 | **Online Retail II** (UK gift wholesaler, B2B) | UCI repository (CC BY 4.0, unverified) | HF mirror `attik/Online-Retail-II-UCI` |
 | **Instacart** online grocery, 2017 (3.4M orders, order day-of-week and hour; weekday labels undocumented) | Released by Instacart for non-commercial use (aggregate statistics only) | HF mirror `attik/Instacart-Market-Basket-Analysis` |
+| **OTTO** German online retailer, 4 weeks of Aug 2022: clicks, carts, orders on anonymized article ids (no categories or prices); an OTTO "session" is one shopper's whole period | **CC BY 4.0** (commercial use allowed; confirmed in the repo README) | HF mirror `hazemessam/otto-recsys` (the official Kaggle zip), streamed with a 25% shopper sample (`docs/experiments/scripts/stream_otto_events.py`) |
 | **X5 RetailHero** uplift (Russian grocery chain): purchase lines Nov 2018–Mar 2019 before an SMS campaign; 200k clients **randomly** sent the SMS or not, with whether they bought | Not stated; competition data from X5 Retail Group (ods.ai). Aggregate statistics only; age and gender columns not used | HF mirror `pytorch-lifestream/retailhero-uplift` (`docs/experiments/scripts/x5_uplift.py`) |
 | **Amazon Reviews 2023** (McAuley Lab, UCSD): Electronics, Home & Kitchen, Grocery | Not stated on the dataset card; earlier Amazon releases were "non-commercial research only" (aggregate statistics only) | HF `McAuley-Lab/Amazon-Reviews-2023`: `benchmark/0core/rating_only/*.csv` + `raw/meta_categories/meta_*.jsonl`, streamed (`docs/experiments/scripts/stream_amazon.py`) |
 
@@ -54,7 +55,7 @@ secrets; others need a free account or an application):
 |---|---|---|---|
 | **dunnhumby The Complete Journey** | 2,500 grocery households over 2 years: transactions, **campaigns, coupons and redemptions**, household demographics (campaigns not randomized) | Free registration | dunnhumby terms, non-commercial |
 | **Tmall Repeat Buyers** (Alibaba Tianchi) | New buyers from a Singles' Day sale, labeled by whether they bought again from the merchant within 6 months: **first → second order** | Tianchi account | Research use |
-| **OTTO** (otto-de/recsys-dataset) | ~12M sessions of clicks, **carts and orders** over 4 weeks | HF mirror `hazemessam/otto-recsys` | **CC BY 4.0 (commercial use allowed)** |
+| **OTTO** (otto-de/recsys-dataset; now used, see above) | ~12M sessions of clicks, **carts and orders** over 4 weeks | HF mirror `hazemessam/otto-recsys` | **CC BY 4.0 (commercial use allowed)** |
 | **Taobao UserBehavior** (Tianchi) | ~100M events from 1M users over 9 days: views, **carts, favorites**, buys | HF mirror `TGB-Seq/Taobao`; original on Tianchi | Research use |
 | **REES46 cosmetics shop** (Oct 2019–Feb 2020) | Five months with **remove-from-cart**, low-priced repeat purchases | Kaggle | "© Original Authors" |
 | **YooChoose** (RecSys 2015), **Diginetica** (CIKM Cup 2016) | Classic session benchmarks (clicks and buys; Diginetica adds search queries) | Kaggle / challenge sites | Research use |

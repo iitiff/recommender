@@ -31,6 +31,21 @@ import pandas as pd
 
 DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 MIN_ORDERS = 300
+BANDS = [
+    (0, 7, "0-6"),
+    (7, 10, "7-9"),
+    (10, 13, "10-12"),
+    (13, 16, "13-15"),
+    (16, 19, "16-18"),
+    (19, 24, "19-23"),
+]
+
+
+def bands(hours: np.ndarray) -> dict[str, float]:
+    """Share of orders per band of hours (for lead-time questions: order now, receive later)."""
+    return {
+        label: round(float(((hours >= lo) & (hours < hi)).mean()), 4) for lo, hi, label in BANDS
+    }
 
 
 def tv(p: np.ndarray, q: np.ndarray) -> float:
@@ -55,6 +70,7 @@ def profile(orders: pd.DataFrame) -> dict:
         "orders": int(len(base_orders)),
         "overall_hour": [round(float(x), 4) for x in all_hour],
         "overall_dow": [round(float(x), 4) for x in all_dow],
+        "overall_hour_bands": bands(base_orders.hour.to_numpy()),
         "categories": {},
     }
     for cat, g in orders.groupby("category"):
@@ -79,6 +95,7 @@ def profile(orders: pd.DataFrame) -> dict:
             "peak_days": [int(x) for x in top2],
             "peak_days_share": round(float(d[top2].sum()), 4),
             "store_share_same_days": round(float(all_dow[top2].sum()), 4),
+            "hour_bands": bands(g.hour.to_numpy()),
         }
     return out
 

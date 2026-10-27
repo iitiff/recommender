@@ -113,15 +113,22 @@ Guardrails (CLAUDE.md "Price is context, not taste"):
 | Comparison breadth | shoes 6 alternatives (median), furniture 5, small appliances 2 | How many, and how varied, alternatives (diversity re-ranking) |
 | Cart conversion | apparel 25%, electronics 43% | Abandoned-cart priority |
 | Adjacency (next type entered) | TV → home audio 2.4×, camera → security 2.1×, pantry → bakery 2.3× (Amazon) | Adjacent-category source; expansion is a mild nudge |
-| Repeat cycle | not measurable in these datasets (reviews hide re-buys) | Replenishment timing: needs order data (Instacart) |
+| Time-of-week rhythm | Most categories follow the store's rhythm; a few don't: alcohol late-week afternoons 1.2×, stock-up groceries on the big shopping days 1.1×, furniture/appliances at weekends 1.2× (Instacart, REES46; `2026-10-27-category-timing.md`) | Campaign timing per category, only where distinctive; learn per store **and channel** |
+| Repeat cycle | Groceries: median 7 days between orders, but the next order day is hard to predict (±5 days) (Instacart). Not measurable in the review data | Replenishment reminders: cadence windows, not exact days |
 
 ## Rejected (failed the stability test)
 
 | Candidate | Result | Use instead |
 |---|---|---|
 | "Deal seeker" | −0.06 month to month | The discount moment (layer 2) |
-| Personal send hour | Own usual 3-hour window catches 19.7% of next-month visits vs 18.6% for the store's evening peak | Store-level peak + momentum timing |
-| Weekday vs weekend shopper | 0.06 month to month | Nothing |
+| Personal send hour, **for non-routine categories** | Electronics store: own usual 3-hour window catches 19.7% of next-month visits vs 18.6% for the store's peak (REES46) | Store-level peak + momentum timing |
+| Weekday vs weekend shopper, for non-routine categories | 0.06 month to month (REES46) | Nothing |
+
+**Correction (2026-10-27):** personal timing *does* hold for routine
+categories. Grocery shoppers' own usual window and day beat the store's
+peak by about 1.3× (32% vs 25%; 23% vs 17%; Instacart,
+`2026-10-27-category-timing.md`). Personal routine is a trait for repeat
+grocery-type shopping only.
 | Category expansion → loyalty | 2× in RetailRocket only; ±1–2 points in Olist, REES46, H&M | A per-store randomized test before any strategy |
 
 ## Not yet known (needs our own logged data or new datasets)
@@ -171,6 +178,7 @@ stay about products ("similar to what you viewed"), never about the person
 | `experiments/2026-10-24-lifecycle-across-datasets.md` | 5 stores | What replicates (and what doesn't) in lifecycles |
 | `experiments/2026-10-24-lifecycle-stages-deep-dive.md` | RR, REES46 | Abandoner stage; momentum; style; in-visit needs |
 | `experiments/2026-10-24-product-type-and-price.md` | REES46 | Product context; anchor price band |
+| `experiments/2026-10-27-category-timing.md` | Instacart, Olist, REES46 | Category rhythms; personal routines in groceries |
 | `experiments/2026-10-24-shopper-traits-stability.md` | REES46 | Which traits are stable; rejected traits |
 | `experiments/2026-10-24-shopper-price-level.md` | REES46 | Hierarchical price profile |
 | `experiments/2026-10-24-amazon-traits-over-years.md` | Amazon | Traits over years; brand decay; adjacency |

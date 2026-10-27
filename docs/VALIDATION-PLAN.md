@@ -27,7 +27,7 @@ stores and online, and many one-order customers.
 
 | # | What | Why |
 |---|---|---|
-| 0.1 | **Standing holdouts per message type** (5–10% of eligible customers get nothing), plus message logs with send time, channel, content and the holdout flag | Without a holdout no message's effect can be measured. A promotional SMS (X5) was credited with about 19× its real lift |
+| 0.1 | **Standing holdouts per message type** (5–10% of eligible customers get nothing), plus message logs with send time, channel, content, the holdout flag, and **every send decision (including holds) with the probability it was made with** | Without a holdout no message's effect can be measured. A promotional SMS (X5) was credited with about 19× its real lift. Without logged probabilities, a new send policy can't be evaluated from the logs (`2026-10-27-ope-dry-run.md`) |
 | 0.2 | **A data extract:** order lines from each account's first purchase (grocery/GM flag, category, price paid, promotion), channel and fulfillment method per order, visits and searches tied to the customer, cart events (adds, removals), fulfillment events (promised vs actual time, substitutions, damage), returns with reasons, ratings, service contacts, contactability (opt-ins), acquisition channel | Every analysis below. The public datasets lacked searches, removals, messages, fulfillment details and the grocery/GM mix |
 | 0.3 | **Local timestamps** (or the store's or customer's time zone) and a documented channel code | Timing results depend on them (REES46 timestamps were UTC; H&M's channel code is undocumented) |
 
@@ -83,6 +83,8 @@ the base rate and d the lift to detect.
 | 2.13 | **Cross-sell by habit vs attitude** | Holdout; new-category message; routine-reinforcing message; split by habit strength | New-category adoption and the *original* category's purchases (does the message break the routine?) | ~20k per habit group | Liu-Thompkins & Tam 2013; 1.17 |
 | 2.14 | **Share-of-wallet growth** for loyal customers with a low estimated share | Holdout; category reminders for categories they buy elsewhere | Category spend share; total margin | Depends on 1.18 | 1.18 |
 | 2.15 | **Second-channel invitation** for early single-channel repeat customers | Holdout; invitation to try the other channel (store pickup or app), no price offer | 12-month true-friend rate (loyal and valuable); second-channel use (unsubscribes) | ~20k | `2026-10-27-paths-to-value.md`: both channels by day 90 → 33% true friends vs 7–9%, possibly selection |
+| 2.16 | **Per-customer message budget** vs a fixed cap | Holdout; fixed weekly cap; a budget from each customer's predicted response (the Pinterest pattern), filled by uplift × value minus a fatigue cost | 90-day orders and margin per customer; opt-outs, complaints | ~20k | LIFECYCLE "Messaging frequency"; Zhang, Kumar & Cosguner 2017 |
+| 2.17 | **Micro-randomized trial** on one high-volume message type | At each eligible moment, send with a fixed probability (e.g. 40%); log the probability | Effect on next-7-day visits and orders by context, time of day, and the number of recent sends (fatigue) | Thousands of customers × many decisions | HeartSteps design; supplies logs for off-policy evaluation |
 
 **For offers specifically:** measure margin, not just orders: offer cost on
 *every* redemption, including customers who would have bought anyway.
@@ -97,6 +99,9 @@ Promotions don't target by price sensitivity.
 4. **Then** 2.5, 2.8 and 2.9.
 5. **Last:** 2.6 (12-month readout) and 2.12 (needs engineering).
 6. **Keep** 2.11 running underneath, as holdout data accumulates.
+7. **Run** 2.17 early on one message type. Its logged send probabilities
+   make every later policy testable offline (off-policy evaluation, see
+   `docs/experiments/2026-10-27-ope-dry-run.md`) before 2.16.
 
 Each readout gets a write-up in private storage, using the public
 `docs/experiments/TEMPLATE.md` structure.

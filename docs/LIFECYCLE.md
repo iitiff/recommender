@@ -175,6 +175,39 @@ increasing sophistication, measuring each step:
 | Long term | Incremental orders (or revenue) per customer over 90 days | Catches messages that win now but hurt later (e.g. discounts training discount-seeking) |
 | Guardrails | Unsubscribes, complaints, messages per customer per week, relevance of expansion picks | Fatigue destroys the channel you're optimizing |
 
+## Paths from first order to loyal
+
+From `docs/experiments/2026-10-27-paths-to-loyalty.md` (H&M, 146,884 new
+customers, each followed for a year):
+- **Nearly every possible path occurs:** 3,993 of 4,095 monthly patterns.
+  So we design for **families** of paths, not individual ones.
+- **Seven families; three lead to loyalty:**
+  - steady from the start (48% of loyal customers);
+  - early repeat that keeps going (41%);
+  - slow start that builds (11%).
+- **The levers are timing and fading.**
+  - A second order within 60 days → 25–28% loyal; after 120 days → 5.6%.
+  - 36% of new customers return and then fade (quick burst, early repeat
+    that fades, one late return). They are the group to work on.
+- **Breadth of the first basket barely matters;** store and mixed-channel
+  starts do better.
+- **Replicated** in CDNOW (true first-ever buyers) and a B2B wholesaler: the
+  same families, the same 60-day cliff
+  (`docs/experiments/2026-10-27-paths-across-datasets.md`).
+- **The one-order share depends mostly on the business model:** 36% in
+  fashion, 54% in music, 97% in a marketplace, where nothing in the first
+  order changes it.
+- **One-order buyers aren't all lost at day 90.** A quarter to a third
+  return within the year, but rarely become loyal. So: win the second
+  order in days 1–60, then switch to light reactivation.
+- **In grocery, categories enter in a typical order:**
+  - staples first: produce, dairy, beverages, snacks;
+  - then frozen, pantry, bakery and deli by the second order;
+  - then household, personal care and breakfast by the third.
+
+  That order is a candidate next-category sequence. Loyal customers are
+  more *frequent*, not broader.
+
 ## Visits: the leading signal
 
 Orders are rare and slow; visits arrive early. In REES46 the median number of

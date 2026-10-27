@@ -226,6 +226,29 @@ From `docs/experiments/2026-10-27-loyalty-drivers.md`:
   buyers" can't establish. Test design:
   `docs/experiments/2026-10-27-grocery-first-test-design.md`.
 
+## What "loyal" means: a profile, not one tier
+
+Our working tier ("6+ orders in 12 months, still buying") measures only
+*depth*. Research and our data add five more dimensions
+(`docs/experiments/2026-10-27-loyalty-dimensions.md`):
+
+| Dimension | What to measure | Why it changes the action |
+|---|---|---|
+| **Depth** | Frequency, regularity, tenure, expected purchases (MBG/NBD) | When to nudge or reactivate |
+| **Value** | Margin after promotions and returns: true friends / **barnacles** (loyal, low value: in H&M, 2–3% of repeaters, half their items on sale) / **butterflies** (valuable, not frequent: a third of H&M repeaters) / strangers (Reinartz & Kumar) | Don't reward barnacles with more discounts. Serve butterflies while they buy instead of forcing frequency |
+| **Driver** | Habit (consistent day, time, store, rhythm) vs attitude (ratings, reviews, intent searches) | Habit didn't weaken response to a promotion (X5). Research says it hinders *cross-selling* (Liu-Thompkins & Tam), so test new-category messages on habitual shoppers before scaling |
+| **Share of wallet** | Our share of the customer's category spend (receipt panel or survey; Du, Kamakura & Mela) | A "loyal" customer may give us a small share; growing it can matter more than frequency |
+| **Engagement** | Intent visits, lists, reviews, referrals (Kumar et al.) | Value beyond orders; early warning |
+| **Resilience** | Behavior after a stock-out, late delivery or price change | Separates true from "spurious" (convenience) loyalty (Dick & Basu) |
+
+Two cautions from research:
+- **Most shoppers split their spend across stores** (Ehrenberg, Sharp).
+  Squeezing more out of the heaviest buyers yields less than reaching more
+  buyers.
+- **Loyalty-program members are mostly heavy buyers who joined first**
+  (Meyer-Waarden & Benavent). Test program effects; don't read them from
+  member vs non-member comparisons.
+
 ## When is a customer lapsed? Per customer, not a fixed cutoff
 
 From `docs/experiments/2026-10-27-loyalty-models.md` (CDNOW, H&M):

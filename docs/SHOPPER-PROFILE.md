@@ -133,6 +133,22 @@ peak by about 1.3× (32% vs 25%; 23% vs 17%; Instacart,
 grocery-type shopping only.
 | Category expansion → loyalty | 2× in RetailRocket only; ±1–2 points in Olist, REES46, H&M | A per-store randomized test before any strategy |
 
+## Loyalty dimensions
+
+Beyond lifecycle stage and rhythm, the profile carries:
+- **Value tier:** true friend / barnacle / butterfly / stranger, on margin
+  after promotions and returns.
+- **Promotion habit:** share of items bought on sale. It's a *behavioral*
+  trait used to avoid over-discounting; it never sets the price a shopper
+  is charged.
+- **Habit strength,** measured separately for day, time window, store or
+  channel, and rhythm, since they barely correlate.
+- **Attitude signals** where available: ratings, reviews, intent searches.
+
+Share of wallet and resilience need outside or shock data
+(`docs/experiments/2026-10-27-loyalty-dimensions.md`,
+`docs/VALIDATION-PLAN.md`).
+
 ## Visit intent after an order
 
 Since the last order: visits, **intent visits** (searches, carts, focused

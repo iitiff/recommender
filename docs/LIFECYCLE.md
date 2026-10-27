@@ -208,6 +208,24 @@ customers, each followed for a year):
   That order is a candidate next-category sequence. Loyal customers are
   more *frequent*, not broader.
 
+## What else predicts the second order
+
+From `docs/experiments/2026-10-27-loyalty-drivers.md`:
+- **Intent visits after the first order predict the second.** At the same
+  number of visits, 2+ intent visits (carts, focused views, comparing
+  within a category) lift the second-order rate by about 8 points (OTTO).
+  A visit in the last 2 days means about 1.5–1.6× the odds. Plain visits
+  matter little, so "top of mind" needs intent to count.
+- **Fulfillment and ratings:**
+  - Lateness drives 1–2 star reviews (78% of orders 8+ days late).
+  - In a marketplace with 2% repeat, the effect on reordering can't be
+    told apart from zero. Measure it in a higher-repeat business, and
+    treat problems as triggers for service recovery.
+- **Small returns go with more future business** (B2B), not less.
+- **Grocery first** is a causal claim that "loyal customers are grocery
+  buyers" can't establish. Test design:
+  `docs/experiments/2026-10-27-grocery-first-test-design.md`.
+
 ## Visits: the leading signal
 
 Orders are rare and slow; visits arrive early. In REES46 the median number of

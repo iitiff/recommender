@@ -133,6 +133,14 @@ peak by about 1.3× (32% vs 25%; 23% vs 17%; Instacart,
 grocery-type shopping only.
 | Category expansion → loyalty | 2× in RetailRocket only; ±1–2 points in Olist, REES46, H&M | A per-store randomized test before any strategy |
 
+## Visit intent after an order
+
+Since the last order: visits, **intent visits** (searches, carts, focused
+views, comparing within a category) and days since the last visit. These
+predict the next order better than plain visit counts
+(`docs/experiments/2026-10-27-loyalty-drivers.md`). Searches are the target
+signal; public datasets only allow proxies.
+
 ## Not yet known (needs our own logged data or new datasets)
 
 - **Responsiveness:** who acts on recommendations and messages, and which

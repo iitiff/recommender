@@ -23,10 +23,16 @@ the 2019-11-15..17 sale has a day with no purchases logged (day 45), so
 abandonments come from days 48-53 (Nov 18-23, Moscow time) and their 7 days
 of follow-up end by day 60.
 
+OTTO (from stream_otto_events.py) has no categories or prices: substitutes,
+cart value, category and alternatives compared are not measured. Abandonments
+come from days 7-20 (Aug 8-21, 2022, German time), after a week of history.
+
 Usage:
   uv run --no-project --with pandas --with pyarrow python -I \
     cart_abandonment.py rees46 events.parquet > out.json
   python -I cart_abandonment.py retailrocket data/retailrocket > out.json
+  uv run --no-project --with pandas --with pyarrow python -I \
+    cart_abandonment.py otto otto_events.parquet > out.json
 """
 
 from __future__ import annotations
@@ -117,6 +123,16 @@ def load_retailrocket(d: Path) -> tuple[pd.DataFrame, dict[int, str], tuple[int,
     days = int(out.t.max() // DAY)
     names = {int(x): f"department {x}" for x in out.top.unique()}
     return out, names, (30 * DAY, (days - 7) * DAY)  # a month of history, 7 days follow-up
+
+
+def load_otto(path: Path) -> tuple[pd.DataFrame, dict[int, str], tuple[int, int]]:
+    e = pd.read_parquet(path)
+    e["t"] = e.t.astype(np.int64)
+    e["leaf"] = -1 - e["product"].astype(np.int64)  # no categories: each product its own
+    e["top"] = 0
+    e["price"] = np.float32(np.nan)
+    e = e.sort_values(["user", "t"], kind="stable").reset_index(drop=True)
+    return e, {0: "all"}, (7 * DAY, 21 * DAY)
 
 
 # -- visits -----------------------------------------------------------------------
@@ -347,9 +363,8 @@ def analyse(e: pd.DataFrame, top_names: dict[int, str], window: tuple[int, int])
 
 if __name__ == "__main__":
     mode, path = sys.argv[1], Path(sys.argv[2])
-    events, top_names, window = {"rees46": load_rees46, "retailrocket": load_retailrocket}[mode](
-        path
-    )
+    loaders = {"rees46": load_rees46, "retailrocket": load_retailrocket, "otto": load_otto}
+    events, top_names, window = loaders[mode](path)
     cart = events[events.kind == CART][["user", "product", "t"]]
     buy = events[events.kind == BUY][["user", "product", "t"]]
     m = buy.merge(cart.groupby(["user", "product"]).t.min().rename("tc"), on=["user", "product"],
@@ -360,4 +375,9 @@ if __name__ == "__main__":
         "purchases_with_prior_cart": coverage,
         **analyse(events, top_names, window),
     }
+    if mode == "otto":  # no categories or prices: drop what can't be measured
+        for seg in ("value", "top", "compared"):
+            result["segments"].pop(seg, None)
+        for d in [result["cases"], *[g for s in result["segments"].values() for g in s.values()]]:
+            d.pop("bought_substitute_only_7d", None)
     print(json.dumps(result, indent=1))

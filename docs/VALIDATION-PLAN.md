@@ -54,6 +54,11 @@ answer changes.
 | 1.13 | **Recommender replay:** journey blend vs best single source, tuned on a validation window, confirmed once on test | Structure transfers, weights don't (RetailRocket +4.7 points of hit@20; OTTO needs re-tuning) | `recsys evaluate --split next`; journey-blend write-ups | Ship the blend with store-tuned weights |
 | 1.14 | **Engaged core vs light repeaters** (sequence clustering) | Only one natural split: an engaged core of 12–16% vs light repeaters | `path_clusters.py`; loyalty-models | Segment definitions for reporting |
 | 1.15 | **Attribute value study:** which customer attributes improve predictions (drop-one-group ablation, freshness, history depth) | Not yet run (proposed) | to build | Which attributes to request from data owners |
+| 1.16 | **Loyalty profile:** value grid on *margin* (true friends, barnacles, butterflies, strangers), promotion and return habits | In fashion, barnacles are 2–3% of repeaters and buy on sale; butterflies are a third (H&M) | `loyalty_dimensions.py`; loyalty-dimensions | Who gets rewards vs full-price service |
+| 1.17 | **Habit strength** (day, time, store, rhythm, separately) and attitude signals (ratings, reviews, searches) | Habit measures barely correlate; habit didn't weaken promotion response (X5) | `loyalty_dimensions.py` | Inputs for the cross-sell test (2.13) |
+| 1.18 | **Share of wallet** by category, from a receipt panel or survey linked to customers | Spend with us says little about spend elsewhere (Du, Kamakura & Mela 2007) | to build | Grow share vs frequency |
+| 1.19 | **Resilience after shocks:** behavior after a stock-out, late or failed delivery, substitution, price change, or a competitor opening nearby | Spurious loyalty breaks under shocks (Dick & Basu); not measurable on public data | to build | Service-recovery priorities |
+| 1.20 | **Loyalty-program selection:** member trajectories before and after joining vs matched non-members | Heavy buyers join first; the effect is small and fades within 6–9 months (Meyer-Waarden & Benavent 2009) | to build | Whether to credit the program |
 
 ## Phase 2: randomized experiments (causal; each has a holdout)
 
@@ -75,6 +80,8 @@ the base rate and d the lift to detect.
 | 2.10 | **"Top of mind" content with no offer** (inspiration, lists) | Holdout; weekly content | Intent visits, then orders within 30 days | ~20k | 1.5: does raising intent visits *cause* orders? |
 | 2.11 | **Targeting rule for non-price messages** | Everyone; skip the likeliest buyers (propensity); an uplift model once holdout data exists | Incremental orders per message | Uses 2.1–2.5 data | X5: the propensity rule captured 65% of the lift with half the sends |
 | 2.12 | **Recommender online** | Current recs; journey blend; blend + exploration slots | Add-to-cart rate, discovery carts, revenue per visit | Interleaving needs far fewer users | 1.13 |
+| 2.13 | **Cross-sell by habit vs attitude** | Holdout; new-category message; routine-reinforcing message; split by habit strength | New-category adoption and the *original* category's purchases (does the message break the routine?) | ~20k per habit group | Liu-Thompkins & Tam 2013; 1.17 |
+| 2.14 | **Share-of-wallet growth** for loyal customers with a low estimated share | Holdout; category reminders for categories they buy elsewhere | Category spend share; total margin | Depends on 1.18 | 1.18 |
 
 **For offers specifically:** measure margin, not just orders: offer cost on
 *every* redemption, including customers who would have bought anyway.

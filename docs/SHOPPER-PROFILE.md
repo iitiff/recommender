@@ -142,6 +142,11 @@ grocery-type shopping only.
 - **What they value** (quality, price, durability, looks): review text
   (Amazon Reviews with text).
 - **Replenishment cycles:** order data with re-buys (Instacart).
+- **Deal responsiveness:** in a randomized SMS campaign, clients who often
+  spend loyalty points gained +8.4 points vs +3.3 on average, and the likeliest
+  buyers gained least (+1.0) (`docs/experiments/2026-10-27-x5-sms-uplift.md`).
+  A candidate behavioral trait once promotion and points data exist; its
+  stability is still untested.
 - **Who an abandoned-cart message persuades:** organic data only shows
   propensity (2+ order shoppers recover 13.6%, new visitors 3.3%; REES46),
   not uplift (`docs/experiments/2026-10-27-cart-abandonment.md`).

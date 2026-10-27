@@ -15,7 +15,8 @@ instacart DIR (groceries; orders.csv, order_products__prior.csv, products.csv, a
 rees46 events.parquet (from stream_rees46_events.py):
   5. Exposure curve: for product types a shopper hadn't bought before, the
      chance of buying in the type at the k-th visit in which they view it,
-     given no purchase in earlier visits (discrete-time hazard over exposures).
+     given no purchase in earlier visits (discrete-time hazard over exposures);
+     overall, by the type's price band (median price paid) and by top level.
 
 Instacart caps days between orders at 30, so day counts beyond that are
 lumped together.
@@ -197,18 +198,51 @@ def exploration(lines: pd.DataFrame) -> dict:
 # -- REES46: exposure curve -------------------------------------------------------
 
 
+PRICE_BANDS = [0, 25, 100, 300, 1e9]
+PRICE_LABELS = ["under $25", "$25-100", "$100-300", "$300+"]
+
+
+def curve(k_max: pd.Series, bought: pd.Series, max_k: int = 10, min_reach: int = 1000) -> dict:
+    """Hazard over exposures: P(buy at the k-th viewing visit | not bought before)."""
+    hazard, reach = {}, {}
+    for k in range(1, max_k + 1):
+        reached = k_max >= k
+        if reached.sum() < min_reach:
+            break
+        reach[k] = int(reached.sum())
+        hazard[k] = r((bought & (k_max == k)).sum() / reached.sum(), 4)
+    peak = max(hazard, key=hazard.get) if hazard else None
+    return {
+        "pairs": int(len(k_max)),
+        "bought_within_window": r(bought.mean(), 4),
+        "hazard": hazard,
+        "reach": reach,
+        "peak_k": peak,
+        "peak_vs_first": r(hazard[peak] / hazard[1], 2) if peak and hazard[1] else None,
+        "last_k_vs_peak": r(hazard[max(hazard)] / hazard[peak], 2)
+        if peak and hazard[peak]
+        else None,
+        "eventually_buy_given_reached_k": {
+            k: r((bought & (k_max >= k)).sum() / (k_max >= k).sum(), 4) for k in reach
+        },
+    }
+
+
 def exposure_curve(path: Path, max_k: int = 10) -> dict:
     import pyarrow.parquet as pq
 
     names = json.loads(path.with_suffix(".json").read_text())["category_codes"]
     type_of_code = {i: ".".join(n.split(".")[:2]) for n, i in names.items()}
-    ev = pq.read_table(path, columns=["user", "t", "kind", "code", "session"]).to_pandas()
+    ev = pq.read_table(path, columns=["user", "t", "kind", "code", "session", "price"]).to_pandas()
     ev = ev[ev.code >= 0]
     codes = pd.Series(type_of_code)
-    ev["type"] = pd.Categorical(codes.reindex(ev.code.to_numpy()).to_numpy()).codes.astype(np.int16)
+    type_cat = pd.Categorical(codes.reindex(ev.code.to_numpy()).to_numpy())
+    ev["type"] = type_cat.codes.astype(np.int16)
     ev = ev.drop(columns="code")
+    # A type's typical price: the median price paid in it.
+    type_price = ev[ev.kind == 2].groupby("type").price.median()
     buys = ev[ev.kind == 2].groupby(["user", "type"]).t.min().rename("t_buy")
-    views = ev[ev.kind == 0]
+    views = ev[ev.kind == 0].drop(columns=["kind", "price"])
     del ev
     # One row per (shopper, type, visit): the visit's first view of that type.
     v = views.groupby(["user", "type", "session"]).t.min().reset_index()
@@ -223,22 +257,25 @@ def exposure_curve(path: Path, max_k: int = 10) -> dict:
     v["k"] = v.groupby(["user", "type"]).cumcount() + 1
     k_max = v.groupby(["user", "type"]).k.max()
     bought = v.groupby(["user", "type"]).t_buy.first().notna()
-    hazard, reach = {}, {}
-    for k in range(1, max_k + 1):
-        reached = k_max >= k
-        converted_at_k = bought & (k_max == k)
-        if reached.sum() < 1000:
-            break
-        reach[k] = int(reached.sum())
-        hazard[k] = r(converted_at_k.sum() / reached.sum(), 4)
-    ever_after = {k: r((bought & (k_max >= k)).sum() / (k_max >= k).sum(), 4) for k in reach}
-    return {
-        "shopper_type_pairs": int(len(k_max)),
-        "bought_within_window": r(bought.mean(), 4),
-        "buy_at_kth_viewing_visit_given_not_before": hazard,
-        "pairs_reaching_k": reach,
-        "eventually_buy_given_reached_k": ever_after,
-    }
+
+    pair_type = k_max.index.get_level_values("type")
+    band = pd.cut(
+        type_price.reindex(pair_type).to_numpy(), PRICE_BANDS, labels=PRICE_LABELS, right=False
+    )
+    top = pd.Series(np.asarray(type_cat.categories)).str.split(".").str[0]
+    top_of_pair = top.reindex(pair_type).to_numpy()
+    out = {"all": curve(k_max, bought, max_k), "by_price_band": {}, "by_top_level": {}}
+    for label in PRICE_LABELS:
+        m = np.asarray(band == label)
+        if m.sum() >= 20_000:
+            out["by_price_band"][label] = curve(k_max[m], bought[m], max_k)
+    for name in pd.unique(top_of_pair):
+        m = top_of_pair == name
+        if m.sum() >= 20_000:
+            out["by_top_level"][str(name)] = curve(k_max[m], bought[m], max_k) | {
+                "median_price": r(type_price.reindex(pair_type[m]).median(), 0)
+            }
+    return out
 
 
 if __name__ == "__main__":

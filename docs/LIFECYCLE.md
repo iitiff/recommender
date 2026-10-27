@@ -41,8 +41,11 @@ so a reminder replenishes the *basket* and lists the items most likely due.
 New categories fit early in the lifecycle (orders 2–10: about half the items
 are new to the shopper) and still in 1 of 4 orders for veterans. Success is
 adoption (bought again within 3 orders: 38% of trials), not a single trial.
-A starting exposure cap is 3–5 showings per category before rotating to the
-next adjacent one, to be tuned with impression logs.
+The exposure cap depends on how the category is bought: about 2–3 showings
+for need-driven and high-ticket categories (electronics, computers), which
+convert early and wear out; 5–9 for style and browse categories (apparel,
+accessories, furniture), which wear in. Then rotate to the next adjacent
+category. All of it is to be tuned with impression logs.
 
 ## How the industry names lifecycle stages
 

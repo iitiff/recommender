@@ -102,6 +102,26 @@ bought again within the next 3 orders.
 | Buy at this visit, if not before | 3.6% | 4.4% | **4.6%** | 4.6% | 4.4% | 4.1% | 3.6% | 3.2% |
 | Pairs reaching this visit | 7.6M | 2.4M | 1.2M | 733k | 484k | 339k | 185k | 112k |
 
+**By category and price band** (same measure, split by the type's top-level
+category and by its median price paid)
+
+| Category | Median price | Buy at 1st exposure | Peak at | Peak vs 1st | 10th (or last) vs peak |
+|---|---|---|---|---|---|
+| Electronics | $260 | 5.1% | 1st | 1.0× | 0.65× |
+| Computers | $180 | 2.6% | 2nd–4th | 1.2× | 0.58× |
+| Appliances | $188 | 4.0% | 4th | 1.4× | 0.67× |
+| Construction | $90 | 2.2% | 4th | 2.0× | 0.69× |
+| Auto | $121 | 2.1% | 4th | 2.1× | 0.80× |
+| Furniture | $144 | 1.0% | 5th | 3.3× | 0.92× |
+| Sport | $175 | 1.0% | 5th | 3.9× | 0.95× |
+| Kids | $38 | 1.4% | 6th | 3.1× | 0.67× |
+| Accessories | $35 | 0.9% | 7th | 4.9× | 1.0× |
+| Apparel | $83 | 0.8% | 9th | 4.8× | 0.94× |
+| Price band: under $25 | | 2.4% | 3rd | 3.6× | 0.90× |
+| Price band: $25–100 | | 1.4% | 5th | 2.8× | 0.74× |
+| Price band: $100–300 | | 4.2% | 3rd | 1.1× | 0.68× |
+| Price band: $300+ | | 3.7% | 2nd | 1.1× | 0.62× |
+
 ## Conclusion
 
 1. **Rhythm makes reminders a timing question, not a yes/no.**
@@ -129,7 +149,25 @@ bought again within the next 3 orders.
      the replenishment moment rather than replacing it.
    - Success is measured by **adoption** (bought again within 3 orders:
      38% of trials), not by a single trial.
-4. **New-category exposure: about 3–5 times, then rotate.**
+4. **New-category exposure depends on how the category is bought.**
+   - **Need- and spec-driven categories front-load.** Electronics,
+     computers and $300+ items peak at the 1st–2nd exposure and fade
+     fastest (to 0.6× by the 10th). Cap at about 2–3, then move on.
+   - **Style and browse categories wear in.** Apparel, accessories, kids,
+     furniture and sport start low (about 1%), rise 3–5× by the 5th–9th
+     exposure and barely fade. Keep showing them 5–9 times.
+   - **In between** (appliances, auto, tools): peak around the 3rd–4th.
+   - **Price alone isn't the driver:** apparel ($83) ramps most, while
+     computers ($180) fade fastest. The cheap price band ramps because this
+     store's cheap categories are accessories and kids' items.
+   - Concepts: **wear-in / wear-out**, effective frequency.
+   - Pooled across categories, the picture below holds: a peak at the
+     3rd–4th exposure.
+   - Groceries can't be measured here: REES46 has none, and Instacart has
+     no exposures. The routine, low-price end (ramp, then sustain) is a
+     hypothesis, not a finding.
+
+   **Pooled across categories: about 3–5 times, then rotate.**
    - The chance of buying peaks at the 3rd–4th exposure and declines slowly
      after about 5. There is no cliff, so interest doesn't vanish after one
      showing, but returns shrink.

@@ -8,6 +8,7 @@ of each source governs what you may do with it.
 
 | Dataset | License | What it has | Good for |
 |---|---|---|---|
+| **OTTO** (`otto`) | **CC BY 4.0** (commercial use allowed) | 4 weeks (Aug 2022) of clicks / carts / orders from a large German online retailer: ~12.9M shoppers, ~1.8M articles, ~216M events. Articles are anonymized ids (no category, price or brand). `prepare` keeps 1 in `--sample-every` shoppers (default 64: ~200k shoppers, 3.4M events) with complete histories | Session-based recs and lifecycle work on a commercially usable dataset |
 | **RetailRocket** (`retailrocket`) | CC BY-NC-SA 4.0 | 2.76M events (view / add-to-cart / purchase), 1.4M visitors, 235k items, 137 days (May–Sep 2015); item category and **availability over time**; category tree. Names and most properties are hashed. | Session-based recs, catalog churn (stock-outs), re-engagement triggers |
 
 ```bash
@@ -15,6 +16,9 @@ uv sync --extra datasets
 uv run recsys dataset download retailrocket data/raw/retailrocket   # ≈1 GB
 uv run recsys dataset prepare retailrocket data/raw/retailrocket data/retailrocket
 uv run recsys dataset profile data/retailrocket
+
+uv run recsys dataset download otto data/raw/otto                   # ≈2 GB zip
+uv run recsys dataset prepare otto data/raw/otto data/otto --sample-every 64
 ```
 
 Prepared layout (the engine's standard one): `catalog/` (`catalog.yaml` +
@@ -32,7 +36,7 @@ Lifecycle comparison in `docs/experiments/2026-10-24-lifecycle-across-datasets.m
 | **H&M** Personalized Fashion | Kaggle competition rules (aggregate statistics only) | HF mirror `dinhlnd1610/HM-Personalized-Fashion-Recommendations` |
 | **Online Retail II** (UK gift wholesaler, B2B) | UCI repository (CC BY 4.0, unverified) | HF mirror `attik/Online-Retail-II-UCI` |
 | **Instacart** online grocery, 2017 (3.4M orders, order day-of-week and hour; weekday labels undocumented) | Released by Instacart for non-commercial use (aggregate statistics only) | HF mirror `attik/Instacart-Market-Basket-Analysis` |
-| **OTTO** German online retailer, 4 weeks of Aug 2022: clicks, carts, orders on anonymized article ids (no categories or prices); an OTTO "session" is one shopper's whole period | **CC BY 4.0** (commercial use allowed; confirmed in the repo README) | HF mirror `hazemessam/otto-recsys` (the official Kaggle zip), streamed with a 25% shopper sample (`docs/experiments/scripts/stream_otto_events.py`) |
+| **OTTO** German online retailer, 4 weeks of Aug 2022: clicks, carts, orders on anonymized article ids (no categories or prices); an OTTO "session" is one shopper's whole period | **CC BY 4.0** (commercial use allowed; confirmed in the repo README) | HF mirror `hazemessam/otto-recsys` (the official Kaggle zip), streamed with a 25% shopper sample (`docs/experiments/scripts/stream_otto_events.py`); now also has an adapter (above) |
 | **X5 RetailHero** uplift (Russian grocery chain): purchase lines Nov 2018–Mar 2019 before an SMS campaign; 200k clients **randomly** sent the SMS or not, with whether they bought | Not stated; competition data from X5 Retail Group (ods.ai). Aggregate statistics only; age and gender columns not used | HF mirror `pytorch-lifestream/retailhero-uplift` (`docs/experiments/scripts/x5_uplift.py`) |
 | **Amazon Reviews 2023** (McAuley Lab, UCSD): Electronics, Home & Kitchen, Grocery | Not stated on the dataset card; earlier Amazon releases were "non-commercial research only" (aggregate statistics only) | HF `McAuley-Lab/Amazon-Reviews-2023`: `benchmark/0core/rating_only/*.csv` + `raw/meta_categories/meta_*.jsonl`, streamed (`docs/experiments/scripts/stream_amazon.py`) |
 

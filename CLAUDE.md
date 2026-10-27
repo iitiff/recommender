@@ -75,6 +75,7 @@ uv run recsys evaluate examples/demo examples/demo/interactions.csv --model-conf
 uv run recsys lab examples/demo --interactions examples/demo/interactions.csv  # http://127.0.0.1:8000
 uv sync --extra datasets && uv run recsys dataset prepare retailrocket RAW_DIR data/retailrocket
 uv run recsys dataset profile data/retailrocket
+uv run recsys dataset prepare otto RAW_DIR data/otto --sample-every 64  # CC BY 4.0
 uv run recsys evaluate data/retailrocket/catalog data/retailrocket/interactions.csv --split next \
   --test-fraction 0.1 --models most_popular,trending,recently_viewed,covisitation --k 5 --k 20 \
   --group-facet department --availability data/retailrocket/availability.csv  # session eval

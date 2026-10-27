@@ -65,6 +65,8 @@ message sent vs holdout (uplift), with unsubscribe and frequency guardrails.
          (`docs/experiments/2026-10-26-journey-blend-retailrocket.md`)
    - [ ] 2c. Learned per-journey weights, then a learned ranker over
          `ShopperState` features; replicate on a REES46 sample (prices, brands)
+         (OTTO: the blend's structure transfers but its weights don't; tuned
+         per store on a validation window, docs/experiments/2026-10-27-journey-blend-otto.md)
          Spec for the shopper-state features: docs/SHOPPER-PROFILE.md
 3. - [ ] Day-by-day replay: nightly retrain → eval gate → model registry
 4. - [ ] Lifecycle messaging (docs/LIFECYCLE.md): lifecycle stages; triggers

@@ -226,6 +226,27 @@ From `docs/experiments/2026-10-27-loyalty-drivers.md`:
   buyers" can't establish. Test design:
   `docs/experiments/2026-10-27-grocery-first-test-design.md`.
 
+## When is a customer lapsed? Per customer, not a fixed cutoff
+
+From `docs/experiments/2026-10-27-loyalty-models.md` (CDNOW, H&M):
+- **A "still alive" model** (MBG/NBD, `pymc-marketing`) gives each
+  customer a probability of still buying.
+  - One-order customers look lapsed after about **7–8 weeks**.
+  - A fortnightly buyer after about 9 weeks.
+  - Someone buying every 4 months with a long history after about 40 weeks.
+  - A single 90-day rule is too late for the first and too early for the
+    last.
+- **Don't use BG/NBD where many customers buy once.** It treats every
+  one-order customer as alive.
+- **For ranking who buys next,** the model's expected purchases are only
+  slightly better than days since the last purchase, and both beat a fixed
+  90-day rule.
+- **New customers acquired on sale** are more often one-and-done (H&M: 41%
+  vs 36%). Plan their second order without leaning on another discount.
+- **The 7 path families are decision labels.** The only natural split in
+  the data is a small engaged core (12–16% of repeaters) vs light
+  repeaters.
+
 ## Visits: the leading signal
 
 Orders are rare and slow; visits arrive early. In REES46 the median number of

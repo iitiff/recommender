@@ -82,6 +82,7 @@ the base rate and d the lift to detect.
 | 2.12 | **Recommender online** | Current recs; journey blend; blend + exploration slots | Add-to-cart rate, discovery carts, revenue per visit | Interleaving needs far fewer users | 1.13 |
 | 2.13 | **Cross-sell by habit vs attitude** | Holdout; new-category message; routine-reinforcing message; split by habit strength | New-category adoption and the *original* category's purchases (does the message break the routine?) | ~20k per habit group | Liu-Thompkins & Tam 2013; 1.17 |
 | 2.14 | **Share-of-wallet growth** for loyal customers with a low estimated share | Holdout; category reminders for categories they buy elsewhere | Category spend share; total margin | Depends on 1.18 | 1.18 |
+| 2.15 | **Second-channel invitation** for early single-channel repeat customers | Holdout; invitation to try the other channel (store pickup or app), no price offer | 12-month true-friend rate (loyal and valuable); second-channel use (unsubscribes) | ~20k | `2026-10-27-paths-to-value.md`: both channels by day 90 → 33% true friends vs 7–9%, possibly selection |
 
 **For offers specifically:** measure margin, not just orders: offer cost on
 *every* redemption, including customers who would have bought anyway.

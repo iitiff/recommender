@@ -70,7 +70,7 @@ message sent vs holdout (uplift), with unsubscribe and frequency guardrails.
 4. - [ ] Lifecycle messaging (docs/LIFECYCLE.md): lifecycle stages; triggers
          (abandoned cart/browse, post-purchase, back-in-stock, win-back); two message
          jobs (next transaction vs category expansion); next-best-action from
-         rules → propensity → uplift (Hillstrom / Criteo) → contextual bandit;
+         rules → propensity → uplift (Hillstrom / Criteo / X5) → contextual bandit;
          `message_*` events. North star: second-order rate, 90-day retention.
 5. - [ ] Rec Lab: live session view and an "Inbox" view (what message, why)
 

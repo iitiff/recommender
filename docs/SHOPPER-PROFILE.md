@@ -142,6 +142,13 @@ grocery-type shopping only.
 - **What they value** (quality, price, durability, looks): review text
   (Amazon Reviews with text).
 - **Replenishment cycles:** order data with re-buys (Instacart).
+- **Who a message without an incentive persuades:** in a randomized
+  *promotional* SMS campaign, the likeliest buyers gained least (+1.0 point
+  vs +3.3 on average), and clients who often spend loyalty points gained most
+  (+8.4) (`docs/experiments/2026-10-27-x5-sms-uplift.md`).
+  - The points result is about response to a promotion.
+  - It must not decide who gets a discount: that would be personalized
+    pricing, which "Price is context, not taste" excludes.
 - **Who an abandoned-cart message persuades:** organic data only shows
   propensity (2+ order shoppers recover 13.6%, new visitors 3.3%; REES46),
   not uplift (`docs/experiments/2026-10-27-cart-abandonment.md`).

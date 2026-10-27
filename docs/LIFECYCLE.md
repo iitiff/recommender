@@ -35,6 +35,12 @@ day 9; 55% of next orders come within 1× their gap, 76% within 1.5×.
 | **Overdue** (1.25–2) | Missed their usual slot | **Replenishment reminder**: their usual basket, items whose own cycle has passed first |
 | Lapsing (> 2) | Drifting away | Win-back |
 
+**Tested in part:** in a randomized grocery promotional SMS campaign (X5,
+`docs/experiments/2026-10-27-x5-sms-uplift.md`), the rhythm state did not
+change the message's effect: within cycle +3.4 points, overdue +3.0, lapsing
++3.4. Treat the defaults above as hypotheses for *replenishment reminders*
+specifically, not as a rule for every message.
+
 Products have their own, longer cycles (milk 11 days, eggs 15, cheese 21),
 so a reminder replenishes the *basket* and lists the items most likely due.
 
@@ -149,8 +155,11 @@ increasing sophistication, measuring each step:
 
 1. **Rules by stage** (the table above), with frequency caps. A baseline, like MostPopular.
 2. **Propensity models:** probability of returning and buying, per stage.
+   In a randomized promotional SMS campaign (X5), skipping the likeliest buyers first
+   captured 65% of the incremental purchases with half the sends: the top
+   propensity decile gained only +1.0 point vs +3.3 on average.
 3. **Uplift per action:** the *incremental* effect of each message type vs no
-   message, learned from randomized data (Hillstrom, Criteo). Send only where the
+   message, learned from randomized data (Hillstrom, Criteo, X5). Send only where the
    lift is positive; that's how you stop paying for "sure things" and stop
    bothering "sleeping dogs".
 4. **Contextual bandit across actions:** keeps exploring which message works

@@ -141,6 +141,15 @@ was in a new category placed a third order about twice as often, but Olist,
 REES46 and H&M show no such effect. So category expansion is a hypothesis to
 test per store with a randomized holdout, not a default.
 
+**The second order mostly comes back for the first category.** Most second
+orders repeat a first-order category, well above chance: H&M 62% vs 48%,
+Olist 36% vs 7%. Grocery baskets repeat *and* add (82–94%). Over 12 months,
+expanding on the second order goes with 0–3 points more loyalty. Loyal
+customers add their first new category at the same order as everyone else.
+So the second-order message leads with the first category, and offers one
+adjacent category as a secondary slot
+(`docs/experiments/2026-10-28-second-order-category.md`).
+
 A recommender trained only on "what will they click next" drifts toward job 1
 and keeps customers in their current category. That maximizes the next click,
 not long-term value. Job 2 is an explicit choice to trade a little short-term

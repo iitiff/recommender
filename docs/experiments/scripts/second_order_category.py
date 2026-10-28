@@ -100,7 +100,7 @@ def adjusted_gap(outcome: pd.Series, expanded: pd.Series, strata: pd.DataFrame) 
 
 def expansion_timing(sets: pd.DataFrame, flag: pd.Series) -> dict:
     """First order (2..6) that adds a new category, among customers with 6+ orders."""
-    six = sets.dropna(subset=[6]).index.intersection(flag.index)
+    six = sets.dropna(subset=list(range(1, 7))).index.intersection(flag.index)
     first_new = pd.Series(7, index=six)
     seen = sets.loc[six, 1].copy()
     for k in range(2, 7):
@@ -119,7 +119,7 @@ def expansion_timing(sets: pd.DataFrame, flag: pd.Series) -> dict:
 
 def breadth_catch_up(sets: pd.DataFrame, expanded: pd.Series) -> dict:
     """Distinct categories after order 6, by what order 2 did."""
-    six = sets.dropna(subset=[6]).index.intersection(expanded.index)
+    six = sets.dropna(subset=list(range(1, 7))).index.intersection(expanded.index)
     breadth = pd.Series(
         [len(frozenset().union(*row)) for row in sets.loc[six, list(range(1, 7))].to_numpy()],
         index=six,
@@ -136,7 +136,7 @@ def breadth_catch_up(sets: pd.DataFrame, expanded: pd.Series) -> dict:
 
 def analyse(name: str, sets: pd.DataFrame, outcomes: dict[str, pd.Series],
             strata: pd.DataFrame, flag: pd.Series | None) -> dict:  # fmt: skip
-    two = sets.dropna(subset=[2]).index
+    two = sets.dropna(subset=[1, 2]).index
     s1, s2 = sets.loc[two, 1], sets.loc[two, 2]
     expanded = pd.Series([bool(b - a) for a, b in zip(s1, s2, strict=True)], index=two)
     out = {"dataset": name, "stay_vs_chance": stay_rates(s1, s2)}

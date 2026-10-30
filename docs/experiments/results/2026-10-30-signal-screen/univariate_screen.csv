@@ -1,0 +1,114 @@
+dataset,feature,family,coverage,spearman_cltv,spearman_retained,mi_cltv,mi_retained,suppressed
+hm,lifetime_orders,Breadth & lifecycle,1.0,0.592,0.422,0.2422,0.0972,False
+hm,orders,RFM,1.0,0.455,0.296,0.1235,0.0518,False
+hm,spend,RFM,1.0,0.451,0.199,0.1658,0.0329,False
+hm,distinct_groups,Breadth & lifecycle,1.0,0.42,0.24,0.1051,0.0371,False
+hm,tenure_days,RFM,1.0,0.41,0.333,0.1178,0.0672,False
+hm,recency_days,RFM,1.0,-0.248,-0.173,0.0396,0.0183,False
+hm,aov,RFM,1.0,0.227,0.029,0.0869,0.0339,False
+hm,gap_ratio,Momentum,0.679,0.042,-0.01,0.1301,0.0801,False
+hm,markdown_share,Response (discounts),1.0,0.035,0.034,0.0825,0.0237,False
+hm,online_share,Channel,1.0,0.01,-0.115,0.0875,0.026,False
+hm,order_momentum,Momentum,1.0,0.009,0.01,0.0909,0.0406,False
+hm,order_slope,Momentum,1.0,-0.007,0.008,0.0568,0.0253,False
+cdnow,lifetime_orders,Lifecycle,1.0,0.393,0.283,0.1001,0.041,False
+cdnow,spend,RFM,1.0,0.379,0.202,0.1284,0.0217,False
+cdnow,orders,RFM,1.0,0.351,0.242,0.081,0.0328,False
+cdnow,aov,RFM,1.0,0.242,0.09,0.0788,0.0136,False
+cdnow,recency_days,RFM,1.0,-0.207,-0.168,0.0181,0.0113,False
+cdnow,tenure_days,RFM,1.0,0.066,0.071,0.0041,0.0,False
+cdnow,order_momentum,Momentum,1.0,0.049,0.056,0.0633,0.037,False
+cdnow,gap_ratio,Momentum,0.647,-0.048,-0.079,0.0338,0.032,False
+cdnow,order_slope,Momentum,1.0,0.04,0.055,0.0491,0.0166,False
+onlineretail,lifetime_orders,Breadth & lifecycle,1.0,0.573,0.377,0.2234,0.0854,False
+onlineretail,spend,RFM,1.0,0.571,0.286,0.3008,0.0475,False
+onlineretail,orders,RFM,1.0,0.455,0.266,0.137,0.0476,False
+onlineretail,aov,RFM,1.0,0.41,0.182,0.1342,0.0178,False
+onlineretail,tenure_days,RFM,1.0,0.379,0.282,0.1007,0.0413,False
+onlineretail,distinct_products,Breadth & lifecycle,1.0,0.356,0.203,0.0707,0.0268,False
+onlineretail,returns,Friction (returns),1.0,0.271,0.157,0.0479,0.0072,False
+onlineretail,recency_days,RFM,1.0,-0.236,-0.134,0.0367,0.0109,False
+onlineretail,return_rate,Friction (returns),1.0,0.221,0.136,0.0439,0.0226,False
+onlineretail,order_momentum,Momentum,1.0,0.034,0.027,0.1078,0.0342,False
+onlineretail,gap_ratio,Momentum,0.571,0.032,-0.014,0.1401,0.0712,False
+onlineretail,order_slope,Momentum,1.0,0.026,0.019,0.0346,0.0132,False
+olist,lifetime_orders,Breadth & lifecycle,1.0,0.049,0.049,0.0075,0.0024,False
+olist,orders,RFM,1.0,0.045,0.045,0.0042,0.0031,False
+olist,installments,Payment,1.0,0.025,0.025,0.002,0.0029,False
+olist,avg_review,Friction,0.812,0.024,0.024,0.0,0.0021,False
+olist,distinct_categories,Breadth & lifecycle,1.0,0.023,0.023,0.0065,0.0052,False
+olist,recency_days,RFM,1.0,-0.02,-0.02,0.0,0.0,False
+olist,low_reviews,Friction,1.0,-0.019,-0.02,0.0013,0.0024,False
+olist,late_deliveries,Friction,1.0,-0.018,-0.018,0.0067,0.0,False
+olist,tenure_days,RFM,1.0,-0.013,-0.013,0.0,0.0017,False
+olist,voucher_share,Response (discounts),1.0,0.012,0.012,0.0,0.0015,False
+olist,order_slope,Momentum,1.0,0.011,0.011,0.0,0.0,False
+olist,spend,RFM,1.0,0.01,0.009,0.0,0.001,False
+olist,aov,RFM,1.0,0.008,0.007,0.0042,0.0009,False
+olist,order_momentum,Momentum,1.0,0.008,0.008,0.0,0.0003,False
+olist,avg_delivery_days,Friction,0.81,-0.004,-0.004,0.0,0.0,False
+olist,gap_ratio,Momentum,0.0,,,,,True
+cj,spend,RFM,1.0,0.809,0.1,0.6013,0.0092,False
+cj,distinct_departments,Breadth & lifecycle,1.0,0.694,0.099,0.3584,0.0066,False
+cj,orders,RFM,1.0,0.666,0.11,0.3048,0.0073,False
+cj,lifetime_orders,Breadth & lifecycle,1.0,0.658,0.111,0.2898,0.009,False
+cj,aov,RFM,1.0,0.498,0.038,0.1922,0.0026,False
+cj,recency_days,RFM,1.0,-0.474,-0.094,0.1353,0.0065,False
+cj,coupon_order_share,"Response (campaigns, coupons)",1.0,0.392,0.049,0.1297,0.0021,False
+cj,campaigns_received,"Response (campaigns, coupons)",1.0,0.326,0.05,0.0531,0.0012,False
+cj,stores_used,Convenience,1.0,0.32,0.071,0.0685,0.004,False
+cj,tenure_days,RFM,1.0,0.309,0.071,0.1126,0.0016,False
+cj,coupons_redeemed,"Response (campaigns, coupons)",1.0,0.135,0.013,0.0097,0.0,False
+cj,redemption_rate,"Response (campaigns, coupons)",0.27,0.125,,0.0594,0.0048,False
+cj,order_momentum,Momentum,1.0,0.074,0.042,0.1288,0.004,False
+cj,gap_ratio,Momentum,0.89,-0.069,-0.057,0.1451,0.0056,False
+cj,loyalty_discount_share,"Response (campaigns, coupons)",1.0,0.008,-0.004,0.0783,0.0052,False
+cj,order_slope,Momentum,1.0,-0.006,0.009,0.0458,0.002,False
+rees46,orders,RFM,1.0,0.252,0.249,0.022,0.0237,False
+rees46,spend,RFM,1.0,0.25,0.247,0.0231,0.0195,False
+rees46,browse_no_buy_share,Intent,1.0,-0.245,-0.242,0.0263,0.0224,False
+rees46,sessions,Engagement,1.0,0.189,0.189,0.018,0.0182,False
+rees46,cart_adds,Intent,1.0,0.187,0.184,0.0263,0.0099,False
+rees46,distinct_categories_bought,Breadth,0.115,0.187,0.175,0.0255,0.0254,False
+rees46,views,Engagement,1.0,0.184,0.184,0.0193,0.0166,False
+rees46,recency_days,RFM,0.115,-0.178,-0.169,0.0202,0.0253,False
+rees46,distinct_products_viewed,Engagement,1.0,0.177,0.178,0.0166,0.0153,False
+rees46,distinct_categories_viewed,Breadth,1.0,0.175,0.175,0.0226,0.0165,False
+rees46,avg_session_sec,Engagement,1.0,0.136,0.137,0.0225,0.0152,False
+rees46,viewed_3x_not_bought,Intent,1.0,0.109,0.11,0.0056,0.007,False
+rees46,cart_abandon_sessions,Intent,1.0,0.092,0.091,0.0059,0.0048,False
+rees46,aov,RFM,0.115,0.089,0.051,0.026,0.0212,False
+rees46,sessions_last7_share,Momentum,1.0,0.083,0.083,0.0146,0.015,False
+rees46,order_momentum,Momentum,0.115,0.066,0.064,0.0278,0.0278,False
+rees46,session_slope,Momentum,1.0,0.034,0.033,0.0124,0.0126,False
+rees46,session_momentum,Momentum,1.0,0.014,0.014,0.0189,0.0207,False
+otto,orders,RFM,1.0,0.286,0.285,0.0215,0.0258,False
+otto,spend,RFM,1.0,0.285,0.285,0.0242,0.0217,False
+otto,browse_no_buy_share,Intent,1.0,-0.274,-0.273,0.0277,0.0305,False
+otto,cart_adds,Intent,1.0,0.256,0.255,0.0307,0.0256,False
+otto,sessions,Engagement,1.0,0.181,0.181,0.0271,0.0207,False
+otto,views,Engagement,1.0,0.181,0.18,0.0143,0.0212,False
+otto,distinct_products_viewed,Engagement,1.0,0.179,0.178,0.0278,0.0231,False
+otto,cart_abandon_sessions,Intent,1.0,0.177,0.176,0.0053,0.0139,False
+otto,viewed_3x_not_bought,Intent,1.0,0.145,0.144,0.0071,0.0097,False
+otto,avg_session_sec,Engagement,1.0,0.109,0.108,0.0114,0.0126,False
+otto,recency_days,RFM,0.108,-0.082,-0.081,0.0268,0.026,False
+otto,session_slope,Momentum,1.0,0.024,0.024,0.0027,0.0084,False
+otto,session_momentum,Momentum,1.0,0.019,0.02,0.0189,0.0149,False
+otto,sessions_last7_share,Momentum,1.0,0.009,0.01,0.016,0.0176,False
+retailrocket,browse_no_buy_share,Intent,1.0,-0.045,-0.045,0.0,0.0039,False
+retailrocket,cart_adds,Intent,1.0,0.042,0.042,0.0009,0.0,False
+retailrocket,orders,RFM,1.0,0.041,0.041,0.0036,0.0,False
+retailrocket,spend,RFM,1.0,0.041,0.041,0.0,0.0001,False
+retailrocket,cart_abandon_sessions,Intent,1.0,0.033,0.033,0.0084,0.0,False
+retailrocket,recency_days,RFM,0.008,-0.024,-0.024,0.01,0.0035,False
+retailrocket,sessions,Engagement,1.0,0.024,0.024,0.0,0.0049,False
+retailrocket,viewed_3x_not_bought,Intent,1.0,0.021,0.021,0.0,0.0,False
+retailrocket,distinct_products_viewed,Engagement,1.0,0.02,0.02,0.0046,0.0013,False
+retailrocket,avg_session_sec,Engagement,1.0,0.018,0.018,0.0,0.0,False
+retailrocket,views,Engagement,1.0,0.017,0.017,0.0,0.0008,False
+retailrocket,sessions_last7_share,Momentum,1.0,0.01,0.01,0.0,0.0,False
+retailrocket,session_slope,Momentum,1.0,0.005,0.005,0.0,0.0002,False
+retailrocket,oos_views,Friction (stock-outs),1.0,0.005,0.005,0.0,0.0003,False
+retailrocket,session_momentum,Momentum,1.0,-0.002,-0.002,0.0096,0.0048,False
+retailrocket,oos_view_share,Friction (stock-outs),0.998,-0.002,-0.002,0.0024,0.0012,False

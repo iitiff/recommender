@@ -1,0 +1,114 @@
+dataset,segment,model,r2_log_cltv,norm_gini,top_decile_capture,auc_retained,delta_r2_lo,delta_r2_hi,delta_auc_lo,delta_auc_hi
+hm,all,RFM,0.419,0.674,0.328,0.807,,,,
+hm,all,RFM + Momentum,0.446,0.697,0.331,0.82,0.025,0.03,0.011,0.014
+hm,all,RFM + Breadth & lifecycle,0.476,0.712,0.343,0.825,0.053,0.061,0.017,0.02
+hm,all,RFM + Response (discounts),0.419,0.675,0.326,0.808,-0.0,0.001,0.001,0.002
+hm,all,RFM + Channel,0.424,0.677,0.328,0.811,0.004,0.006,0.003,0.005
+hm,all,All,0.481,0.715,0.346,0.83,0.058,0.065,0.021,0.025
+hm,established,RFM,0.352,0.609,0.278,0.696,,,,
+hm,established,RFM + Momentum,0.375,0.632,0.282,0.698,,,,
+hm,established,RFM + Breadth & lifecycle,0.419,0.663,0.29,0.733,,,,
+hm,established,RFM + Response (discounts),0.353,0.61,0.278,0.696,,,,
+hm,established,RFM + Channel,0.361,0.618,0.28,0.696,,,,
+hm,established,All,0.425,0.669,0.29,0.739,,,,
+hm,developing,RFM,0.088,0.336,0.204,0.6,,,,
+hm,developing,RFM + Momentum,0.1,0.359,0.206,0.629,,,,
+hm,developing,RFM + Breadth & lifecycle,0.105,0.369,0.206,0.638,,,,
+hm,developing,RFM + Response (discounts),0.09,0.336,0.201,0.602,,,,
+hm,developing,RFM + Channel,0.09,0.341,0.205,0.611,,,,
+hm,developing,All,0.111,0.372,0.211,0.645,,,,
+hm,new,RFM,0.021,0.195,0.182,0.533,,,,
+hm,new,RFM + Momentum,0.02,0.188,0.183,0.533,,,,
+hm,new,RFM + Breadth & lifecycle,0.024,0.205,0.188,0.538,,,,
+hm,new,RFM + Response (discounts),0.026,0.215,0.184,0.548,,,,
+hm,new,RFM + Channel,0.026,0.221,0.183,0.557,,,,
+hm,new,All,0.037,0.268,0.19,0.589,,,,
+cdnow,all,RFM,0.101,0.501,0.323,0.63,,,,
+cdnow,all,RFM + Momentum,0.123,0.535,0.313,0.654,0.007,0.037,0.011,0.038
+cdnow,all,RFM + Lifecycle,0.128,0.548,0.331,0.655,0.011,0.041,0.014,0.037
+cdnow,all,All,0.121,0.537,0.325,0.65,0.003,0.037,0.005,0.034
+cdnow,developing,RFM,-0.03,0.251,0.17,0.547,,,,
+cdnow,developing,RFM + Momentum,-0.021,0.275,0.184,0.562,,,,
+cdnow,developing,RFM + Lifecycle,-0.022,0.282,0.19,0.563,,,,
+cdnow,developing,All,-0.018,0.281,0.19,0.566,,,,
+onlineretail,all,RFM,0.233,0.775,0.492,0.728,,,,
+onlineretail,all,RFM + Momentum,0.247,0.801,0.532,0.726,-0.002,0.032,-0.015,0.013
+onlineretail,all,RFM + Friction (returns),0.238,0.778,0.502,0.732,-0.006,0.017,-0.005,0.014
+onlineretail,all,RFM + Breadth & lifecycle,0.255,0.801,0.535,0.744,0.0,0.048,0.001,0.029
+onlineretail,all,All,0.253,0.804,0.529,0.737,-0.003,0.044,-0.008,0.024
+olist,all,RFM,-0.038,0.264,0.365,0.516,,,,
+olist,all,RFM + Momentum,-0.041,0.271,0.349,0.514,-0.005,-0.0,-0.016,0.01
+olist,all,RFM + Friction,-0.042,0.239,0.291,0.528,-0.014,0.006,-0.026,0.054
+olist,all,RFM + Breadth & lifecycle,-0.039,0.277,0.342,0.525,-0.004,0.002,-0.004,0.022
+olist,all,RFM + Response (discounts),-0.04,0.268,0.334,0.508,-0.005,0.002,-0.024,0.007
+olist,all,RFM + Payment,-0.042,0.247,0.258,0.522,-0.013,0.006,-0.027,0.04
+olist,all,All,-0.042,0.253,0.36,0.543,-0.015,0.008,-0.026,0.076
+olist,new,RFM,-0.051,0.232,0.228,0.501,,,,
+olist,new,RFM + Momentum,-0.051,0.228,0.32,0.498,,,,
+olist,new,RFM + Friction,-0.054,0.19,0.316,0.491,,,,
+olist,new,RFM + Breadth & lifecycle,-0.052,0.216,0.251,0.495,,,,
+olist,new,RFM + Response (discounts),-0.052,0.21,0.252,0.493,,,,
+olist,new,RFM + Payment,-0.054,0.218,0.261,0.513,,,,
+olist,new,All,-0.05,0.195,0.32,0.52,,,,
+cj,all,RFM,0.469,0.824,0.31,,,,,
+cj,all,RFM + Momentum,0.482,0.824,0.305,,-0.003,0.028,,
+cj,all,RFM + Breadth & lifecycle,0.47,0.823,0.308,,-0.009,0.012,,
+cj,all,"RFM + Response (campaigns, coupons)",0.474,0.826,0.309,,-0.012,0.024,,
+cj,all,RFM + Convenience,0.469,0.824,0.31,,-0.006,0.006,,
+cj,all,All,0.484,0.826,0.311,,-0.002,0.036,,
+cj,established,RFM,0.473,0.808,0.278,,,,,
+cj,established,RFM + Momentum,0.48,0.808,0.274,,,,,
+cj,established,RFM + Breadth & lifecycle,0.469,0.805,0.278,,,,,
+cj,established,"RFM + Response (campaigns, coupons)",0.48,0.804,0.281,,,,,
+cj,established,RFM + Convenience,0.479,0.807,0.277,,,,,
+cj,established,All,0.492,0.808,0.275,,,,,
+rees46,all,RFM,0.104,0.582,0.533,0.649,,,,
+rees46,all,RFM + Momentum,0.12,0.606,0.534,0.739,0.013,0.019,0.085,0.095
+rees46,all,RFM + Engagement,0.127,0.62,0.549,0.751,0.02,0.026,0.097,0.107
+rees46,all,RFM + Intent,0.114,0.601,0.534,0.708,0.008,0.013,0.055,0.064
+rees46,all,RFM + Breadth,0.115,0.615,0.529,0.733,0.009,0.014,0.079,0.09
+rees46,all,All,0.134,0.634,0.554,0.76,0.026,0.034,0.107,0.116
+rees46,prospect,RFM,-0.0,0.249,0.176,0.5,,,,
+rees46,prospect,RFM + Momentum,0.017,0.295,0.251,0.656,,,,
+rees46,prospect,RFM + Engagement,0.019,0.321,0.236,0.676,,,,
+rees46,prospect,RFM + Intent,0.01,0.282,0.23,0.604,,,,
+rees46,prospect,RFM + Breadth,0.018,0.332,0.211,0.649,,,,
+rees46,prospect,All,0.024,0.35,0.261,0.689,,,,
+rees46,new,RFM,-0.016,0.219,0.173,0.537,,,,
+rees46,new,RFM + Momentum,-0.007,0.249,0.204,0.576,,,,
+rees46,new,RFM + Engagement,0.001,0.306,0.22,0.591,,,,
+rees46,new,RFM + Intent,-0.011,0.239,0.186,0.551,,,,
+rees46,new,RFM + Breadth,-0.014,0.231,0.188,0.564,,,,
+rees46,new,All,0.013,0.314,0.218,0.612,,,,
+rees46,developing,RFM,0.034,0.34,0.259,0.593,,,,
+rees46,developing,RFM + Momentum,0.029,0.284,0.215,0.616,,,,
+rees46,developing,RFM + Engagement,0.047,0.406,0.264,0.626,,,,
+rees46,developing,RFM + Intent,0.032,0.347,0.256,0.592,,,,
+rees46,developing,RFM + Breadth,0.022,0.303,0.274,0.595,,,,
+rees46,developing,All,0.055,0.393,0.216,0.645,,,,
+otto,all,RFM,0.094,0.489,0.473,0.697,,,,
+otto,all,RFM + Momentum,0.117,0.571,0.498,0.776,0.021,0.025,0.075,0.083
+otto,all,RFM + Engagement,0.127,0.639,0.518,0.806,0.03,0.034,0.106,0.112
+otto,all,RFM + Intent,0.12,0.61,0.519,0.779,0.023,0.028,0.079,0.086
+otto,all,All,0.135,0.664,0.543,0.817,0.038,0.044,0.117,0.124
+otto,new,RFM,0.005,0.155,0.175,0.528,,,,
+otto,new,RFM + Momentum,0.04,0.313,0.226,0.634,,,,
+otto,new,RFM + Engagement,0.048,0.35,0.233,0.658,,,,
+otto,new,RFM + Intent,0.035,0.314,0.229,0.63,,,,
+otto,new,All,0.055,0.377,0.247,0.665,,,,
+otto,prospect,RFM,-0.0,0.166,0.168,0.5,,,,
+otto,prospect,RFM + Momentum,0.018,0.329,0.316,0.657,,,,
+otto,prospect,RFM + Engagement,0.025,0.469,0.367,0.715,,,,
+otto,prospect,RFM + Intent,0.024,0.409,0.38,0.664,,,,
+otto,prospect,All,0.036,0.516,0.419,0.737,,,,
+otto,developing,RFM,0.033,0.242,0.167,0.582,,,,
+otto,developing,RFM + Momentum,0.046,0.272,0.176,0.626,,,,
+otto,developing,RFM + Engagement,0.056,0.302,0.196,0.637,,,,
+otto,developing,RFM + Intent,0.037,0.272,0.169,0.623,,,,
+otto,developing,All,0.069,0.331,0.197,0.642,,,,
+retailrocket,all,RFM,-0.051,-0.011,0.183,0.474,,,,
+retailrocket,all,RFM + Momentum,-0.05,0.035,0.217,0.452,-0.017,0.016,-0.131,0.081
+retailrocket,all,RFM + Engagement,-0.05,0.211,0.433,0.378,-0.038,0.033,-0.196,0.013
+retailrocket,all,RFM + Intent,-0.027,0.411,0.45,0.506,0.006,0.042,-0.027,0.095
+retailrocket,all,RFM + Friction (stock-outs),-0.055,0.418,0.45,0.474,-0.02,0.01,-0.082,0.097
+retailrocket,all,All,-0.05,-0.109,0.25,0.408,-0.034,0.039,-0.158,0.027

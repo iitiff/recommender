@@ -1,0 +1,9 @@
+dataset,rows,customers,cutoffs,retained,cltv_mean,cltv_median,cltv_top10pct_share,stages,obs_days,outcome_days
+hm,208140,144274,2019-06-01;2019-09-01,0.823,0.56,0.28,0.449,established=96646;developing=73209;new=38285,90,365
+cdnow,9517,7278,1997-07-01;1997-10-01,0.673,105.3,38.97,0.542,developing=6956;established=2561,90,270
+onlineretail,4813,3482,2010-09-01;2010-12-01,0.775,2485.3,700.71,0.64,developing=2140;established=1521;new=1152,90,365
+olist,16956,16898,2017-05-01;2017-08-01,0.028,4.03,0.0,1.0,new=16745;developing=211,90,365
+cj,4562,2327,2017-04-01;2017-05-01,0.993,1305.98,865.71,0.343,established=3557;developing=756;new=249,90,240
+rees46,301579,301579,2019-11-01,0.08,55.75,0.0,1.0,prospect=266796;new=25695;developing=7936;established=1152,31,30
+otto,1080403,1080403,day 14,0.054,0.15,0.0,1.0,prospect=963782;new=95762;developing=20399;established=460,14,13
+retailrocket,240355,240355,day 90,0.0,0.0,0.0,1.0,prospect=238336;new=1936;developing=74;established=9,90,47

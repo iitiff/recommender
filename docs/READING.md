@@ -33,7 +33,7 @@ Papers and industry write-ups behind the lifecycle and messaging plan
 | Hohnhold, O'Brien & Tang, "Focus on the long-term," *KDD* 2015 | Users learn to ignore ads (ad blindness); measuring it led Google to cut mobile ad load 50% | No **wear-out** visible across Complete Journey campaigns months apart |
 | Lewis (Yahoo display-ad field experiments) | Wear-out measured without randomization is overstated | – |
 | Kronrod & Huber, *IJRM* 2019 | Annoyance from repetition can turn into preference later | – |
-| Yancey & Settles (Duolingo), "A sleeping, recovering bandit…," *KDD* 2020 | **Recovering arms**: a template regains effect after a rest; novelty boosts short-term response | `experiments/2026-10-30-measurement-upgrades.md` |
+| Yancey & Settles (Duolingo), "A sleeping, recovering bandit…," *KDD* 2020 | **Recovering arms**: a template regains effect after a rest; novelty boosts short-term response | Small and short: −0.8 points if repeated within a day, recovered after 3–5 days, no extra novelty bonus (`experiments/2026-10-30-measurement-upgrades.md`) |
 
 ## What to send: offers, content and timing
 
@@ -77,7 +77,7 @@ Papers and industry write-ups behind the lifecycle and messaging plan
 | Source | Finding | Here |
 |---|---|---|
 | Fader & Hardie 2001 (CDNOW); Fader, Hardie & Lee, *Marketing Science* 2005 | **BG/NBD**: when a customer has likely lapsed, from recency and frequency | MBG/NBD in `experiments/2026-10-27-loyalty-models.md` |
-| Wang, Liu & Miao (Google), "A deep probabilistic model for customer lifetime value prediction," 2019 | **Zero-inflated lognormal** (ZILN) loss for value with many zeros and a heavy tail | `experiments/2026-10-30-measurement-upgrades.md` |
+| Wang, Liu & Miao (Google), "A deep probabilistic model for customer lifetime value prediction," 2019 | **Zero-inflated lognormal** (ZILN) loss for value with many zeros and a heavy tail | Best on ranking and calibration when most customers buy nothing; raw-value regression is better calibrated otherwise (`experiments/2026-10-30-measurement-upgrades.md`) |
 | Airbnb, listing lifetime value | Baseline vs incremental vs marketing-induced incremental value | Framing for "value" in uplift × value |
 
 ## Measuring it right
@@ -87,7 +87,7 @@ Papers and industry write-ups behind the lifecycle and messaging plan
 | Gordon et al. (Facebook), *Marketing Science* 2019 | Observational methods often miss experimental ad lift | X5: an SMS credited with ~19× its real lift without a holdout; Complete Journey: the naive campaign estimate had the wrong sign |
 | Lewis & Rao, *QJE* 2015 | Marketing effects are small relative to noise; experiments need large samples | Sample sizes in VALIDATION-PLAN |
 | Bernardi et al. (Booking.com), *KDD* 2019 | Better offline model metrics often didn't improve business metrics | Same as our signal screen: predictive ≠ uplift |
-| Deng et al. (Microsoft), **CUPED**, *WSDM* 2013; Etsy, **CUPAC** (Code as Craft); Lin & Crespo (Etsy) 2024 | Adjust outcomes with pre-experiment covariates or an ML prediction: Etsy averaged 7% (CUPED) and 27% (CUPAC) variance reduction | `experiments/2026-10-30-measurement-upgrades.md` |
+| Deng et al. (Microsoft), **CUPED**, *WSDM* 2013; Etsy, **CUPAC** (Code as Craft); Lin & Crespo (Etsy) 2024 | Adjust outcomes with pre-experiment covariates or an ML prediction: Etsy averaged 7% (CUPED) and 27% (CUPAC) variance reduction | 3–5% for new customers; 40–70% for regular customers' spend (`experiments/2026-10-30-measurement-upgrades.md`) |
 | Athey, Chetty, Imbens & Kang, **surrogate index**, 2019; Netflix, proxy metrics from past experiments, *KDD* 2024 and 2025 | Predict long-term effects from short-term metrics, learned from many past experiments | Experiment 2.17 and later |
 | Spotify, cumulative holdbacks and "When proxy metrics break" | Individually positive tests can add up to a negative effect; keep a program-level holdback | Phase 0.1 |
 | Klasnja et al., **micro-randomized trials**, *Health Psychology* 2015 (HeartSteps) | Randomize at each decision point with a fixed probability | Experiment 2.17 |

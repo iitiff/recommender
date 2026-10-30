@@ -111,7 +111,54 @@ signals:**
 
 ## 3. Notification novelty and recovery (Duolingo)
 
-RESULTS_DUOLINGO
+**Data:** Duolingo practice reminders (Yancey & Settles, KDD 2020; CC BY-NC
+4.0). We use the first 3.0M notifications of training part 1. Conversion
+means a lesson completed within 2 hours: 17.9% overall.
+
+**Method:** a linear probability model adjusted for:
+- the template;
+- UI language;
+- the number of eligible templates;
+- the user's notification count in the window;
+- days since any notification;
+- recent volume.
+
+The logging policy chose templates from eligibility and history, both in
+the data. So this adjustment removes most of the selection, though not
+user engagement the policy didn't see.
+
+| Same template last sent | Raw conversion | **Adjusted, vs not sent in the last ~30 days** |
+|---|---|---|
+| < 1 day ago | 14.4% | **−0.80 points** [−0.99, −0.61] |
+| 1–2 days | 18.0% | −0.51 [−0.67, −0.36] |
+| 2–3 days | 18.8% | −0.70 [−0.87, −0.52] |
+| 3–5 days | 20.7% | +0.14 [−0.02, +0.31] |
+| 5–7 days | 22.6% | +0.33 [+0.13, +0.53] |
+| 7–14 days | 23.3% | +0.10 [−0.05, +0.24] |
+| 14–30 days | 22.4% | −0.06 [−0.22, +0.10] |
+| Not sent in the window | 13.7% | (reference) |
+
+**Lessons:**
+- **The raw "recovery curve" is mostly about who gets old templates.**
+  Conversion seemed to climb from 14% to 23% with rest. After adjustment,
+  nearly all of that disappears: learners with long histories differ from
+  new ones.
+- **The real effect is small and short:**
+  - repeating a template within 3 days costs 0.5–0.8 points (3–4% of the
+    conversion rate);
+  - after 3–5 days it has recovered;
+  - a template unseen for a month does no better than one rested a week,
+    so there is **no extra novelty bonus**.
+- **For our messages:**
+  - avoid repeating the same creative within about 3 days;
+  - don't expect rotating templates to move much.
+  - Who gets a message and when (uplift, budget, timing) matters an order
+    of magnitude more.
+- **Recent volume is not a fatigue test here.** Practice reminders go to
+  learners who haven't practiced, so "7 reminders in 7 days" mostly means
+  "skipped every day". Lower-volume users converted 1.5–6.5 points more
+  even after adjustment, which is engagement, not fatigue. A clean fatigue
+  test needs randomized volume: experiment 2.17.
 
 ## Changes made to the plan
 
@@ -132,3 +179,5 @@ RESULTS_DUOLINGO
   are item counts.
 - **ZILN is fitted as a hurdle with gradient-boosted parts,** not the
   original single network.
+- **The Duolingo data has no logged send probabilities,** so it supports
+  adjusted comparisons, not off-policy evaluation.

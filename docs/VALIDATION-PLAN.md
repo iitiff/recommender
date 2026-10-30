@@ -59,6 +59,7 @@ answer changes.
 | 1.18 | **Share of wallet** by category, from a receipt panel or survey linked to customers | Spend with us says little about spend elsewhere (Du, Kamakura & Mela 2007) | to build | Grow share vs frequency |
 | 1.19 | **Resilience after shocks:** behavior after a stock-out, late or failed delivery, substitution, price change, or a competitor opening nearby | Spurious loyalty breaks under shocks (Dick & Basu); not measurable on public data | to build | Service-recovery priorities |
 | 1.20 | **Loyalty-program selection:** member trajectories before and after joining vs matched non-members | Heavy buyers join first; the effect is small and fades within 6–9 months (Meyer-Waarden & Benavent 2009) | to build | Whether to credit the program |
+| 1.21 | **Signal screen vs future value:** each signal family's lift over RFM (holdout by customer, bootstrap intervals), thresholds, lifecycle segments, stability across cutoffs | Lifetime order count and the gap ratio (2–3.5× past the usual gap) lead; visit signals lift new customers from AUC ~0.55 to ~0.65 and make prospects rankable; campaign and discount history adds nothing beyond spend (8 public datasets) | `signal_screen.py`; signal-screen | Which signals enter targeting models and which triggers to test |
 
 ## Phase 2: randomized experiments (causal; each has a holdout)
 

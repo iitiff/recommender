@@ -208,11 +208,17 @@ def lift_ci(te: pd.DataFrame, base: dict, new: dict, reps: int = 200) -> dict:
 
     rng = np.random.default_rng(SEED)
     cust = te.customer.to_numpy()
-    groups = pd.Series(np.arange(len(te))).groupby(pd.factorize(cust)[0]).agg(list).tolist()
+    single = len(np.unique(cust)) == len(cust)  # one row per customer: resample rows
+    groups = (
+        np.arange(len(te))
+        if single
+        else pd.Series(np.arange(len(te))).groupby(pd.factorize(cust)[0]).agg(list).tolist()
+    )
     ly, ret = np.log1p(te.cltv.to_numpy()), te.retained.to_numpy()
     d_r2, d_auc = [], []
     for _ in range(reps):
-        idx = np.concatenate([groups[i] for i in rng.integers(0, len(groups), len(groups))])
+        pick = rng.integers(0, len(groups), len(groups))
+        idx = pick if single else np.concatenate([groups[i] for i in pick])
         yy = ly[idx]
         sst = ((yy - yy.mean()) ** 2).sum()
         d_r2.append(
@@ -645,7 +651,7 @@ def rees46(path: str, every: int = 10) -> dict:
     return screen(panel_from([(label, f, stage, cltv)]), fam, notes)
 
 
-def otto(path: str, every: int = 4) -> dict:
+def otto(path: str, every: int = 8) -> dict:
     W, H = 14, 13
     e = pd.read_parquet(path)
     e = e[e.user % every == 0].rename(columns={"user": "c"})

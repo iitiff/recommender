@@ -377,7 +377,6 @@ def screen(p: pd.DataFrame, fam: dict[str, list[str]], notes: dict) -> dict:
 FINISH = screen
 
 
-
 def day_of(ts: pd.Series, epoch: str) -> pd.Series:
     return (pd.to_datetime(ts) - pd.Timestamp(epoch)).dt.days
 

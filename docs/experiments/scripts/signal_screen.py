@@ -372,6 +372,10 @@ def screen(p: pd.DataFrame, fam: dict[str, list[str]], notes: dict) -> dict:
 
 # -- datasets ----------------------------------------------------------------------------
 
+# What each dataset function does with its panel; other scripts swap this to reuse
+# the panels (e.g. cltv_models.py) without re-implementing the feature building.
+FINISH = screen
+
 
 def day_of(ts: pd.Series, epoch: str) -> pd.Series:
     return (pd.to_datetime(ts) - pd.Timestamp(epoch)).dt.days
@@ -425,7 +429,7 @@ def hm(tx_dir: str, articles: str, every: int = 5) -> dict:
     notes = {"sample": f"1 in {every} customers", "W": W, "H": H,
              "unavailable": "sessions, opens, carts, returns, deliveries, tickets, reviews",
              "tenure": "left-censored at 2018-09-20"}  # fmt: skip
-    return screen(panel_from(parts), fam, notes)
+    return FINISH(panel_from(parts), fam, notes)
 
 
 def cdnow(path: str) -> dict:
@@ -446,7 +450,7 @@ def cdnow(path: str) -> dict:
         "Lifecycle": ["lifetime_orders"],
     }
     notes = {"W": W, "H": H, "cohort": "first-ever buyers of Q1 1997", "unavailable": "all but RFM"}
-    return screen(panel_from(parts), fam, notes)
+    return FINISH(panel_from(parts), fam, notes)
 
 
 def onlineretail(path: str) -> dict:
@@ -484,7 +488,7 @@ def onlineretail(path: str) -> dict:
     }
     notes = {"W": W, "H": H, "business": "wholesale (B2B)", "cltv": "net of returns",
              "breadth": "distinct products (no categories)"}  # fmt: skip
-    return screen(panel_from(parts), fam, notes)
+    return FINISH(panel_from(parts), fam, notes)
 
 
 def olist(d: str) -> dict:
@@ -545,7 +549,7 @@ def olist(d: str) -> dict:
     }
     notes = {"W": W, "H": H, "leakage": "deliveries and reviews only if dated before the cutoff",
              "business": "marketplace; ~3% of buyers ever return"}  # fmt: skip
-    return screen(panel_from(parts), fam, notes)
+    return FINISH(panel_from(parts), fam, notes)
 
 
 def cj(d: str) -> dict:
@@ -601,7 +605,7 @@ def cj(d: str) -> dict:
     notes = {"W": W, "H": H, "population": "2,469 frequent households (no new customers)",
              "tenure": "left-censored at 2017-01-01",
              "campaigns": "targeted, not random (selection bias)"}  # fmt: skip
-    return screen(panel_from(parts), fam, notes)
+    return FINISH(panel_from(parts), fam, notes)
 
 
 def events_panel(e: pd.DataFrame, label: str, C: float, W: float, H: float,
@@ -648,7 +652,7 @@ def rees46(path: str, every: int = 10) -> dict:
     notes = {"sample": f"1 in {every} users", "W": W, "H": H,
              "history": "starts 2019-10-01, so tenure and lifecycle are not measurable",
              "unavailable": "searches, wishlist, opens, returns, deliveries"}  # fmt: skip
-    return screen(panel_from([(label, f, stage, cltv)]), fam, notes)
+    return FINISH(panel_from([(label, f, stage, cltv)]), fam, notes)
 
 
 def otto(path: str, every: int = 8) -> dict:
@@ -668,7 +672,7 @@ def otto(path: str, every: int = 8) -> dict:
     }  # fmt: skip
     notes = {"sample": f"1 in {every} of the stored 25% sample", "W": W, "H": H,
              "cltv": "items ordered (no prices)", "spend": "items ordered"}  # fmt: skip
-    return screen(panel_from([(label, f, stage, cltv)]), fam, notes)
+    return FINISH(panel_from([(label, f, stage, cltv)]), fam, notes)
 
 
 def retailrocket(d: str, every: int = 4) -> dict:
@@ -712,7 +716,7 @@ def retailrocket(d: str, every: int = 4) -> dict:
     notes = {"sample": f"1 in {every} visitors", "W": W, "H": H,
              "cltv": "items bought (prices hashed)",
              "resellers": "1.2% of buyers buy 10+ items; not removed"}  # fmt: skip
-    return screen(panel_from([(label, f, stage, cltv)]), fam, notes)
+    return FINISH(panel_from([(label, f, stage, cltv)]), fam, notes)
 
 
 if __name__ == "__main__":

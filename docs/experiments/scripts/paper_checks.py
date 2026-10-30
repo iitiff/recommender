@@ -353,6 +353,10 @@ def established_cj(d: str) -> dict:
 # -- 3. offers as advertising, and wear-out ---------------------------------------------
 
 
+def quint(x: pd.Series) -> pd.Series:
+    return pd.qcut(x.rank(method="first"), 5, labels=False)
+
+
 def offers_cj(d: str, reps: int = 200) -> dict:
     t = cj_tables(d)
     tx, camp, desc, coupons = t["tx"], t["campaigns"], t["campaign_descriptions"], t["coupons"]
@@ -387,6 +391,8 @@ def offers_cj(d: str, reps: int = 200) -> dict:
             pre = v[~post].groupby(win.c[~post]).sum().reindex(hh, fill_value=0) / weeks_pre
             po = v[post].groupby(win.c[post]).sum().reindex(hh, fill_value=0) / weeks_post
             frame[name] = (po - pre).to_numpy()
+            if name == "total":
+                pre_total = pre
         frame["treated"] = frame.index.isin(treated)
         if frame.treated.sum() < MIN_CELL:
             continue
@@ -396,8 +402,10 @@ def offers_cj(d: str, reps: int = 200) -> dict:
             a1 = pw.sales_value[late_pre].groupby(pw.c[late_pre]).sum().reindex(hh, fill_value=0)
             a0 = pw.sales_value[~late_pre].groupby(pw.c[~late_pre]).sum().reindex(hh, fill_value=0)
             frame["placebo"] = ((a1 - a0) / 8).to_numpy()
+            frame["stratum"] = (quint(a1).astype(str) + "/" + quint(a0).astype(str)).to_numpy()
         else:
             frame["placebo"] = np.nan
+            frame["stratum"] = quint(pre_total).astype(str).to_numpy()
         for name in parts:
             dd = frame.loc[frame.treated, name].mean() - frame.loc[~frame.treated, name].mean()
             res[name] = dd
@@ -413,26 +421,41 @@ def offers_cj(d: str, reps: int = 200) -> dict:
         frame["k"] = kk.reindex(frame.index)
         by_k.setdefault("all", []).append(frame)
 
-    def pooled(frames: list[pd.DataFrame], key: str | None = None) -> dict:
+    names = ["total", "coupon_products", "other_products", "redeemed_lines", "placebo"]
+
+    def cells(allf: pd.DataFrame, matched: bool) -> pd.DataFrame:
+        """One row per campaign (and spend stratum when matched): treated minus control
+        mean of each outcome, weighted by the cell's targeted households."""
+        key = ["campaign", "stratum"] if matched else ["campaign"]
+        g = allf.groupby([*key, "treated"])
+        m = g[names].mean().unstack("treated")
+        n = g.size().unstack("treated").fillna(0)
+        ok = (n[True] > 0) & (n[False] >= (5 if matched else 1))
+        out = (m.xs(True, axis=1, level="treated") - m.xs(False, axis=1, level="treated"))[ok]
+        out["w"] = n[True][ok]
+        return out.reset_index()
+
+    def wavg(c: pd.DataFrame) -> dict:
+        res = {}
+        for name in names:
+            v = c[name].notna()
+            res[name] = (
+                float(np.average(c.loc[v, name], weights=c.loc[v, "w"]))
+                if v.any()
+                else float("nan")
+            )
+        return res
+
+    def pooled(frames: list[pd.DataFrame], matched: bool = False) -> dict:
         allf = pd.concat(frames)
-
-        def est(f: pd.DataFrame) -> dict:
-            out = {}
-            for name in ["total", "coupon_products", "other_products", "redeemed_lines",
-                         "placebo"]:  # fmt: skip
-                gs = [g for _, g in f.groupby("campaign") if g[name].notna().any()]
-                parts = [g.loc[g.treated, name].mean() - g.loc[~g.treated, name].mean() for g in gs]
-                w = [g.treated.sum() for g in gs]
-                out[name] = float(np.average(parts, weights=w)) if gs else float("nan")
-            return out
-
-        point = est(allf)
+        c = cells(allf, matched)
+        point = wavg(c)
+        camps = c.campaign.unique()
+        by_camp = {k: g for k, g in c.groupby("campaign")}
         boot = []
-        camps = allf.campaign.unique()
         for _ in range(reps):  # resample campaigns (clusters)
             pick = rng.choice(camps, len(camps), replace=True)
-            boot.append(est(pd.concat([allf[allf.campaign == c].assign(campaign=i)
-                                       for i, c in enumerate(pick)])))  # fmt: skip
+            boot.append(wavg(pd.concat([by_camp[k] for k in pick])))
         out = {}
         for name, v in point.items():
             b = [x[name] for x in boot]
@@ -452,8 +475,11 @@ def offers_cj(d: str, reps: int = 200) -> dict:
 
     out = {"per_campaign": [{k: (r(v, 3) if isinstance(v, float) else v) for k, v in x.items()}
                             for x in rows]}  # fmt: skip
-    out["pooled"] = pooled([f for fs in per_type.values() for f in fs])
+    every = [f for fs in per_type.values() for f in fs]
+    out["pooled"] = pooled(every)
+    out["pooled_trajectory_matched"] = pooled(every, matched=True)
     out["by_type"] = {k: pooled(v) for k, v in per_type.items()}
+    out["by_type_trajectory_matched"] = {k: pooled(v, matched=True) for k, v in per_type.items()}
     # wear-out: the household's 1st, 2nd, 3rd+ campaign of the year (vs the same controls)
     allf = pd.concat(by_k["all"])
     out["by_campaign_count"] = {}
@@ -461,8 +487,11 @@ def offers_cj(d: str, reps: int = 200) -> dict:
         sub = allf[~allf.treated | (allf.k == k)]
         n = int((sub.treated).sum())
         if n >= MIN_CELL:
-            res = pooled([g for _, g in sub.groupby("campaign")])
-            out["by_campaign_count"][f"{k}{'+' if k == 3 else ''}"] = res
+            label = f"{k}{'+' if k == 3 else ''}"
+            out["by_campaign_count"][label] = pooled([g for _, g in sub.groupby("campaign")])
+            out["by_campaign_count"][label + " (trajectory-matched)"] = pooled(
+                [g for _, g in sub.groupby("campaign")], matched=True
+            )
     out["notes"] = {
         "design": "per campaign: change in weekly spend (campaign weeks vs 8 weeks before), "
         "targeted households minus all other households; pooled over campaigns "
@@ -471,6 +500,8 @@ def offers_cj(d: str, reps: int = 200) -> dict:
         "cancel in the before/after change, trends do not",
         "overlap": "campaigns overlap in time, so effects of concurrent campaigns mix",
         "placebo": "same contrast for the 8 weeks before vs the 8 before those (should be ~0)",
+        "trajectory_matched": "targeted vs untargeted households in the same quintiles of "
+        "weekly spend in each of the two 8-week periods before the campaign",
     }
     return out
 

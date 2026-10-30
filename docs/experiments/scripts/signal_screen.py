@@ -194,7 +194,8 @@ def fit_eval(cols: list[str], tr: pd.DataFrame, te: pd.DataFrame) -> tuple[dict,
         "top_decile_capture": r(y[top].sum() / y.sum()) if y.sum() > 0 else None,
     }
     preds = {"log": p}
-    if tr.retained.nunique() == 2 and te.retained.nunique() == 2:
+    counts = [tr.retained.sum(), (~tr.retained).sum(), te.retained.sum(), (~te.retained).sum()]
+    if min(counts) >= MIN_CELL:
         clf = lgbm("clf").fit(tr[cols], tr.retained)
         preds["prob"] = clf.predict_proba(te[cols])[:, 1]
         out["auc_retained"] = r(roc_auc_score(te.retained, preds["prob"]))
@@ -283,6 +284,9 @@ def univariate(p: pd.DataFrame, feats: list[str], fam_of: dict[str, str]) -> dic
     mi_r = mutual_info_classif(xm, m.retained, random_state=SEED)
     out = {}
     for i, f in enumerate(feats):
+        if s[f].notna().sum() < MIN_CELL:
+            out[f] = {"family": fam_of[f], "coverage": r(s[f].notna().mean()), "suppressed": True}
+            continue
         out[f] = {
             "family": fam_of[f],
             "coverage": r(s[f].notna().mean()),
@@ -291,7 +295,7 @@ def univariate(p: pd.DataFrame, feats: list[str], fam_of: dict[str, str]) -> dic
             "mi_cltv": r(mi_c[i], 4),
             "mi_retained": r(mi_r[i], 4),
         }
-    return dict(sorted(out.items(), key=lambda kv: -abs(kv[1]["spearman_cltv"] or 0)))
+    return dict(sorted(out.items(), key=lambda kv: -abs(kv[1].get("spearman_cltv") or 0)))
 
 
 def screen(p: pd.DataFrame, fam: dict[str, list[str]], notes: dict) -> dict:
@@ -334,13 +338,19 @@ def screen(p: pd.DataFrame, fam: dict[str, list[str]], notes: dict) -> dict:
             "spearman_cltv": {
                 f: r(sub[f].corr(sub.cltv, method="spearman"))
                 for f in feats
-                if sub[f].nunique() > 1
+                if sub[f].nunique() > 1 and sub[f].notna().sum() >= MIN_CELL
             },
             "incremental": incremental(fam, trs, tes, ci=False)[0],
         }
     if p.cutoff.nunique() > 1:
         per = {
-            cut: pd.Series({f: abs(g[f].corr(g.cltv, method="spearman")) for f in feats})
+            cut: pd.Series(
+                {
+                    f: abs(g[f].corr(g.cltv, method="spearman"))
+                    for f in feats
+                    if g[f].notna().sum() >= MIN_CELL
+                }
+            )
             for cut, g in p.groupby("cutoff")
         }
         a, b = list(per.values())[:2]
@@ -672,7 +682,11 @@ def retailrocket(d: str, every: int = 4) -> dict:
     e = e.sort_values(["c", "t"], kind="stable").reset_index(drop=True)
     label, f, stage, cltv = events_panel(e, "day 90", 90, W, H)
     av = pd.read_csv(d / "availability.csv")
-    av["t"] = (pd.to_datetime(av.valid_from, utc=True, format="ISO8601") - t0).dt.total_seconds()
+    av["t"] = (
+        (pd.to_datetime(av.valid_from, utc=True, format="ISO8601") - t0)
+        .dt.total_seconds()
+        .astype(np.int64)
+    )
     av = av.sort_values("t")
     v = e[(e.kind == VIEW) & (e.t < 90 * DAY)].sort_values("t")
     v = pd.merge_asof(v, av[["item_id", "t", "available"]].rename(columns={"item_id": "product"}),

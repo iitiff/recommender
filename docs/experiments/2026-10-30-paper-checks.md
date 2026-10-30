@@ -85,7 +85,43 @@ per 10 points deeper:
 
 ### 3. Offers as advertising (Complete Journey campaigns)
 
-RESULTS_OFFERS
+Change in weekly spend per household (campaign weeks vs the 8 weeks
+before), targeted minus other households. Pooled over 15 campaigns,
+weighted by targeted households. 95% intervals come from resampling
+campaigns.
+
+| Comparison | Total | Coupon products | Other products | Redeemed coupon lines | Placebo (before the campaign) |
+|---|---|---|---|---|---|
+| Targeted vs all others | −$1.29 [−3.18, 0.09] | −0.21 | −1.08 | +0.15 | **−$2.99 [−4.26, −1.47]** |
+| **Targeted vs others on the same trajectory** | **+$3.14 [0.80, 4.35]** | +1.27 [−0.01, 1.96] | **+1.87** [0.63, 2.70] | +0.21 [0.10, 0.30] | −0.83 [−2.45, 0.49] |
+
+**Reading it:**
+- **The naive comparison fails its placebo.** Targeted households' spend
+  was already falling by about $3 a week before the campaigns: they were
+  picked after a high-spend stretch.
+- **Matching fixes most of that.** Targeted households are compared with
+  untargeted ones in the same quintiles of weekly spend in each of the two
+  8-week periods before. The placebo shrinks to −$0.83 (interval includes
+  0). It is no longer an independent test, because matching used the same
+  weeks.
+- **With matching:**
+  - campaigns lifted spend by about **$3.1 a week per targeted household**;
+  - **93% of that lift was outside redeemed coupon lines;**
+  - 60% was on products the coupons didn't cover.
+
+**By campaign type** (matched):
+
+| Type | Total per week | Of which coupon products |
+|---|---|---|
+| Type A (3 campaigns, 3.3k households; per-household coupon selection) | +$4.20 [2.41, 5.24] | half |
+| Type B (10 campaigns, 1.6k) | +$0.74 [−1.47, 3.06] | ~0 |
+| Type C (2 campaigns, 0.3k) | +$4.89 | ~0 |
+
+**By the household's campaign count that year** (matched; wear-out):
+
+| Campaign | 1st | 2nd | 3rd+ |
+|---|---|---|---|
+| Lift per week | +$2.21 [0.39, 4.08] | +$3.46 [1.27, 4.91] | +$3.35 [−0.35, 5.05] |
 
 ### 4. Risk vs persuadability vs profit (X5, randomized)
 
@@ -150,8 +186,8 @@ of activity (items and active days):
 | **Lewis 2006** (deep acquisition discounts lower value) | **Not on frequency; partly on value** | Deep-discount starters came back *more* often (loyal +4.6 points raw at 40%+ off; +0.6 per 10 points adjusted). But they spent no more over 12 months (−15% raw, ±0 adjusted) and kept buying on discount (29% vs 12% depth) |
 | **Anderson & Simester 2004, new customers** (deep discounts raise later purchases) | **Yes** | Same direction as their catalog experiments |
 | **Anderson & Simester 2004, established customers** (deep discounts lower later purchases, raise deal-seeking) | **Deal-seeking: yes. Fewer purchases: no** | After a deep-discount quarter, discount depth rose about 2–3 points per 10 points of depth, even controlling for each customer's earlier discount habit (H&M and Complete Journey). Frequency didn't fall |
-| **Sahni et al. 2017** (offers as advertising) | SEE_OFFERS | SEE_OFFERS_DETAIL |
-| **Hohnhold et al. 2015** (wear-out) | **Not testable here** | Campaign lifts by count were within noise |
+| **Sahni et al. 2017** (offers as advertising) | **Yes, after correcting for targeting** | Matched on spending trajectory, campaigns lifted weekly spend about $3.1 per household, and 93% of the lift came without redeeming a coupon (Sahni: 90%). The naive comparison showed a *decline*, because targeted households were already trending down |
+| **Hohnhold et al. 2015** (wear-out) | **No wear-out visible** | Matched lift was +$2.2, +$3.5 and +$3.4 a week for a household's 1st, 2nd and 3rd+ campaign, with wide intervals. Grocery campaigns months apart are far from the ad-load frequencies Hohnhold studied |
 | **Ascarza 2018** (highest risk ≠ most persuadable) | **Partly** | The surest buyers had the smallest uplift (+1 point). But uplift peaked in the high-risk 7th–8th deciles (+5 points) and stayed high at the very top. For a promotional SMS, risk and persuadability went together more than Ascarza found for retention offers |
 | **Lemmens & Gupta 2020** (target by profit impact) | **Yes at small budgets** | At 10–30% budgets, uplift × value captured the most incremental *value* (19–46%), while uplift alone captured the most *purchases*. At a 50% budget, simple risk ranking won both: uplift models add most when the budget is tight |
 | **Dai et al. 2014** (fresh start) | **No general effect** | No Monday or month-start over-index in H&M, Olist or Complete Journey. Small Monday effects in CDNOW and B2B (week restart), a month-start effect in grocery (paydays, likely). Comebacks *under*-index in early January |
@@ -179,7 +215,14 @@ of activity (items and active days):
 5. **Delivery speed is a retention lever** of the same order as a message
    program. Measure it in Phase 0.2 (promised vs actual times) and include
    it in validation 1.6.
-6. **Diversity:** a modest positive association, consistent with the
+6. **Offers work mostly as reminders:** in Complete Journey, about 9 in
+   10 dollars of campaign lift came without a redeemed coupon. Every offer
+   test should include a same-message, no-offer arm. The discount may be
+   paying for a reminder.
+7. **Never read a targeted campaign naively:** the raw comparison got the
+   *sign* wrong. This is the same lesson as Gordon et al. and our X5 19×
+   finding. Standing holdouts (Phase 0.1) remove the problem.
+8. **Diversity:** a modest positive association, consistent with the
    second-order and signal-screen findings (breadth adds a little). It
    doesn't justify pushing new categories without the 2.1 test.
 

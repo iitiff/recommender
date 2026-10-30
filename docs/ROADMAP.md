@@ -116,7 +116,8 @@ evaluation.
 - Team-draft interleaving for low-traffic model comparisons
 - A/B tests with power analysis; permanent popularity holdout to measure lift
 - Thompson sampling / epsilon-greedy exploration with logged propensities;
-  inverse propensity scoring (IPS) for offline policy evaluation
+  inverse propensity scoring (IPS) for offline policy evaluation. Dry run
+  with `obp` on the Open Bandit Dataset: `docs/experiments/2026-10-27-ope-dry-run.md`
 
 ## Phase 6: Multi-tenant productization
 

@@ -164,6 +164,67 @@ increasing sophistication, measuring each step:
    bothering "sleeping dogs".
 4. **Contextual bandit across actions:** keeps exploring which message works
    for whom, logging propensities so offline evaluation stays honest.
+5. **Budgeted and sequential:** the per-customer budget and fatigue cost
+   below; offline reinforcement learning only once logs with propensities
+   exist.
+
+## Messaging frequency: one budget per customer, filled by value
+
+Frequency caps per message type (or per category, from the exposure curves)
+are a start. The pattern that large senders converged on is different:
+**one budget per customer, shared by every message type**, filled by the
+messages that add the most value at that moment.
+
+**How the industry got there:**
+1. **Cut volume, keep engagement.** LinkedIn's email volume work (KDD 2016)
+   optimized the cost against the benefit of each send. Large volume cuts
+   didn't significantly reduce site-wide engagement.
+2. **A budget per person.** Pinterest (KDD 2018; 2020 user-state budgets)
+   predicts how much each person benefits from notifications, then sets
+   *their* weekly budget.
+3. **One decision across message types, in near real time.** LinkedIn (KDD
+   2018) maximizes engagement subject to volume limits.
+4. **Sequences, not single sends.** Meta's Horizon and frequency control,
+   and LinkedIn's offline reinforcement learning work, found that
+   optimizing each send for immediate clicks can hurt long-term engagement.
+
+**What the marketing research adds:**
+- **The response to volume is non-linear.** At a home-improvement retailer,
+  7 emails a month beat 4 or 10 by 16–32% of lifetime profit per customer
+  (Zhang, Kumar & Cosguner 2017).
+- **Too-short gaps hurt more than too-long ones** (Drèze & Bonfrer 2008).
+- **Opt-out is a cost of each send:** losing permission loses the channel
+  (Kumar, Zhang & Luo 2014).
+- **Naive wear-out curves are biased.** Wear-out measured without
+  randomization overstates it (Lewis, display-ad field experiments), and
+  annoyance now can coexist with preference later (Kronrod & Huber 2019).
+  Our category exposure curves came from views customers chose themselves,
+  so treat them as priors.
+- **A message can backfire.** A proactive retention message *raised* churn
+  from 6% to 10% (Ascarza et al. 2016). Uplift, not risk, picks who gets one.
+
+**Our design (to test, not assumed):**
+1. **Each customer gets a weekly budget** that comes from their own
+   response. Start from the stage-and-rhythm defaults, and learn it with
+   experiment 2.16 (`docs/VALIDATION-PLAN.md`).
+2. **Every candidate message gets a score:** estimated uplift × value,
+   minus a fatigue and opt-out cost. The fatigue cost rises with recent
+   sends to that customer and falls with time since the last one, like
+   Duolingo's "recovering" arms.
+3. **The highest-scoring messages fill the budget,** with minimum gaps
+   between sends and the per-category exposure caps as limits.
+4. **Every send decision is logged with its probability** (from
+   randomization or exploration), so off-policy evaluation can test the
+   next policy before it goes live (`2026-10-27-ope-dry-run.md`).
+5. **Long-term outcomes** (90-day orders, opt-outs) decide. Leading signals
+   (intent visits, second-order rate) read out early, through a surrogate
+   index (Athey, Chetty, Imbens & Kang 2019).
+
+**How to learn it:** a **micro-randomized trial** (from mobile health:
+HeartSteps). At each send opportunity, send with a fixed probability such as
+40%. One study then estimates the effect by context and by how many
+messages the customer already received, which is fatigue measured without
+selection bias (experiment 2.17).
 
 ## Metrics
 

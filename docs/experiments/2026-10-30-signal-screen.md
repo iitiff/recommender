@@ -10,6 +10,10 @@ dropped before anyone builds them.
 **Script:** `docs/experiments/scripts/signal_screen.py`. Aggregates only;
 cells under 50 customers are suppressed.
 
+**Tables:** `docs/experiments/results/2026-10-30-signal-screen/`, with the
+univariate screen, incremental lift, redundancy, SHAP importance and
+thresholds, and stability for every dataset.
+
 ## Data
 
 | Dataset | Business | Customers screened | Windows (observation → outcome) | Outcome | Signal families available |
